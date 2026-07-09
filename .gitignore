@@ -1,0 +1,14 @@
+# 临时文件
+*.tmp
+task_body.json
+tmp_task.json
+
+# 敏感配置（含 App Secret 和 Token）
+.claude/settings.local.json
+
+# OAuth 脚本（含 token）
+oauth_exchange.ps1
+oauth_exchange2.ps1
+
+# Node
+node_modules/

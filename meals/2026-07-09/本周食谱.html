@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🍳 Poppy 的每周食谱 — 2026.7.9-7.15</title>
+<style>
+  :root {
+    --bg:#faf8f5;--card-bg:#fff;--text:#2c2c2c;--text-secondary:#666;
+    --accent:#e8852e;--accent2:#4caf50;--border:#ede8e0;
+    --tag-bg:#fff4ea;--tag-text:#c96a1e;--shadow:0 1px 3px rgba(0,0,0,.05);
+  }
+  @media(prefers-color-scheme:dark){
+    :root{--bg:#1a1a1c;--card-bg:#252528;--text:#e0ded8;--text-secondary:#a09e98;
+    --border:#3a3835;--tag-bg:#3d2a18;--tag-text:#f0a060;--shadow:0 1px 3px rgba(0,0,0,.25);}
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.75;padding:40px 20px 80px;}
+  .container{max-width:800px;margin:0 auto;}
+  .header{text-align:center;padding:48px 0 36px;border-bottom:2px solid var(--accent);margin-bottom:36px;}
+  .header h1{font-size:1.8rem;font-weight:700;margin-bottom:8px;}
+  .header .date{font-size:.95rem;color:var(--text-secondary);}
+  .header .greeting{margin-top:12px;font-size:1.05rem;color:var(--accent);font-weight:500;}
+
+  .highlight-bar{background:linear-gradient(135deg,#fff4ea 0%,#eefaf0 50%,#f0f4fe 100%);border-radius:10px;padding:16px 24px;margin:24px 0;display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:center;}
+  @media(prefers-color-scheme:dark){.highlight-bar{background:linear-gradient(135deg,#2d2018 0%,#1a281c 50%,#1a2230 100%);}}
+  .highlight-bar .stat{display:flex;flex-direction:column;align-items:center;}
+  .highlight-bar .stat .num{font-size:1.3rem;font-weight:700;color:var(--accent);}
+  .highlight-bar .stat .lbl{font-size:.75rem;color:var(--text-secondary);}
+  .highlight-bar .note{font-size:.85rem;color:var(--text-secondary);}
+
+  .section-title{font-size:1.15rem;font-weight:700;margin:36px 0 14px;padding-bottom:6px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+
+  .day-block{margin-bottom:32px;border-radius:12px;overflow:hidden;border:1px solid var(--border);}
+  .day-head{background:var(--card-bg);padding:12px 20px;font-weight:700;font-size:1rem;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);}
+  .day-head .dow{color:var(--accent);}
+  .meal-cards{display:grid;grid-template-columns:1fr 1fr;}
+  @media(max-width:640px){.meal-cards{grid-template-columns:1fr;}}
+
+  .meal-card{background:var(--card-bg);padding:20px 22px;border-right:1px solid var(--border);position:relative;transition:opacity .2s;}
+  .meal-card:last-child{border-right:none;}
+  @media(max-width:640px){.meal-card{border-right:none;border-bottom:1px solid var(--border);}}
+  .meal-card.switching{opacity:.4;}
+
+  .meal-card .card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
+  .meal-card .meal-tag{display:inline-block;font-size:.72rem;font-weight:700;padding:2px 10px;border-radius:12px;}
+  .meal-card .meal-tag.lunch{background:#fff4ea;color:#c96a1e;}
+  .meal-card .meal-tag.dinner{background:#e8f5e9;color:#388e3c;}
+  @media(prefers-color-scheme:dark){.meal-card .meal-tag.lunch{background:#3d2a18;color:#f0a060;}.meal-card .meal-tag.dinner{background:#1a2e1e;color:#6ecf70;}}
+
+  .btn-refresh {
+    display:inline-flex;align-items:center;gap:4px;
+    padding:3px 10px;border-radius:14px;border:1px solid var(--border);
+    background:var(--card-bg);color:var(--text-secondary);
+    font-size:.7rem;cursor:pointer;transition:all .15s;
+    font-family:inherit;white-space:nowrap;
+  }
+  .btn-refresh:hover{background:var(--tag-bg);color:var(--tag-text);border-color:var(--tag-text);}
+  .btn-refresh:active{transform:scale(.95);}
+  .btn-refresh .icon{display:inline-block;font-size:.85rem;transition:transform .4s;}
+  .btn-refresh.spinning .icon{animation:spin .6s ease-in-out;}
+  @keyframes spin{100%{transform:rotate(360deg);}}
+  .btn-refresh .counter{font-size:.65rem;opacity:.6;}
+
+  .meal-card h3{font-size:1.05rem;font-weight:700;margin-bottom:4px;}
+  .meal-card .tool{font-size:.78rem;color:var(--text-secondary);margin-bottom:8px;}
+  .meal-card .steps{font-size:.82rem;color:var(--text-secondary);margin:8px 0;padding-left:16px;}
+  .meal-card .steps li{margin-bottom:2px;}
+  .meal-card .source{margin-top:10px;}
+  .meal-card .source a{display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:20px;background:var(--tag-bg);color:var(--tag-text);font-size:.78rem;text-decoration:none;font-weight:500;}
+  .meal-card .source a:hover{filter:brightness(.92);}
+  .meal-card .source .platform{font-size:.7rem;padding:1px 6px;border-radius:4px;margin-left:4px;color:#fff;}
+  .meal-card .source .platform.bili{background:#fb7299;}
+  .meal-card .source .platform.xhs{background:#ff2442;}
+  .recipe-body{transition:opacity .15s;}
+
+  .shop-cat{margin-bottom:14px;}
+  .shop-cat h4{font-size:.92rem;font-weight:700;margin-bottom:6px;}
+  .shop-items{display:flex;flex-wrap:wrap;gap:5px;}
+  .shop-item{font-size:.8rem;padding:2px 10px;border-radius:14px;background:var(--card-bg);border:1px solid var(--border);white-space:nowrap;}
+
+  .tips-box{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-top:16px;}
+  .tips-box ul{padding-left:18px;font-size:.85rem;color:var(--text-secondary);}
+  .tips-box ul li{margin-bottom:3px;}
+
+  .footer{text-align:center;margin-top:40px;padding-top:20px;border-top:1px solid var(--border);color:var(--text-secondary);font-size:.82rem;}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>🍳 Poppy 的每周食谱</h1>
+  <div class="date">2026.7.9（周四）— 7.15（周三）</div>
+  <div class="greeting">宁，这周吃得很精炼！每份刚好一人、一厨具、15分钟备料 🥢</div>
+</div>
+
+<div class="highlight-bar">
+  <div class="stat"><span class="num">7</span><span class="lbl">天</span></div>
+  <div class="stat"><span class="num">14</span><span class="lbl">顿</span></div>
+  <div class="stat"><span class="num">4</span><span class="lbl">厨具</span></div>
+  <div class="stat"><span class="num">~150</span><span class="lbl">元/周</span></div>
+  <div class="note">🍚焖饭×5 🍗炸烤×3 🍳小锅×3 🔥微波×3 &nbsp;|&nbsp; 点击 🔄 换食谱</div>
+</div>
+
+<!-- day blocks with data attributes -->
+<div class="day-block">
+  <div class="day-head"><span class="dow">周四</span> 7月9日</div>
+  <div class="meal-cards">
+    <div class="meal-card" data-tool="rice" data-meal="lunch" data-idx="0"><div class="card-header"><span class="meal-tag lunch">🥘 午餐</span><button class="btn-refresh" onclick="refreshRecipe(this)" title="换一个食谱"><span class="icon">🔄</span> 换食谱</button></div><div class="recipe-body"><h3>腊肠土豆焖饭</h3><div class="tool">🍚 电饭煲 · 3分钟备料</div><ol class="steps"><li>大米半杯（60g）洗净入锅，加水至刚没过米面</li><li>土豆半个切小丁，干香菇2朵泡发切丁，腊肠半根切片</li><li>所有食材铺在米上，淋生抽1勺+蚝油半勺+香油，<b>不要搅拌</b></li><li>煮饭键，跳闸后焖5分钟，撒葱花拌匀</li></ol><div class="source"><a href="https://www.bilibili.com/video/BV1FA41187Bt/" target="_blank">📺 视频教程<span class="platform bili">B站</span></a></div></div></div>
+    <div class="meal-card" data-tool="micro" data-meal="dinner" data-idx="1"><div class="card-header"><span class="meal-tag dinner">🌙 晚餐</span><button class="btn-refresh" onclick="refreshRecipe(this)" title="换一个食谱"><span class="icon">🔄</span> 换食谱</button></div><div class="recipe-body"><h3>水蒸蛋 + 蒜蓉金针菇</h3><div class="tool">🔥 微波炉 · 5分钟</div><ol class="steps"><li>蛋1个打散+1.5倍温水+少许盐，盖保鲜膜扎孔</li><li>金针菇一小把去根撕散，铺碗底淋蒜蓉酱</li><li>两个碗同时入微波炉，中高火3-4分钟</li><li>蒸蛋淋生抽香油，开吃</li></ol><div class="source"><a href="https://www.bilibili.com/video/BV1zt421u7zT/" target="_blank">📺 微波蒸蛋教程<span class="platform bili">B站</span></a></div></div></div>
+  </div>
+</div>
+
+<div class="day-block">
+  <div class="day-head"><span class="dow">周五</span> 7月10日</div>
+  <div class="meal-cards">
+    <div class="meal-card" data-tool="rice" data-meal="lunch" data-idx="2"><div class="card-header"><span class="meal-tag lunch">🥘 午餐</span><button class="btn-refresh" onclick="refreshRecipe(this)" title="换一个食谱"><span class="icon">🔄</span> 换食谱</button></div><div class="recipe-body"><h3>一颗番茄饭</h3><div class="tool">🍚 电饭煲 · 5分钟备料</div><ol class="steps"><li>大米半杯洗净入锅，水量比平时略少</li><li>番茄1个去蒂划十字放中间，周围铺土豆丁、胡萝卜丁、玉米青豆、火腿丁</li><li>淋生抽1勺、蚝油半勺、黑胡椒少许，煮饭键</li><li>跳闸后压碎番茄，拌匀，焖2分钟</li></ol><div class="source"><a href="https://www.bilibili.com/opus/177367868560881019" target="_blank">📺 一只番茄饭做法<span class="platform bili">B站</span></a></div></div></div>
+    <div class="meal-card" data-tool="airfry" data-meal="dinner" data-idx="3"><div class="card-header"><span class="meal-tag dinner">🌙 晚餐</span><button class="btn-refresh" onclick="refreshRecipe(this)" title="换一个食谱"><span class="icon">🔄</span> 换食谱</button></div><div class="recipe-body"><h3>脆皮椒盐鸡翅 + 烤西兰花</h3><div class="tool">🍗 空气炸锅 · 20分钟</div><ol class="steps"><li>鸡翅4个划刀，料酒+生抽+椒盐腌15分钟</li><li>鸡翅入锅，180℃ 18分钟，中途翻面</li><li>最后5分钟放入西兰花小朵（提前拌油盐）一起烤</li></ol><div class="source"><a href="https://www.bilibili.com/video/BV1ddPPzNEkZ/" target="_blank">📺 脆皮椒盐鸡翅<span class="platform bili">B站</span></a></div></div></div>
+  </div>
+</div>
+
+<div class="day-block">
+  <div class="day-head"><span class="dow">周六</span> 7月11日</div>
+  <div class="meal-cards">
+    <div class="meal-card" data-tool="pot" data-meal="lunch" data-idx="4"><div class="card-header"><span class="meal-tag lunch">🥘 午餐</span><button class="btn-refresh" onclick="refreshRecipe(this)" title="换一个食谱"><span class="icon">🔄</span> 换食谱</button></div><div class="recipe-body"><h3>番茄鸡蛋焖面</h3><div class="tool">🍳 小电锅 · 10分钟</div><ol class="steps"><li>番茄1个切块，小电锅倒少许油炒出沙</li><li>加一碗水烧开，放一小把挂面（约80g）</li><li>面熟后淋入蛋液1个，加生抽1勺+盐+香油</li><li>撒葱花出锅，直接端锅吃</li></ol><div class="source"><a href="https://www.bilibili.com/video/BV1cY4y1K7tf/" target="_blank">📺 番茄焖面教程<span class="platform bili">B站</span></a></div></div></div>
+    <div class="meal-card" data-tool="rice" data-meal="dinner" data-idx="5"><div class="card-header"><span class="meal-tag dinner">🌙 晚餐</span><button class="btn-refresh" onclick="refreshRecipe(this)" title="换一个食谱"><span class="icon">🔄</span> 换食谱</button></div><div class="recipe-body"><h3>咖喱鸡肉焖饭</h3><div class="tool">🍚 电饭煲 · 5分钟备料</div><ol class="steps"><li>鸡胸肉小半块切丁，料酒+生抽腌10分钟</li><li>米半杯入锅，铺鸡丁+土豆丁+胡萝卜丁</li><li>咖喱块切一半（约15g）放在上面，加水至正常煮饭线</li><li>煮饭键，跳闸拌匀</li></ol><div class="source"><a href="https://www.bilibili.com/video/BV1FA41187Bt/" target="_blank">📺 电饭煲一锅出教程<span class="platform bili">B站</span></a></div></div></div>
+  </div>
+</div>
+
+<div class="day-block">
+  <div class="day-head"><span class="dow">周日</span> 7月12日</div>
+  <div class="meal-cards">
+    <div class="meal-card" data-tool="rice" data-meal="lunch" data-idx="6"><div class="card-header"><span class="meal-tag lunch">🥘 午餐</span><button class="btn-refresh" onclick="refreshRecipe(this)" title="换一个食谱"><span class="icon">🔄</span> 换食谱</button></div><div class="recipe-body"><h3>葱香嫩滑鸡腿饭</h3><div class="tool">🍚 电饭煲 · 10分钟备料</div><ol class="steps"><li>鸡全腿1只去骨，料酒+黑胡椒+盐腌15分钟</li><li>电饭煲倒少许油，鸡皮面朝下煎至金黄</li><li>取出鸡腿，放入半杯米+水，铺上葱段、姜片、洋葱丝</li><li>鸡腿放在最上面，煮饭键煮好，切块淋生抽</li></ol><div class="source"><a href="https://www.bilibili.com/video/BV1DmkmYeEmn/" target="_blank">📺 电饭煲料理篇<span class="platform bili">B站</span></a></div></div></div>
+    <div class="meal-card" data-tool="micro" data-meal="dinner" data-idx="7"><div class="card-header"><span class="meal-tag dinner">🌙 晚餐</span><button class="btn-refresh" onclick="refreshRecipe(this)" title="换一个食谱"><span class="icon">🔄</span> 换食谱</button></div><div class="recipe-body"><h3>虾仁豆腐焖蛋</h3><div class="tool">🔥 微波炉 · 7分钟</div><ol class="steps"><li>嫩豆腐半盒切块铺碗底，速冻虾仁5-6只撒上面</li><li>鸡蛋1个打散+半勺生抽搅匀，淋入碗中</li><li>盖保鲜膜扎孔，高火5分钟</li><li>撒葱花+少许蒸鱼豉油</li></ol><div class="source"><a href="https://www.bilibili.com/video/BV1K55WzAE85/" target="_blank">📺 微波炉一周不重样<span class="platform bili">B站</span></a></div></div></div>
+  </div>
+</div>
+
+<div class="day-block">
+  <div class="day-head"><span class="dow">周一</span> 7月13日</div>
+  <div class="meal-cards">
+    <div class="meal-card" data-tool="pot" data-meal="lunch" data-idx="8"><div class="card-header"><span class="meal-tag lunch">🥘 午餐</span><button class="btn-refresh" onclick="refreshRecipe(this)" title="换一个食谱"><span class="icon">🔄</span> 换食谱</button></div><div class="recipe-body"><h3>清汤菌菇面</h3><div class="tool">🍳 小电锅 · 10分钟</div><ol class="steps"><li>小电锅加水烧开，放干香菇2朵+白玉菇少许煮3分钟</li><li>下挂面一小把（约80g），加生抽1勺+盐</li><li>面将熟时打入鸡蛋1个，放几片青菜</li><li>滴香油出锅，暖胃又简单</li></ol><div class="source"><a href="https://www.bilibili.com/video/BV1b84y1j7xp/" target="_blank">📺 清汤面教程<span class="platform bili">B站</span></a></div></div></div>
+    <div class="meal-card" data-tool="airfry" data-meal="dinner" data-idx="9"><div class="card-header"><span class="meal-tag dinner">🌙 晚餐</span><button class="btn-refresh" onclick="refreshRecipe(this)" title="换一个食谱"><span class="icon">🔄</span> 换食谱</button></div><div class="recipe-body"><h3>孜然金针菇 + 烤豆腐</h3><div class="tool">🍗 空气炸锅 · 15分钟</div><ol class="steps"><li>老豆腐半块切厚片，金针菇一小把去根撕散</li><li>豆腐和金针菇刷薄油，撒孜然粉+辣椒粉+盐</li><li>豆腐入锅180℃ 12分钟，中间翻面；金针菇最后8分钟放入</li><li>出锅撒香菜/葱花</li></ol><div class="source"><a href="https://www.bilibili.com/video/BV1ACzLB2EsB/" target="_blank">📺 空气炸锅合集<span class="platform bili">B站</span></a></div></div></div>
+  </div>
+</div>
+
+<div class="day-block">
+  <div class="day-head"><span class="dow">周二</span> 7月14日</div>
+  <div class="meal-cards">
+    <div class="meal-card" data-tool="rice" data-meal="lunch" data-idx="10"><div class="card-header"><span class="meal-tag lunch">🥘 午餐</span><button class="btn-refresh" onclick="refreshRecipe(this)" title="换一个食谱"><span class="icon">🔄</span> 换食谱</button></div><div class="recipe-body"><h3>电饭煲三汁焖锅</h3><div class="tool">🍚 电饭煲 · 10分钟备料</div><ol class="steps"><li>鸡翅3个划刀，料酒+生抽腌10分钟</li><li>锅底刷油，铺洋葱丝+土豆块+胡萝卜块+金针菇</li><li>最上面放鸡翅，淋酱汁（生抽1勺+蚝油1勺+番茄酱1勺+糖少许+水3勺）</li><li>煮饭键约40分钟，开盖香气四溢</li></ol><div class="source"><a href="https://www.bilibili.com/video/BV14ytwzTEnz/" target="_blank">📺 三汁焖锅教程<span class="platform bili">B站</span></a></div></div></div>
+    <div class="meal-card" data-tool="micro" data-meal="dinner" data-idx="11"><div class="card-header"><span class="meal-tag dinner">🌙 晚餐</span><button class="btn-refresh" onclick="refreshRecipe(this)" title="换一个食谱"><span class="icon">🔄</span> 换食谱</button></div><div class="recipe-body"><h3>微波炉番茄鸡蛋面</h3><div class="tool">🔥 微波炉 · 3分钟</div><ol class="steps"><li>挂面一小把入碗加水没过，高火2分钟</li><li>取出倒掉一半水，加入番茄块+蛋液+生抽+香油</li><li>高火再叮1分钟，拌匀开吃</li><li>一个碗搞定，零洗锅</li></ol><div class="source"><a href="https://www.bilibili.com/video/BV1gT411p7FK/" target="_blank">📺 微波炉快手三餐<span class="platform bili">B站</span></a></div></div></div>
+  </div>
+</div>
+
+<div class="day-block">
+  <div class="day-head"><span class="dow">周三</span> 7月15日</div>
+  <div class="meal-cards">
+    <div class="meal-card" data-tool="micro" data-meal="lunch" data-idx="12"><div class="card-header"><span class="meal-tag lunch">🥘 午餐</span><button class="btn-refresh" onclick="refreshRecipe(this)" title="换一个食谱"><span class="icon">🔄</span> 换食谱</button></div><div class="recipe-body"><h3>微波炉煲仔饭</h3><div class="tool">🔥 微波炉 · 12分钟</div><ol class="steps"><li>米半杯+水（米水1:1.2）入微波碗，高火6分钟</li><li>取出铺腊肠片+香菇片+焯水青菜，打一个蛋</li><li>盖盖高火再叮4分钟，焖2分钟</li><li>淋酱汁（生抽1勺+蚝油半勺+糖少许+水1勺）</li></ol><div class="source"><a href="https://www.bilibili.com/video/BV1fkM36QEaw/" target="_blank">📺 微波煲仔饭教程<span class="platform bili">B站</span></a></div></div></div>
+    <div class="meal-card" data-tool="pot" data-meal="dinner" data-idx="13"><div class="card-header"><span class="meal-tag dinner">🌙 晚餐</span><button class="btn-refresh" onclick="refreshRecipe(this)" title="换一个食谱"><span class="icon">🔄</span> 换食谱</button></div><div class="recipe-body"><h3>日式小火锅</h3><div class="tool">🍳 小电锅 · 15分钟</div><ol class="steps"><li>小电锅加水+味噌半勺（或酱油+盐底）烧开</li><li>放入豆腐块+金针菇+娃娃菜几片+肥牛卷4-5片</li><li>慢慢涮着吃，蘸生抽+蒜末</li><li>最后汤里下几根面条收尾</li></ol><div class="source"><a href="https://www.bilibili.com/video/BV1DmkmYeEmn/" target="_blank">📺 一人食小火锅<span class="platform bili">B站</span></a></div></div></div>
+  </div>
+</div>
+
+<div class="section-title">🛒 本周采购清单（一人份 · 约 150 元）</div>
+<div class="shop-cat"><h4>🥩 肉类（一周量）</h4><div class="shop-items"><span class="shop-item">腊肠 1根</span><span class="shop-item">鸡翅 7个</span><span class="shop-item">鸡腿 1只</span><span class="shop-item">鸡胸肉 半块</span><span class="shop-item">肥牛卷 1小盒(150g)</span><span class="shop-item">虾仁 1小袋(100g)</span><span class="shop-item">火腿肠 1根</span><span class="shop-item">鸡蛋 8个</span></div></div>
+<div class="shop-cat"><h4>🥬 蔬菜</h4><div class="shop-items"><span class="shop-item">番茄 4个</span><span class="shop-item">土豆 3个</span><span class="shop-item">胡萝卜 1根</span><span class="shop-item">金针菇 3包</span><span class="shop-item">西兰花 半颗</span><span class="shop-item">干香菇 5朵</span><span class="shop-item">洋葱 1个</span><span class="shop-item">娃娃菜 半颗</span><span class="shop-item">青菜 1小把</span><span class="shop-item">豆腐 半盒</span><span class="shop-item">青豆玉米(冷冻) 1小袋</span><span class="shop-item">葱姜蒜</span></div></div>
+<div class="shop-cat"><h4>🍜 主食</h4><div class="shop-items"><span class="shop-item">大米（已有的补一点）</span><span class="shop-item">挂面 1把</span></div></div>
+<div class="shop-cat"><h4>🧂 调料</h4><div class="shop-items"><span class="shop-item">咖喱块 1小盒</span><span class="shop-item">味噌 1小袋</span><span class="shop-item">孜然粉</span><span class="shop-item">椒盐</span><span class="shop-item">黑胡椒</span><span class="shop-item">番茄酱</span></div></div>
+
+<div class="tips-box"><h4 style="margin-bottom:8px;">💡 Poppy 的一人食采购贴士</h4><ul><li>🛒 周末一次性采购，总价 <b>约 150 元</b>，比外卖省一半</li><li>🧊 肉类回来分装冷冻：鸡翅腌好冷冻、肥牛虾仁分小份冷冻</li><li>🥬 绿叶菜（青菜、娃娃菜）先吃；根茎类（土豆、胡萝卜）耐放后吃</li><li>🍚 焖饭米量用<b>半杯（约60g）</b>刚好一人食，不会剩</li></ul></div>
+
+<div class="section-title">🔗 食谱来源（全部可点）</div>
+<div style="font-size:.82rem;color:var(--text-secondary);line-height:2.2;">
+  <a href="https://www.bilibili.com/video/BV1FA41187Bt/" target="_blank" style="color:var(--accent2);">📺 电饭煲焖饭一键完成 (B站)</a><br>
+  <a href="https://www.bilibili.com/video/BV1ddPPzNEkZ/" target="_blank" style="color:var(--accent2);">📺 脆皮椒盐鸡翅 (B站)</a><br>
+  <a href="https://www.bilibili.com/video/BV14ytwzTEnz/" target="_blank" style="color:var(--accent2);">📺 三汁焖锅 (B站)</a><br>
+  <a href="https://www.bilibili.com/video/BV1DmkmYeEmn/" target="_blank" style="color:var(--accent2);">📺 电饭煲料理篇 (B站)</a><br>
+  <a href="https://www.bilibili.com/video/BV1ACzLB2EsB/" target="_blank" style="color:var(--accent2);">📺 空气炸锅合集 (B站)</a>
+</div>
+
+<div class="footer">由 <strong>美味财</strong> 整理 · 2026-07-09 · 全部来源 Bilibili · 开始做饭吧 🍚</div>
+</div>
+
+<script>
+// ===== 备选食谱库 =====
+const BANK = {
+  // 🍚 电饭煲 — 午餐
+  rice_lunch: [
+    {name:'腊肠土豆焖饭',tool:'🍚 电饭煲 · 3分钟备料',steps:['大米半杯（60g）洗净入锅，加水至刚没过米面','土豆半个切小丁，干香菇2朵泡发切丁，腊肠半根切片','所有食材铺在米上，淋生抽1勺+蚝油半勺+香油，<b>不要搅拌</b>','煮饭键，跳闸后焖5分钟，撒葱花拌匀'],link:'https://www.bilibili.com/video/BV1FA41187Bt/',label:'视频教程'},
+    {name:'一颗番茄饭',tool:'🍚 电饭煲 · 5分钟备料',steps:['大米半杯洗净入锅，水量比平时略少','番茄1个去蒂划十字放中间，周围铺土豆丁+胡萝卜丁+玉米青豆+火腿丁','淋生抽1勺、蚝油半勺、黑胡椒少许，煮饭键','跳闸后压碎番茄，拌匀，焖2分钟'],link:'https://www.bilibili.com/opus/177367868560881019',label:'一只番茄饭'},
+    {name:'咖喱鸡肉焖饭',tool:'🍚 电饭煲 · 5分钟备料',steps:['鸡胸肉小半块切丁，料酒+生抽腌10分钟','米半杯入锅，铺鸡丁+土豆丁+胡萝卜丁','咖喱块切一半（约15g）放在上面，加水至正常煮饭线','煮饭键，跳闸拌匀'],link:'https://www.bilibili.com/video/BV1FA41187Bt/',label:'电饭煲一锅出'},
+    {name:'排骨玉米焖饭',tool:'🍚 电饭煲 · 10分钟备料',steps:['排骨3-4块焯水去血沫，料酒+生抽腌10分钟','米半杯入锅，铺排骨+玉米段+胡萝卜丁','加生抽1勺+蚝油半勺+糖少许，煮饭键','跳闸焖5分钟，撒葱花'],link:'https://www.bilibili.com/video/BV1FA41187Bt/',label:'焖饭合集'},
+    {name:'椰汁鸡焖饭',tool:'🍚 电饭煲 · 5分钟备料',steps:['鸡腿肉小半块切丁，料酒+盐腌10分钟','米半杯入锅，用椰浆代替一半水量','铺鸡肉+香菇片+胡萝卜丁','煮饭键，出锅撒椰蓉更香'],link:'https://www.bilibili.com/video/BV1DmkmYeEmn/',label:'电饭煲料理篇'},
+  ],
+  // 🍚 电饭煲 — 晚餐
+  rice_dinner: [
+    {name:'葱香嫩滑鸡腿饭',tool:'🍚 电饭煲 · 10分钟备料',steps:['鸡全腿1只去骨，料酒+黑胡椒+盐腌15分钟','电饭煲倒少许油，鸡皮面朝下煎至金黄','取出鸡腿，放入半杯米+水，铺上葱段+姜片+洋葱丝','鸡腿放在最上面，煮饭键煮好，切块淋生抽'],link:'https://www.bilibili.com/video/BV1DmkmYeEmn/',label:'电饭煲料理篇'},
+    {name:'电饭煲三汁焖锅',tool:'🍚 电饭煲 · 10分钟备料',steps:['鸡翅3个划刀，料酒+生抽腌10分钟','锅底刷油，铺洋葱丝+土豆块+胡萝卜块+金针菇','最上面放鸡翅，淋酱汁（生抽1+蚝油1+番茄酱1+糖+水3）','煮饭键约40分钟，开盖香气四溢'],link:'https://www.bilibili.com/video/BV14ytwzTEnz/',label:'三汁焖锅'},
+    {name:'番茄肥牛焖饭',tool:'🍚 电饭煲 · 5分钟备料',steps:['米半杯入锅，水量比平时少一点','番茄1个去蒂放中间，周围铺土豆丁+胡萝卜丁','腊肠几片铺上，淋生抽蚝油','最后5分钟放肥牛卷4-5片，焖熟拌匀'],link:'https://www.bilibili.com/video/BV1FA41187Bt/',label:'焖饭公式'},
+    {name:'板栗腊肠焖饭',tool:'🍚 电饭煲 · 5分钟备料',steps:['米半杯入锅，水量正常','铺上腊肠片+去壳板栗5-6颗+香菇片','加生抽1勺+蚝油半勺+少许糖','煮饭键，跳闸撒葱花'],link:'https://www.bilibili.com/video/BV1DmkmYeEmn/',label:'板栗腊肠焖饭'},
+    {name:'窝蛋牛肉焖饭',tool:'🍚 电饭煲 · 5分钟备料',steps:['牛肉薄片5-6片，生抽+淀粉腌10分钟','米半杯入锅，铺土豆丁+胡萝卜丁+洋葱丝','煮饭键最后5分钟铺上牛肉+打一个蛋','跳闸焖3分钟，淋生抽胡椒'],link:'https://www.bilibili.com/video/BV1FA41187Bt/',label:'焖饭一锅出'},
+  ],
+  // 🍗 空气炸锅 — 午餐
+  airfry_lunch: [
+    {name:'蒜香鸡翅 + 烤时蔬',tool:'🍗 空气炸锅 · 20分钟',steps:['鸡翅4个划刀，蒜末+生抽+蚝油腌20分钟','鸡翅入锅180℃ 18分钟，中途翻面','最后8分钟放入西兰花+金针菇（拌油盐）','出锅撒椒盐'],link:'https://www.bilibili.com/video/BV1ddPPzNEkZ/',label:'空气炸锅鸡翅'},
+    {name:'脆皮鸡腿',tool:'🍗 空气炸锅 · 25分钟',steps:['鸡全腿1只划刀，奥尔良腌料+料酒腌20分钟','入锅180℃ 22分钟，中途翻面','余温放几分钟锁住汁水','外焦里嫩，一人刚好'],link:'https://www.bilibili.com/video/BV1ddPPzNEkZ/',label:'空气炸锅教程'},
+    {name:'孜然牛肉粒',tool:'🍗 空气炸锅 · 15分钟',steps:['牛肉100g切小块，料酒+生抽+孜然腌15分钟','底部铺洋葱丝，牛肉铺上面','180℃ 12分钟，中途翻一次','撒白芝麻出锅'],link:'https://www.bilibili.com/video/BV1ACzLB2EsB/',label:'空气炸锅合集'},
+  ],
+  // 🍗 空气炸锅 — 晚餐
+  airfry_dinner: [
+    {name:'孜然金针菇 + 烤豆腐',tool:'🍗 空气炸锅 · 15分钟',steps:['老豆腐半块切厚片，金针菇一小把去根撕散','豆腐和金针菇刷薄油，撒孜然粉+辣椒粉+盐','豆腐入锅180℃ 12分钟，中间翻面；金针菇最后8分钟放入','出锅撒香菜/葱花'],link:'https://www.bilibili.com/video/BV1ACzLB2EsB/',label:'空气炸锅合集'},
+    {name:'麻酱豆腐 + 烤茄子',tool:'🍗 空气炸锅 · 18分钟',steps:['老豆腐半块切厚片，茄子半根对半切划刀','豆腐刷油180℃ 12分钟；茄子铺蒜蓉酱180℃ 15分钟','豆腐淋麻酱+生抽，茄子撒葱花','两个一起入锅省时间'],link:'https://www.bilibili.com/video/BV1ACzLB2EsB/',label:'空气炸锅合集'},
+    {name:'烤时蔬拼盘',tool:'🍗 空气炸锅 · 12分钟',steps:['西兰花小朵+金针菇+杏鲍菇片+胡萝卜条','所有蔬菜加油+盐+黑胡椒拌匀','180℃ 10分钟，中途翻一次','蘸酸奶/沙拉酱吃也超棒'],link:'https://www.bilibili.com/video/BV1ACzLB2EsB/',label:'空气炸锅合集'},
+    {name:'柠檬烤三文鱼',tool:'🍗 空气炸锅 · 15分钟',steps:['三文鱼1小块，盐+黑胡椒+柠檬汁腌10分钟','底部铺芦笋/西兰花','180℃ 12分钟，中途不需要翻','挤柠檬汁，清爽低脂'],link:'https://www.bilibili.com/video/BV1ddPPzNEkZ/',label:'空气炸锅教程'},
+  ],
+  // 🍳 小电锅 — 午餐
+  pot_lunch: [
+    {name:'番茄鸡蛋焖面',tool:'🍳 小电锅 · 10分钟',steps:['番茄1个切块，小电锅倒少许油炒出沙','加一碗水烧开，放一小把挂面（约80g）','面熟后淋入蛋液1个，加生抽1勺+盐+香油','撒葱花出锅，直接端锅吃'],link:'https://www.bilibili.com/video/BV1cY4y1K7tf/',label:'番茄焖面'},
+    {name:'黄焖鸡',tool:'🍳 小电锅 · 25分钟',steps:['鸡块3-4块，料酒+生抽+姜片腌10分钟','锅底油炒香蒜+干辣椒+八角，下鸡块翻炒变色','加土豆块+香菇+生抽1勺+蚝油1勺+黄豆酱半勺，加水焖20分钟','最后放青椒块焖2分钟收汁'],link:'https://www.bilibili.com/video/BV1cY4y1K7tf/',label:'一人食教程'},
+    {name:'清汤菌菇面',tool:'🍳 小电锅 · 10分钟',steps:['小电锅加水烧开，放干香菇2朵+白玉菇少许煮3分钟','下挂面一小把（约80g），加生抽1勺+盐','面将熟时打入鸡蛋1个，放几片青菜','滴香油出锅，暖胃又简单'],link:'https://www.bilibili.com/video/BV1b84y1j7xp/',label:'清汤面'},
+  ],
+  // 🍳 小电锅 — 晚餐
+  pot_dinner: [
+    {name:'日式小火锅',tool:'🍳 小电锅 · 15分钟',steps:['小电锅加水+味噌半勺（或酱油+盐底）烧开','放入豆腐块+金针菇+娃娃菜几片+肥牛卷4-5片','慢慢涮着吃，蘸生抽+蒜末','最后汤里下几根面条收尾'],link:'https://www.bilibili.com/video/BV1DmkmYeEmn/',label:'一人食小火锅'},
+    {name:'海鲜粉丝煲',tool:'🍳 小电锅 · 12分钟',steps:['蒜末炒香，加虾仁5-6只+泡发干贝少许翻炒','加生抽1勺+蚝油1勺+糖少许+水半碗','放粉丝一小把焖3分钟','收干撒葱花，鲜香入味'],link:'https://www.bilibili.com/video/BV1cY4y1K7tf/',label:'一人食教程'},
+    {name:'番茄浓汤烩面',tool:'🍳 小电锅 · 10分钟',steps:['煎荷包蛋备用；番茄1个炒出沙加开水','放挂面煮3分钟+午餐肉2片','放入荷包蛋+青菜烫熟','汤浓面滑，冬天暖身'],link:'https://www.bilibili.com/video/BV1b84y1j7xp/',label:'一人食面'},
+    {name:'韩式泡菜豆腐锅',tool:'🍳 小电锅 · 10分钟',steps:['小电锅加水+韩式辣酱半勺+泡菜少许烧开','放入豆腐块+金针菇+肥牛3-4片','煮5分钟，打一个蛋','配米饭或直接吃，酸辣开胃'],link:'https://www.bilibili.com/video/BV1b84y1j7xp/',label:'韩式小火锅'},
+  ],
+  // 🔥 微波炉 — 午餐
+  micro_lunch: [
+    {name:'微波炉煲仔饭',tool:'🔥 微波炉 · 12分钟',steps:['米半杯+水（米水1:1.2）入微波碗，高火6分钟','取出铺腊肠片+香菇片+焯水青菜，打一个蛋','盖盖高火再叮4分钟，焖2分钟','淋酱汁（生抽1勺+蚝油半勺+糖少许+水1勺）'],link:'https://www.bilibili.com/video/BV1fkM36QEaw/',label:'微波煲仔饭'},
+    {name:'微波杂蔬焖饭',tool:'🔥 微波炉 · 15分钟',steps:['米半杯+水入微波碗，高火5分钟','取出铺胡萝卜丁+玉米粒+青豆+鸡胸肉丁','撒盐+油拌匀，高火再8分钟','焖2分钟开吃，饭菜一锅'],link:'https://www.bilibili.com/video/BV1K55WzAE85/',label:'微波炉一周不重样'},
+    {name:'洋葱肥牛煲',tool:'🔥 微波炉 · 10分钟',steps:['肥牛加姜片料酒高火3分钟焯水捞出','碗中铺洋葱丝+蒜末，放肥牛+香菇','加生抽1勺+蚝油1勺+水少许','高火6分钟，拌匀即食'],link:'https://www.bilibili.com/opus/738021243008057352',label:'洋葱肥牛煲'},
+  ],
+  // 🔥 微波炉 — 晚餐
+  micro_dinner: [
+    {name:'水蒸蛋 + 蒜蓉金针菇',tool:'🔥 微波炉 · 5分钟',steps:['蛋1个打散+1.5倍温水+少许盐，盖保鲜膜扎孔','金针菇一小把去根撕散，铺碗底淋蒜蓉酱','两个碗同时入微波炉，中高火3-4分钟','蒸蛋淋生抽香油，开吃'],link:'https://www.bilibili.com/video/BV1zt421u7zT/',label:'微波蒸蛋'},
+    {name:'虾仁豆腐焖蛋',tool:'🔥 微波炉 · 7分钟',steps:['嫩豆腐半盒切块铺碗底，速冻虾仁5-6只撒上面','鸡蛋1个打散+半勺生抽搅匀，淋入碗中','盖保鲜膜扎孔，高火5分钟','撒葱花+少许蒸鱼豉油'],link:'https://www.bilibili.com/video/BV1K55WzAE85/',label:'微波炉一周不重样'},
+    {name:'微波炉番茄鸡蛋面',tool:'🔥 微波炉 · 3分钟',steps:['挂面一小把入碗加水没过，高火2分钟','取出倒掉一半水，加入番茄块+蛋液+生抽+香油','高火再叮1分钟，拌匀开吃','一个碗搞定，零洗锅'],link:'https://www.bilibili.com/video/BV1gT411p7FK/',label:'微波炉快手三餐'},
+    {name:'葱烧鸡腿',tool:'🔥 微波炉 · 12分钟',steps:['鸡腿1只划刀，生抽+料酒+姜片腌15分钟','碗底铺葱段+姜片，放上鸡腿','盖盖高火8分钟，翻面再3分钟','鸡腿切块，淋碗底汤汁+生抽'],link:'https://www.bilibili.com/video/BV1K55WzAE85/',label:'微波炉一周不重样'},
+  ],
+};
+
+// Track refresh count per card
+const counts = {};
+
+function refreshRecipe(btn) {
+  const card = btn.closest('.meal-card');
+  const tool = card.dataset.tool;
+  const meal = card.dataset.meal;
+  const key = `${tool}_${meal}`;
+  const pool = BANK[key];
+  if (!pool || pool.length === 0) return;
+
+  // Spin animation
+  btn.classList.add('spinning');
+  setTimeout(() => btn.classList.remove('spinning'), 600);
+
+  // Track count
+  const idx = card.dataset.idx;
+  counts[idx] = (counts[idx] || 0) + 1;
+
+  // Pick random recipe different from current title
+  const currentName = card.querySelector('h3').textContent;
+  let candidates = pool.filter(r => r.name !== currentName);
+  if (candidates.length === 0) candidates = pool;
+  const recipe = candidates[Math.floor(Math.random() * candidates.length)];
+
+  // Fade out
+  const body = card.querySelector('.recipe-body');
+  body.style.opacity = '0';
+
+  setTimeout(() => {
+    // Build new recipe HTML
+    const stepsHTML = recipe.steps.map(s => `<li>${s}</li>`).join('');
+    body.innerHTML = `
+      <h3>${recipe.name}</h3>
+      <div class="tool">${recipe.tool}</div>
+      <ol class="steps">${stepsHTML}</ol>
+      <div class="source"><a href="${recipe.link}" target="_blank">📺 ${recipe.label}<span class="platform bili">B站</span></a></div>
+    `;
+    body.style.opacity = '1';
+
+    // Update counter on button
+    const cnt = counts[idx] || 1;
+    btn.querySelector('.counter') && btn.querySelector('.counter').remove();
+    if (cnt > 1) {
+      const span = document.createElement('span');
+      span.className = 'counter';
+      span.textContent = cnt;
+      btn.appendChild(span);
+    }
+  }, 160);
+}
+</script>
+
+</body>
+</html>
