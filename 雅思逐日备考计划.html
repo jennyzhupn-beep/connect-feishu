@@ -1,0 +1,2258 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>雅思 4 个月逐日备考计划 — Poppy</title>
+<style>
+/* ===== CSS 变量 ===== */
+:root {
+  --bg: #f5f6fa;
+  --card-bg: #ffffff;
+  --text: #2c3e50;
+  --text-secondary: #6b7c93;
+  --text-muted: #a0aec0;
+  --border: #e2e8f0;
+  --sidebar-bg: #1B3A5C;
+  --sidebar-text: #cbd5e0;
+  --sidebar-active: #E8485F;
+  --sidebar-hover: rgba(255,255,255,0.08);
+  --header-bg: linear-gradient(135deg, #1B3A5C 0%, #2d5a87 100%);
+  --accent: #E8485F;
+  --accent-light: rgba(232,72,95,0.1);
+  --accent-hover: #d1364e;
+  --blue: #1B3A5C;
+  --blue-light: #2d5a87;
+  --success: #38a169;
+  --success-bg: rgba(56,161,105,0.1);
+  --warning: #d69e2e;
+  --warning-bg: rgba(214,158,46,0.1);
+  --progress-bg: #e8ecf2;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+  --shadow: 0 4px 16px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --transition: 0.2s ease;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+  --tag-bg-month1: rgba(232,72,95,0.1);
+  --tag-text-month1: #E8485F;
+  --tag-bg-month2: rgba(214,158,46,0.1);
+  --tag-text-month2: #b7791f;
+  --tag-bg-month3: rgba(56,161,105,0.1);
+  --tag-text-month3: #2f855a;
+  --tag-bg-month4: rgba(27,58,92,0.1);
+  --tag-text-month4: #1B3A5C;
+  --scrollbar-thumb: #cbd5e0;
+  --scrollbar-track: transparent;
+}
+
+body.dark {
+  --bg: #1a202c;
+  --card-bg: #2d3748;
+  --text: #e2e8f0;
+  --text-secondary: #a0aec0;
+  --text-muted: #718096;
+  --border: #4a5568;
+  --sidebar-bg: #171923;
+  --sidebar-text: #a0aec0;
+  --sidebar-hover: rgba(255,255,255,0.06);
+  --header-bg: linear-gradient(135deg, #0d1b2a 0%, #1B3A5C 100%);
+  --progress-bg: #4a5568;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.2);
+  --shadow: 0 4px 16px rgba(0,0,0,0.3);
+  --shadow-lg: 0 8px 30px rgba(0,0,0,0.4);
+  --tag-bg-month1: rgba(232,72,95,0.2);
+  --tag-text-month1: #fc8181;
+  --tag-bg-month2: rgba(214,158,46,0.2);
+  --tag-text-month2: #ecc94b;
+  --tag-bg-month3: rgba(56,161,105,0.2);
+  --tag-text-month3: #68d391;
+  --tag-bg-month4: rgba(99,179,237,0.2);
+  --tag-text-month4: #63b3ed;
+  --success-bg: rgba(56,161,105,0.2);
+  --warning-bg: rgba(214,158,46,0.2);
+  --accent-light: rgba(232,72,95,0.2);
+  --scrollbar-thumb: #4a5568;
+}
+
+/* ===== 全局样式 ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  transition: background var(--transition), color var(--transition);
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ===== 滚动条 ===== */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--scrollbar-track); }
+::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
+
+/* ===== 左侧导航栏 ===== */
+.sidebar {
+  width: 300px;
+  min-width: 300px;
+  background: var(--sidebar-bg);
+  color: var(--sidebar-text);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  transition: transform 0.3s ease, width 0.3s ease;
+}
+.sidebar-header {
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.sidebar-header .logo {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sidebar-header .logo span { color: var(--accent); }
+.sidebar-nav { flex: 1; overflow-y: auto; padding: 8px 0; }
+.nav-section { margin-bottom: 2px; }
+.nav-section-title {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 20px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #fff;
+  user-select: none;
+  transition: background var(--transition);
+}
+.nav-section-title:hover { background: var(--sidebar-hover); }
+.nav-section-title .arrow { transition: transform 0.2s; font-size: 0.7rem; opacity: 0.6; }
+.nav-section.collapsed .arrow { transform: rotate(-90deg); }
+.nav-section.collapsed .nav-sub { display: none; }
+.nav-sub { overflow: hidden; }
+.nav-week-title {
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 20px 8px 32px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  color: var(--sidebar-text);
+  user-select: none;
+  transition: background var(--transition);
+}
+.nav-week-title:hover { background: var(--sidebar-hover); color: #fff; }
+.nav-week-title .arrow { font-size: 0.65rem; opacity: 0.5; transition: transform 0.2s; }
+.nav-week.collapsed .arrow { transform: rotate(-90deg); }
+.nav-week.collapsed .nav-days { display: none; }
+.nav-days { display: flex; flex-wrap: wrap; padding: 4px 20px 8px 48px; gap: 3px; }
+.nav-day {
+  width: 29px; height: 29px;
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.7rem;
+  cursor: pointer;
+  color: var(--sidebar-text);
+  background: rgba(255,255,255,0.04);
+  transition: all var(--transition);
+  position: relative;
+}
+.nav-day:hover { background: var(--sidebar-active); color: #fff; }
+.nav-day.active { background: var(--sidebar-active); color: #fff; font-weight: 700; }
+.nav-day.completed { background: rgba(56,161,105,0.4); color: #fff; }
+.nav-day.today-highlight { box-shadow: 0 0 0 2px var(--accent); }
+
+.nav-link-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 20px;
+  cursor: pointer;
+  color: var(--sidebar-text);
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all var(--transition);
+  text-decoration: none;
+}
+.nav-link-item:hover { background: var(--sidebar-hover); color: #fff; }
+.nav-link-item .icon { font-size: 1.1rem; width: 22px; text-align: center; }
+.nav-link-item.active { background: rgba(232,72,95,0.2); color: #fff; border-left: 3px solid var(--accent); }
+
+/* ===== 主区域 ===== */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  height: 100vh;
+}
+
+/* ===== Header ===== */
+.header {
+  background: var(--header-bg);
+  color: #fff;
+  padding: 24px 32px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: var(--shadow);
+}
+.header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.header h1 { font-size: 1.6rem; font-weight: 700; letter-spacing: 0.5px; }
+.header h1 span { color: var(--accent); }
+.header-subtitle { font-size: 0.95rem; opacity: 0.85; margin-bottom: 16px; }
+
+.stats-row { display: flex; gap: 12px; flex-wrap: wrap; }
+.stat-card {
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(4px);
+  border-radius: var(--radius-sm);
+  padding: 12px 20px;
+  min-width: 120px;
+  flex: 1;
+  text-align: center;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.stat-card .stat-value { font-size: 1.5rem; font-weight: 700; }
+.stat-card .stat-label { font-size: 0.75rem; opacity: 0.7; margin-top: 2px; }
+
+.theme-toggle {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  cursor: pointer;
+  font-size: 1.2rem;
+  display: flex; align-items: center; justify-content: center;
+  transition: all var(--transition);
+  flex-shrink: 0;
+}
+.theme-toggle:hover { background: rgba(255,255,255,0.2); }
+
+.mobile-menu-btn {
+  display: none;
+  width: 40px; height: 40px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  cursor: pointer;
+  font-size: 1.4rem;
+  align-items: center; justify-content: center;
+}
+
+/* ===== 内容区 ===== */
+.content { padding: 24px 32px 48px; flex: 1; }
+
+/* ===== 仪表盘 ===== */
+.dashboard { animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.section-title {
+  font-size: 1.2rem; font-weight: 700;
+  margin-bottom: 16px;
+  color: var(--text);
+  display: flex; align-items: center; gap: 8px;
+}
+.section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+.goal-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 28px; }
+.goal-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+  transition: all var(--transition);
+}
+.goal-card:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+.goal-card .goal-icon { font-size: 2rem; margin-bottom: 8px; }
+.goal-card .goal-name { font-weight: 700; font-size: 1rem; margin-bottom: 4px; }
+.goal-card .goal-target { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 10px; }
+.progress-bar { height: 6px; background: var(--progress-bg); border-radius: 3px; overflow: hidden; margin-bottom: 6px; }
+.progress-fill { height: 100%; border-radius: 3px; background: var(--accent); transition: width 0.5s ease; }
+.progress-label { font-size: 0.75rem; color: var(--text-muted); display: flex; justify-content: space-between; }
+
+.milestone-table { width: 100%; border-collapse: collapse; margin-bottom: 28px; background: var(--card-bg); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-sm); }
+.milestone-table th { background: var(--blue); color: #fff; padding: 12px 16px; font-size: 0.85rem; text-align: left; }
+.milestone-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
+.milestone-table tr:last-child td { border-bottom: none; }
+.milestone-table .month-tag {
+  display: inline-block; padding: 2px 10px; border-radius: 12px;
+  font-size: 0.75rem; font-weight: 600;
+}
+
+.chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 28px; }
+@media (max-width: 768px) { .chart-row { grid-template-columns: 1fr; } }
+.chart-box {
+  background: var(--card-bg); border-radius: var(--radius);
+  padding: 24px; box-shadow: var(--shadow-sm); border: 1px solid var(--border);
+}
+
+.pie-chart {
+  width: 180px; height: 180px;
+  border-radius: 50%;
+  background: conic-gradient(
+    #E8485F 0deg 90deg,
+    #3182ce 90deg 162deg,
+    #38a169 162deg 234deg,
+    #d69e2e 234deg 306deg,
+    #805ad5 306deg 360deg
+  );
+  margin: 12px auto;
+  position: relative;
+}
+.pie-chart::after {
+  content: ''; position: absolute; top: 25%; left: 25%;
+  width: 50%; height: 50%; background: var(--card-bg); border-radius: 50%;
+}
+.pie-legend { display: flex; flex-wrap: wrap; gap: 8px 16px; justify-content: center; margin-top: 12px; font-size: 0.8rem; }
+.pie-legend span { display: flex; align-items: center; gap: 4px; }
+.pie-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+.tips-list { list-style: none; padding: 0; }
+.tips-list li {
+  padding: 10px 16px;
+  margin-bottom: 8px;
+  background: var(--card-bg);
+  border-radius: var(--radius-sm);
+  border-left: 4px solid var(--accent);
+  font-size: 0.9rem;
+  box-shadow: var(--shadow-sm);
+}
+
+/* ===== 每日详情 ===== */
+.day-detail { animation: fadeIn 0.3s ease; }
+.day-header {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 12px;
+}
+.day-header .day-info h2 { font-size: 1.4rem; margin-bottom: 4px; }
+.day-header .day-info .day-meta { font-size: 0.85rem; color: var(--text-secondary); }
+.day-tag {
+  display: inline-block; padding: 4px 14px; border-radius: 16px;
+  font-size: 0.8rem; font-weight: 600;
+}
+.day-nav-btns { display: flex; gap: 8px; }
+.day-nav-btn {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex; align-items: center; justify-content: center;
+  transition: all var(--transition);
+}
+.day-nav-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+.day-nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.task-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin-bottom: 10px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+  display: flex; align-items: flex-start; gap: 14px;
+  transition: all var(--transition);
+}
+.task-card:hover { box-shadow: var(--shadow); }
+.task-card.completed-task { opacity: 0.6; }
+.task-card.completed-task .task-name { text-decoration: line-through; }
+.task-checkbox {
+  width: 22px; height: 22px; min-width: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: transparent;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all var(--transition);
+  margin-top: 2px;
+  font-size: 0.7rem;
+  color: transparent;
+}
+.task-checkbox.checked {
+  background: var(--success);
+  border-color: var(--success);
+  color: #fff;
+}
+.task-body { flex: 1; }
+.task-name { font-weight: 600; font-size: 0.95rem; margin-bottom: 2px; }
+.task-content { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 4px; }
+.task-time {
+  font-size: 0.75rem; color: var(--accent); font-weight: 600;
+  background: var(--accent-light); padding: 2px 10px; border-radius: 10px;
+  display: inline-block;
+}
+.task-links { margin-top: 6px; }
+.task-link {
+  display: inline-block; margin-right: 8px; margin-bottom: 4px;
+  font-size: 0.78rem; color: var(--blue-light);
+  text-decoration: underline; cursor: pointer;
+}
+
+.day-note {
+  background: var(--warning-bg);
+  border-radius: var(--radius-sm);
+  padding: 14px 18px;
+  margin-top: 16px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  border-left: 3px solid var(--warning);
+}
+
+.links-section {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 18px;
+  margin-top: 16px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+}
+.links-section h4 { margin-bottom: 10px; font-size: 0.9rem; }
+.links-section a { color: var(--blue-light); font-size: 0.82rem; margin-right: 12px; }
+
+/* ===== 资源库 ===== */
+.resource-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
+.resource-tab {
+  padding: 8px 18px; border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all var(--transition);
+}
+.resource-tab:hover { border-color: var(--accent); color: var(--accent); }
+.resource-tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+.resource-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+.resource-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 18px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+  transition: all var(--transition);
+}
+.resource-card:hover { box-shadow: var(--shadow); }
+.resource-card .res-name { font-weight: 700; margin-bottom: 4px; }
+.resource-card .res-desc { font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 8px; }
+.resource-card .res-link { font-size: 0.8rem; color: var(--blue-light); word-break: break-all; }
+.resource-card .upgrade-badge {
+  display: inline-block; padding: 2px 8px; border-radius: 10px;
+  font-size: 0.7rem; background: var(--warning-bg); color: var(--warning);
+  font-weight: 600;
+}
+
+/* ===== 任务操作按钮 ===== */
+.task-actions { display: flex; gap: 4px; margin-left: auto; flex-shrink: 0; align-items: flex-start; }
+.task-action-btn {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 1px solid var(--border); background: var(--card-bg);
+  color: var(--text-muted); cursor: pointer; font-size: 0.75rem;
+  display: flex; align-items: center; justify-content: center;
+  transition: all var(--transition); opacity: 0;
+}
+.task-card:hover .task-action-btn { opacity: 1; }
+.task-action-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+.task-action-btn.del-btn:hover { border-color: #e53e3e; color: #e53e3e; background: rgba(229,62,62,0.1); }
+.add-task-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 12px 20px; margin-top: 8px; width: 100%;
+  border: 2px dashed var(--border); border-radius: var(--radius);
+  background: transparent; color: var(--text-muted);
+  cursor: pointer; font-size: 0.9rem; font-weight: 500;
+  transition: all var(--transition);
+}
+.add-task-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+.reset-tasks-btn {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 6px 14px; margin-left: 12px;
+  border: 1px solid var(--border); border-radius: 16px;
+  background: var(--card-bg); color: var(--text-muted);
+  cursor: pointer; font-size: 0.75rem;
+  transition: all var(--transition);
+}
+.reset-tasks-btn:hover { border-color: #e53e3e; color: #e53e3e; }
+
+/* ===== 任务编辑弹窗 ===== */
+.modal-overlay {
+  display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.55); z-index: 1000;
+  align-items: center; justify-content: center;
+}
+.modal-overlay.show { display: flex; }
+.modal-box {
+  background: var(--card-bg); border-radius: var(--radius);
+  padding: 24px; width: 90%; max-width: 480px;
+  box-shadow: var(--shadow-lg); border: 1px solid var(--border);
+  animation: fadeIn 0.2s ease;
+}
+.modal-box h3 { margin-bottom: 16px; font-size: 1.1rem; }
+.modal-field { margin-bottom: 14px; }
+.modal-field label {
+  display: block; font-size: 0.8rem; font-weight: 600;
+  color: var(--text-secondary); margin-bottom: 4px;
+}
+.modal-field input, .modal-field textarea {
+  width: 100%; padding: 10px 14px;
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--bg); color: var(--text);
+  font-size: 0.9rem; font-family: inherit;
+  transition: border-color var(--transition);
+}
+.modal-field input:focus, .modal-field textarea:focus {
+  outline: none; border-color: var(--accent);
+}
+.modal-field textarea { resize: vertical; min-height: 70px; }
+.modal-btns { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+.modal-btn {
+  padding: 10px 22px; border-radius: var(--radius-sm);
+  border: none; cursor: pointer; font-size: 0.85rem; font-weight: 600;
+  transition: all var(--transition);
+}
+.modal-btn.primary { background: var(--accent); color: #fff; }
+.modal-btn.primary:hover { background: var(--accent-hover); }
+.modal-btn.secondary { background: var(--progress-bg); color: var(--text-secondary); }
+.modal-btn.secondary:hover { background: var(--border); }
+
+/* ===== 覆盖层 ===== */
+.overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 99; }
+
+/* ===== 响应式 ===== */
+@media (max-width: 900px) {
+  .sidebar { position: fixed; left: -300px; top: 0; height: 100vh; transition: left 0.3s ease; }
+  .sidebar.open { left: 0; }
+  .overlay.show { display: block; }
+  .mobile-menu-btn { display: flex; }
+  .header { padding: 16px 20px; }
+  .header h1 { font-size: 1.3rem; }
+  .content { padding: 16px 20px 32px; }
+  .stats-row { gap: 8px; }
+  .stat-card { padding: 8px 12px; min-width: 80px; }
+  .stat-card .stat-value { font-size: 1.1rem; }
+  .goal-cards { grid-template-columns: 1fr 1fr; }
+  .chart-row { grid-template-columns: 1fr; }
+  .day-header { flex-direction: column; align-items: flex-start; }
+}
+
+@media (max-width: 500px) {
+  .goal-cards { grid-template-columns: 1fr; }
+  .stats-row { gap: 6px; }
+  .stat-card { padding: 6px 10px; min-width: 60px; flex: 1 1 40%; }
+  .stat-card .stat-value { font-size: 1rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- 覆盖层（移动端） -->
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<!-- 左侧导航栏 -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="logo">📚 雅思<span>备考</span></div>
+  </div>
+  <nav class="sidebar-nav" id="sidebarNav">
+    <a class="nav-link-item active" onclick="showDashboard(); closeSidebar();" data-nav="dashboard">
+      <span class="icon">📊</span> 总览仪表盘
+    </a>
+    <a class="nav-link-item" onclick="showResources(); closeSidebar();" data-nav="resources">
+      <span class="icon">📚</span> 资源库
+    </a>
+    <!-- 月份菜单动态生成 -->
+  </nav>
+</aside>
+
+<!-- 主区域 -->
+<div class="main">
+  <header class="header">
+    <div class="header-top">
+      <div>
+        <h1>雅思 <span>4 个月</span> 逐日备考计划</h1>
+        <div class="header-subtitle">Poppy · 目标 6.5 冲刺 7.0 · 学术类 A 类</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="mobile-menu-btn" onclick="toggleSidebar()" title="菜单">☰</button>
+        <button class="theme-toggle" onclick="toggleTheme()" title="切换主题" id="themeToggle">🌙</button>
+      </div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-value">120</div><div class="stat-label">总天数</div></div>
+      <div class="stat-card"><div class="stat-value">4h</div><div class="stat-label">每日学习</div></div>
+      <div class="stat-card"><div class="stat-value" id="completedCount">0</div><div class="stat-label">已完成天</div></div>
+      <div class="stat-card"><div class="stat-value">6.5</div><div class="stat-label">总分目标</div></div>
+      <div class="stat-card"><div class="stat-value">200-500</div><div class="stat-label">备考预算(元)</div></div>
+    </div>
+  </header>
+
+  <div class="content" id="content"></div>
+</div>
+
+<script>
+// ==================== 数据定义 ====================
+
+const resources = [
+  { cat:'语法', name:'英语兔 语法合集', url:'https://space.bilibili.com/11859520', desc:'保姆级零基础语法', upgrade:false },
+  { cat:'语法', name:'英语的平行世界', url:'https://space.bilibili.com/369655107', desc:'系统语法+真题应用', upgrade:false },
+  { cat:'语法', name:'米勒学长 4h语法速通', url:'https://www.bilibili.com/', desc:'4小时建立语法体系，B站搜「米勒学长 雅思语法」', upgrade:false },
+  { cat:'语法', name:'零基础雅思语法32讲', url:'https://www.bilibili.com/', desc:'附带讲义PDF，B站搜 BV1bb421J7gz', upgrade:false },
+  { cat:'听力', name:'剑雅真题1-19听力合集', url:'https://www.bilibili.com/video/BV1Fj7p6kEnM/', desc:'64集完整音频', upgrade:false },
+  { cat:'听力', name:'天狗吃月亮128', url:'https://space.bilibili.com/388360419', desc:'精听+影子跟读法', upgrade:false },
+  { cat:'听力', name:'9.0听力磨耳朵训练', url:'https://www.bilibili.com/', desc:'初→中→高全套，B站搜 BV13pfvBhEFW', upgrade:false },
+  { cat:'听力', name:'BBC 6 Minute English', url:'https://www.bbc.co.uk/learningenglish/english/features/6-minute-english', desc:'每日泛听', upgrade:false },
+  { cat:'阅读', name:'Charlie 平行阅读法', url:'https://www.bilibili.com/video/BV1eimrBdEK6/', desc:'10分钟手把手教学', upgrade:false },
+  { cat:'阅读', name:'Charlie 11天阅读训练营', url:'https://www.bilibili.com/video/BV1gs4y1B7sD/', desc:'含所有题型专项', upgrade:false },
+  { cat:'阅读', name:'迷糊趣会阅读 平行阅读法', url:'https://www.bilibili.com/', desc:'实操带练，B站搜「迷糊趣会阅读」', upgrade:false },
+  { cat:'阅读', name:'Charlie 长难句拆解', url:'https://www.bilibili.com/', desc:'阅读+长难句，B站搜「Charlie有好好学习」', upgrade:false },
+  { cat:'写作', name:"Simon's IELTS Blog", url:'https://ielts-simon.study', desc:'前考官范文+课程', upgrade:false },
+  { cat:'写作', name:'IELTS Liz', url:'https://ieltsliz.com', desc:'300+免费课程页面', upgrade:false },
+  { cat:'写作', name:'九分学长 大作文', url:'https://www.bilibili.com/', desc:'模板+思路，B站搜「九分学长 雅思大作文」', upgrade:false },
+  { cat:'写作', name:'Jaemen阿古门特 小作文', url:'https://www.bilibili.com/', desc:'图表作文专项，B站搜「Jaemen阿古门特」', upgrade:false },
+  { cat:'口语', name:'雅思哥 App', url:'#', desc:'口语题库+考场回忆，应用商店下载', upgrade:false },
+  { cat:'口语', name:'雅思口语九分安 串题', url:'https://www.bilibili.com/', desc:'15in1暴力串题法，B站搜「雅思口语九分安」', upgrade:false },
+  { cat:'口语', name:'口语Part2四句口诀法', url:'https://www.bilibili.com/', desc:'模板化备考，B站搜 BV1hRhgz5EK7', upgrade:false },
+  { cat:'口语', name:'9.0口语影子跟读训练', url:'https://www.bilibili.com/', desc:'跟读练发音，B站搜 BV1rtYXzSEfp', upgrade:false },
+  { cat:'口语', name:'ChatGPT App（语音模式）', url:'#', desc:'免费AI口语陪练，应用商店下载', upgrade:false },
+  { cat:'综合', name:'全658集雅思零基础教程', url:'https://www.bilibili.com/', desc:'听说读写全覆盖，B站搜 BV12nCRBzEpW', upgrade:false },
+  { cat:'综合', name:'2026零基础128集系统课', url:'https://www.bilibili.com/', desc:'最新2026版，B站搜 BV1BicXzaERu', upgrade:false },
+  // 可选升级资源
+  { cat:'口语', name:'italki 口语模考', url:'https://www.italki.com/', desc:'约 50-80 元/30min，强烈推荐', upgrade:true },
+  { cat:'写作', name:'淘宝雅思写作批改', url:'#', desc:'约 30-60 元/篇，第3个月建议4-5篇', upgrade:true },
+];
+
+const months = [
+  { id:1, name:'第1个月：基础积累期', range:'Day 1-30', color:'month1' },
+  { id:2, name:'第2个月：技巧突破期', range:'Day 31-60', color:'month2' },
+  { id:3, name:'第3个月：强化训练期', range:'Day 61-90', color:'month3' },
+  { id:4, name:'第4个月：模考冲刺期', range:'Day 91-120', color:'month4' },
+];
+
+const weeks = [
+  { id:1, month:1, title:'第1周：启动与摸底', sub:'Day 1-7', range:[1,7], theme:'了解雅思全貌 + 建立每日学习节奏' },
+  { id:2, month:1, title:'第2周：听力起步', sub:'Day 8-14', range:[8,14], theme:'重点突破听力 Section 1-2 + 语法从句 + 阅读入门' },
+  { id:3, month:1, title:'第3周：阅读入门', sub:'Day 15-21', range:[15,21], theme:'建立阅读习惯 + 听力 Section 3 尝试 + 写作范文积累' },
+  { id:4, month:1, title:'第4周：全面巩固', sub:'Day 22-30', range:[22,30], theme:'听力 Section 3-4 入门 + 阅读完整套题 + 写作开始列提纲' },
+  { id:5, month:2, title:'第5周：写作上手周', sub:'Day 31-37', range:[31,37], theme:'正式动笔写作 + 听力 Section 3-4 + 口语 Part 1' },
+  { id:6, month:2, title:'第6周：阅读技巧周', sub:'Day 38-44', range:[38,44], theme:'阅读题型专项突破 + 同义替换积累 + 口语 Part 1 完成' },
+  { id:7, month:2, title:'第7周：听力质变周', sub:'Day 45-51', range:[45,51], theme:'听力 Section 3-4 强化 + 口语 Part 1 收尾 + 写作提速' },
+  { id:8, month:2, title:'第8周：写作基础成型周', sub:'Day 52-60', range:[52,60], theme:'大小作文稳定输出 + 口语 Part 2 入门 + 阅读限时' },
+  { id:9, month:3, title:'第9周：限时突破周', sub:'Day 61-67', range:[61,67], theme:'全部科目开始限时 + 写作四大题型全覆盖' },
+  { id:10, month:3, title:'第10周：写作猛攻周', sub:'Day 68-74', range:[68,74], theme:'大作文四大题型轮训 + 淘宝批改 + 口语 Part 3 入门' },
+  { id:11, month:3, title:'第11周：口语猛攻周', sub:'Day 75-81', range:[75,81], theme:'Part 2 串题素材打磨 + Part 3 深度训练 + 写作提速' },
+  { id:12, month:3, title:'第12周：全面巩固周', sub:'Day 82-90', range:[82,90], theme:'弱项定点突破 + 写作淘宝批改 + 全科模考' },
+  { id:13, month:4, title:'第13周：全真模考周', sub:'Day 91-97', range:[91,97], theme:'每周 2 次全科模考 + 真题精析 + 写作模板定型' },
+  { id:14, month:4, title:'第14周：查漏补缺周', sub:'Day 98-104', range:[98,104], theme:'弱项定点爆破 + 听力拼写清单 + 阅读时间管理' },
+  { id:15, month:4, title:'第15周：考前冲刺周', sub:'Day 105-111', range:[105,111], theme:'稳定状态 + 机经浏览 + 心理建设' },
+  { id:16, month:4, title:'第16周：考试周', sub:'Day 112-120', range:[112,120], theme:'考前准备 + 考试 + 考后休息' },
+];
+
+// 120天完整数据
+const days = [];
+
+function D(day, title, weekId, tasks, links, note) {
+  days.push({ day, title, weekId, tasks: tasks||[], links: links||'', note: note||'' });
+}
+
+// ===== 第1周 Day 1-7 =====
+D(1, '认识雅思', 1, [
+  {n:'了解考试',c:'浏览雅思官网，了解A类考试结构、评分标准、考试流程',t:'1h'},
+  {n:'🔤 扇贝单词',c:'打开 AI精简单词 + 拼写测试 · 选雅思核心词书 · 新词 50',t:'30min'},
+  {n:'听力入门',c:'B站看「雅思听力题型全介绍」了解4个Section的区别',t:'30min'},
+  {n:'阅读入门',c:'B站看「雅思阅读题型全介绍」了解14种题型',t:'30min'},
+  {n:'写作入门',c:'B站看「雅思写作评分标准详解」了解Task1/Task2区别',t:'30min'},
+  {n:'口语入门',c:'B站看「雅思口语考试流程模拟」了解3个Part形式',t:'30min'},
+  {n:'复盘',c:'写下今日了解的内容，建立对雅思的整体认知',t:'30min'},
+], '雅思听力题型：B站搜「黄舒音 听力」 | 雅思阅读题型：<a href="https://www.bilibili.com/video/BV1eimrBdEK6/">Charlie 平行阅读法</a> | 写作评分标准：<a href="https://ieltsliz.com/ielts-writing-task-2-band-scores/">IELTS Liz</a> | 口语流程：B站搜「雅思口语考试流程」');
+
+D(2, '语法诊断', 1, [
+  {n:'🔤 扇贝单词',c:'AI精简单词 + 拼写测试 · 雅思核心 · 新词 50 + 复习 100',t:'30min'},
+  {n:'语法',c:'B站「英语兔」语法入门：句子成分+五大基本句型（看前6集）',t:'1h'},
+  {n:'🎧 扇贝听力口语',c:'逐句训练模式 · 选 1 篇剑雅听力 · 降速 0.8x · 听不懂至少听 3 遍再看原文',t:'40min'},
+  {n:'📖 扇贝阅读',c:'每日精选短文 × 1 · 点击查词 → 自动加入生词本(联动扇贝单词)',t:'30min'},
+  {n:'🎧 扇贝听力口语',c:'跟读复述 · 听一句跟读一句 · 模仿语调',t:'20min'},
+  {n:'复盘',c:'整理今日生词+语法笔记',t:'20min'},
+], '英语兔语法合集：<a href="https://space.bilibili.com/11859520">B站 英语兔</a>');
+
+D(3, '听力初体验', 1, [
+  {n:'单词',c:'扇贝单词 · 新词 50 + 复习 100',t:'30min'},
+  {n:'语法',c:'B站「英语兔」：时态总览（一般/进行/完成时）',t:'45min'},
+  {n:'听力',c:'剑桥真题10 Test1 Section1 · 不限时做一遍 → 对答案 → 精听第二遍',t:'50min'},
+  {n:'阅读',c:'扇贝阅读 · 读 1 篇 + 积累生词',t:'25min'},
+  {n:'听力',c:'扇贝听力 · 泛听 BBC 6 Minute English × 1',t:'20min'},
+  {n:'口语',c:'扇贝听力口语 · 跟读练习',t:'15min'},
+  {n:'复盘',c:'整理听力错题+生词',t:'15min'},
+]);
+
+D(4, '阅读初体验', 1, [
+  {n:'单词',c:'扇贝单词 · 新词 50 + 复习 100',t:'30min'},
+  {n:'语法',c:'B站「英语兔」：从句入门（名词性从句）',t:'45min'},
+  {n:'阅读',c:'剑桥真题10 Test1 Passage1 · 不限时读+做题 → 查生词 → 逐句翻译理解',t:'55min'},
+  {n:'听力',c:'扇贝听力 · 精听 1 篇',t:'30min'},
+  {n:'口语',c:'扇贝听力口语 · 跟读 15min',t:'20min'},
+  {n:'复盘',c:'整理阅读生词+错题',t:'20min'},
+]);
+
+D(5, '写作初探', 1, [
+  {n:'单词',c:'扇贝单词 · 新词 50 + 复习 100',t:'30min'},
+  {n:'语法',c:'B站「英语兔」：定语从句',t:'30min'},
+  {n:'写作',c:'阅读 Simon 大作文范文 2 篇（教育类+科技类），分析每篇结构',t:'50min'},
+  {n:'听力',c:'剑桥真题10 Test1 Section2 · 做题+精听',t:'45min'},
+  {n:'阅读',c:'扇贝阅读 · 读 1 篇',t:'25min'},
+  {n:'口语',c:'扇贝听力口语 · 跟读 15min',t:'20min'},
+  {n:'复盘',c:'整理范文句型+生词',t:'20min'},
+], 'Simon 大作文范文：<a href="https://ielts-simon.study/category/ielts-writing-task-2/">ielts-simon.study</a>');
+
+D(6, '第一周小测 + 调整', 1, [
+  {n:'单词',c:'扇贝单词 · 本周生词总复习',t:'30min'},
+  {n:'听力',c:'剑桥真题10 Test1 Section3 · 做题+精听',t:'45min'},
+  {n:'阅读',c:'剑桥真题10 Test1 Passage2 · 不限时做题+精析',t:'50min'},
+  {n:'写作',c:'看 Simon 小作文范文 2 篇（线图+柱状图），了解小作文结构',t:'30min'},
+  {n:'语法',c:'复习本周语法笔记',t:'30min'},
+  {n:'口语',c:'扇贝听力口语 · 跟读 15min',t:'15min'},
+  {n:'反思',c:'写本周学习总结：哪块最吃力？时间安排是否合理？下周如何调整？',t:'20min'},
+]);
+
+D(7, '休息 / 弹性日', 1, [
+  {n:'可选',c:'扇贝单词 · 快速复习',t:'20min'},
+  {n:'可选',c:'看英剧/美剧 1 集（开英文字幕）',t:'1h'},
+  {n:'可选',c:'听英文歌 / BBC 播客',t:'随意'},
+], '', '🎉 每周日休息半天！可以看一部英文电影（推荐：The Pursuit of Happyness / Forrest Gump / The Social Network），开英文字幕，轻松浸泡。');
+
+// ===== 第2周 Day 8-14 =====
+D(8, '听力 Section 1-2 练习', 2, [
+  {n:'单词',c:'扇贝 · 新词 50 + 复习',t:'30min'},
+  {n:'语法',c:'B站「英语兔」：状语从句',t:'40min'},
+  {n:'听力',c:'剑桥真题10 Test2 Section1 · 做题→对答案→精听写每句',t:'50min'},
+  {n:'阅读',c:'扇贝阅读 · 读 1 篇 + 积累生词',t:'30min'},
+  {n:'听力',c:'扇贝听力 · 精听 1 篇',t:'30min'},
+  {n:'口语',c:'扇贝听力口语 · 跟读',t:'20min'},
+]);
+
+D(9, '听力 + 语法 + 范文', 2, [
+  {n:'单词',c:'扇贝 · 新词 50 + 复习',t:'30min'},
+  {n:'语法',c:'B站「米勒学长」语法速通 · 第1-2节',t:'40min'},
+  {n:'听力',c:'剑桥真题10 Test2 Section2 · 做题+精听',t:'50min'},
+  {n:'阅读',c:'扇贝阅读 · 读 1 篇 + 积累生词',t:'30min'},
+  {n:'写作',c:'看 Simon 大作文范文 1 篇（环境类），标注好词好句',t:'30min'},
+  {n:'口语',c:'扇贝听力口语 · 跟读',t:'20min'},
+]);
+
+D(10, '听力 + 阅读入门', 2, [
+  {n:'单词',c:'扇贝 · 新词 50 + 复习',t:'30min'},
+  {n:'语法',c:'B站「米勒学长」语法速通 · 第3-4节',t:'40min'},
+  {n:'听力',c:'剑桥真题10 Test3 Section1 · 做题+精听',t:'50min'},
+  {n:'阅读',c:'B站看 Charlie「雅思阅读五种题型读法」',t:'30min'},
+  {n:'阅读',c:'剑桥真题10 Test2 Passage1 · 不限时做题',t:'40min'},
+  {n:'口语',c:'扇贝听力口语 · 跟读',t:'15min'},
+  {n:'复盘',c:'整理今日错题+生词',t:'15min'},
+], '阅读五种题型读法：B站搜 BV1ezM8z2EKQ');
+
+D(11, '听力 + 小作文范文', 2, [
+  {n:'单词',c:'扇贝 · 新词 50 + 复习',t:'30min'},
+  {n:'语法',c:'B站「米勒学长」语法速通 · 第5-6节',t:'40min'},
+  {n:'听力',c:'剑桥真题10 Test3 Section2 · 做题+精听',t:'50min'},
+  {n:'写作',c:'看 Simon 小作文范文 2 篇（饼图+表格），标注数据描述句型',t:'40min'},
+  {n:'阅读',c:'扇贝阅读 · 读 1 篇',t:'20min'},
+  {n:'口语',c:'扇贝听力口语 · 跟读',t:'20min'},
+  {n:'复盘',c:'整理小作文常用句型',t:'20min'},
+]);
+
+D(12, '语法收尾 + 阅读精析', 2, [
+  {n:'单词',c:'扇贝 · 新词 50 + 复习',t:'30min'},
+  {n:'语法',c:'B站「米勒学长」语法速通 · 第7-8节（完成）',t:'40min'},
+  {n:'听力',c:'剑桥真题10 Test4 Section1 · 做题+精听',t:'50min'},
+  {n:'阅读',c:'剑桥真题10 Test2 Passage2 · 不限时做题+精析',t:'50min'},
+  {n:'听力',c:'扇贝听力 · 泛听 + BBC 6 Minute × 1',t:'20min'},
+  {n:'口语',c:'扇贝听力口语 · 跟读',t:'15min'},
+  {n:'复盘',c:'整理语法笔记+错题',t:'15min'},
+]);
+
+D(13, '小测日', 2, [
+  {n:'单词',c:'扇贝 · 本周生词总复习',t:'30min'},
+  {n:'听力',c:'剑桥真题11 Test1 Section1+2 · 模拟做题',t:'50min'},
+  {n:'阅读',c:'剑桥真题10 Test2 Passage3 · 不限时做题+精析',t:'50min'},
+  {n:'写作',c:'看 Simon 大小作文范文各 1 篇，用纸笔抄写大作文 1 篇',t:'50min'},
+  {n:'口语',c:'扇贝听力口语 · 自由对话',t:'20min'},
+  {n:'反思',c:'写本周学习总结',t:'20min'},
+]);
+
+D(14, '休息日', 2, [], '', '🎉 看英文电影 1 部（推荐：The Devil Wears Prada / Inside Out），轻松浸泡。');
+
+// ===== 第3周 Day 15-21 =====
+D(15, '平行阅读法入门', 3, [
+  {n:'单词',c:'扇贝 · 新词 50 + 复习',t:'30min'},
+  {n:'听力',c:'剑桥真题11 Test1 Section3 · 不限时做题+精听',t:'50min'},
+  {n:'阅读',c:'B站看 Charlie「平行阅读法」完整视频',t:'30min'},
+  {n:'阅读',c:'扇贝阅读 · 读 1 篇 + 尝试用平行阅读法找答案',t:'40min'},
+  {n:'语法',c:'复习三大从句笔记',t:'30min'},
+  {n:'口语',c:'扇贝听力口语 · 跟读',t:'20min'},
+  {n:'复盘',c:'整理平行阅读法笔记',t:'20min'},
+], 'Charlie 平行阅读法：<a href="https://www.bilibili.com/video/BV1eimrBdEK6/">B站视频</a>');
+
+D(16, '听力 Section 4 + 写作', 3, [
+  {n:'单词',c:'扇贝 · 新词 50 + 复习',t:'30min'},
+  {n:'听力',c:'剑桥真题11 Test1 Section4 · 做题+精听（学术讲座场景）',t:'50min'},
+  {n:'阅读',c:'剑桥真题10 Test3 Passage1 · 不限时+尝试平行阅读法',t:'50min'},
+  {n:'写作',c:'抄写 Simon 大作文范文 1 篇 + 分析论证逻辑',t:'40min'},
+  {n:'听力',c:'扇贝听力 · 精听 1 篇',t:'20min'},
+  {n:'口语',c:'扇贝听力口语 · 跟读',t:'15min'},
+  {n:'复盘',c:'整理今日生词+错题',t:'15min'},
+]);
+
+D(17, '长难句 + 小作文图表', 3, [
+  {n:'单词',c:'扇贝 · 新词 50 + 复习',t:'30min'},
+  {n:'语法',c:'B站「英语的平行世界」长难句分析 · 看前3集',t:'40min'},
+  {n:'听力',c:'剑桥真题11 Test2 Section1+2 · 做题+错题精听',t:'50min'},
+  {n:'阅读',c:'扇贝阅读 · 读 2 篇 + 积累生词',t:'30min'},
+  {n:'写作',c:'看 Simon 小作文范文 2 篇（流程图+地图题），了解结构',t:'30min'},
+  {n:'口语',c:'扇贝听力口语 · 跟读',t:'20min'},
+  {n:'复盘',c:'整理小作文图表类型笔记',t:'20min'},
+]);
+
+D(18, '阅读精析 + 政府类范文', 3, [
+  {n:'单词',c:'扇贝 · 新词 50 + 复习',t:'30min'},
+  {n:'阅读',c:'剑桥真题10 Test3 Passage2 · 不限时+精析',t:'55min'},
+  {n:'听力',c:'剑桥真题11 Test2 Section3 · 做题+精听',t:'45min'},
+  {n:'写作',c:'抄写 Simon 大作文范文 1 篇（政府类话题）',t:'40min'},
+  {n:'听力',c:'扇贝听力 · 泛听 BBC 6 Minute × 1',t:'20min'},
+  {n:'口语',c:'扇贝听力口语 · 跟读',t:'15min'},
+  {n:'复盘',c:'整理同义替换笔记',t:'15min'},
+]);
+
+D(19, '万能论点整理', 3, [
+  {n:'单词',c:'扇贝 · 新词 50 + 复习',t:'30min'},
+  {n:'阅读',c:'剑桥真题10 Test3 Passage3 · 不限时+精析',t:'55min'},
+  {n:'听力',c:'剑桥真题11 Test2 Section4 · 做题+精听（学术场景）',t:'45min'},
+  {n:'写作',c:'阅读 Simon 大作文范文 2 篇，提取万能论点（经济/教育/健康/环境角度）',t:'40min'},
+  {n:'听力',c:'扇贝听力 · 精听 1 篇',t:'20min'},
+  {n:'口语',c:'扇贝听力口语 · 自由对话',t:'15min'},
+  {n:'复盘',c:'整理万能论点清单',t:'15min'},
+]);
+
+D(20, '小测日', 3, [
+  {n:'单词',c:'扇贝 · 本周生词总复习',t:'30min'},
+  {n:'听力',c:'剑桥真题11 Test3 Section1-2 · 模拟做题+错题精听',t:'55min'},
+  {n:'阅读',c:'剑桥真题10 Test4 Passage1 · 不限时+精析',t:'50min'},
+  {n:'写作',c:'看小作文范文 2 篇，尝试自己写一个小作文的概述段',t:'40min'},
+  {n:'语法',c:'复习长难句分析笔记',t:'25min'},
+  {n:'口语',c:'扇贝听力口语 · 跟读',t:'15min'},
+  {n:'反思',c:'写本周学习总结',t:'15min'},
+]);
+
+D(21, '休息日', 3, [], '', '🎉 看 TED 演讲 2 个（推荐：The power of vulnerability / Inside the mind of a master procrastinator），开英文字幕。');
+
+// ===== 第4周 Day 22-30 =====
+D(22, '听力连续训练 + 列提纲', 4, [
+  {n:'单词',c:'扇贝 · 新词 50 + 复习',t:'30min'},
+  {n:'听力',c:'剑桥真题11 Test3 Section3-4 · 做题+精听（连续两Section）',t:'55min'},
+  {n:'阅读',c:'扇贝阅读 · 读 2 篇 + 生词积累',t:'30min'},
+  {n:'写作',c:'拿出 Simon 大作文范文，遮住正文只看题目 → 自己列中文提纲 → 对比范文',t:'40min'},
+  {n:'语法',c:'复习时态+从句',t:'25min'},
+  {n:'口语',c:'扇贝听力口语 · 跟读',t:'20min'},
+  {n:'复盘',c:'整理听力学术场景词汇',t:'20min'},
+]);
+
+D(23, '阅读连续训练 + 小作文', 4, [
+  {n:'单词',c:'扇贝 · 新词 50 + 复习',t:'30min'},
+  {n:'阅读',c:'剑桥真题10 Test4 Passage2+3 · 连续做两篇（不限时）',t:'60min'},
+  {n:'听力',c:'剑桥真题11 Test4 Section1-2 · 做题+错题精听',t:'50min'},
+  {n:'写作',c:'看小作文范文 1 篇，练习写概述段+数据对比段',t:'40min'},
+  {n:'口语',c:'扇贝听力口语 · 跟读',t:'20min'},
+  {n:'复盘',c:'整理阅读错题分类',t:'20min'},
+]);
+
+D(24, '听力 + 列提纲训练', 4, [
+  {n:'单词',c:'扇贝 · 新词 50 + 复习',t:'30min'},
+  {n:'听力',c:'剑桥真题11 Test4 Section3-4 · 做题+精听',t:'55min'},
+  {n:'阅读',c:'扇贝阅读 · 读 2 篇',t:'30min'},
+  {n:'写作',c:'Simon 大作文题 × 2，每题只列提纲（中文）+ 想2个论点+例子',t:'40min'},
+  {n:'听力',c:'扇贝听力 · 精听 1 篇',t:'25min'},
+  {n:'口语',c:'扇贝听力口语 · 跟读',t:'20min'},
+  {n:'复盘',c:'整理听力拼写错误清单',t:'20min'},
+]);
+
+D(25, 'IELTS Liz 大作文结构', 4, [
+  {n:'单词',c:'扇贝 · 新词 50 + 复习',t:'30min'},
+  {n:'阅读',c:'剑桥真题11 Test1 Passage1+2 · 连续两篇+精析',t:'60min'},
+  {n:'听力',c:'扇贝听力 · 精听 2 篇',t:'30min'},
+  {n:'写作',c:'看 IELTS Liz 大作文结构讲解视频',t:'40min'},
+  {n:'口语',c:'扇贝听力口语 · 自由对话',t:'20min'},
+  {n:'复盘',c:'整理大作文四段式模板',t:'20min'},
+], 'IELTS Liz 大作文结构：<a href="https://ieltsliz.com/ielts-writing-task-2/">ieltsliz.com</a>');
+
+D(26, '听力新真题 + 改写训练', 4, [
+  {n:'单词',c:'扇贝 · 新词 50 + 复习',t:'30min'},
+  {n:'听力',c:'剑桥真题12 Test1 Section1-2（开始新真题）· 做题+精听',t:'50min'},
+  {n:'阅读',c:'扇贝阅读 · 读 2 篇 + 生词',t:'30min'},
+  {n:'写作',c:'挑选 Simon 大作文范文 1 篇，全文抄写 → 默写框架 → 用自己的话重写',t:'50min'},
+  {n:'听力',c:'扇贝听力 · 泛听 BBC 6 Minute × 1',t:'20min'},
+  {n:'口语',c:'扇贝听力口语 · 跟读',t:'20min'},
+  {n:'复盘',c:'对比自己的改写和范文',t:'20min'},
+]);
+
+D(27, '阅读 + 小作文句型', 4, [
+  {n:'单词',c:'扇贝 · 新词 50 + 复习',t:'30min'},
+  {n:'阅读',c:'剑桥真题11 Test1 Passage3 + Test2 Passage1 · 不限时',t:'60min'},
+  {n:'听力',c:'剑桥真题12 Test1 Section3-4 · 做题+精听',t:'55min'},
+  {n:'写作',c:'小作文数据描述句型整理（rise/fall/fluctuate/peak/plateau）',t:'30min'},
+  {n:'口语',c:'扇贝听力口语 · 跟读',t:'15min'},
+  {n:'复盘',c:'整理小作文句型模板',t:'30min'},
+]);
+
+D(28, '月末综合检测', 4, [
+  {n:'单词',c:'扇贝 · 本月全部生词复习',t:'40min'},
+  {n:'听力',c:'剑桥真题11 Test4 全套听力 · 模拟做题',t:'55min'},
+  {n:'阅读',c:'剑桥真题11 Test2 Passage2-3 · 不限时全套',t:'55min'},
+  {n:'写作',c:'选一道 Simon 大作文题，尝试写第一篇完整大作文（不限时）',t:'50min'},
+  {n:'口语',c:'扇贝听力口语 · 自由对话',t:'15min'},
+  {n:'反思',c:'写第1个月总结：四项进展如何？达标了吗？下月重点调整？',t:'25min'},
+], '', '📊 月末自检：扇贝单词完成60%+ / 听力Section1-2听懂70%+ / 阅读不限时正确率60%+ / 了解大小作文所有题型 / 能写出完整大作文');
+
+D(29, '月末缓冲', 4, [
+  {n:'缓冲',c:'补本周未完成的任务 + 复习薄弱环节',t:'2h'},
+], '', 'Day 29-30 为月末缓冲日，29日补未完成任务，30日休息。');
+
+D(30, '休息日', 4, [], '', '🎉 休息日！奖励自己！本月辛苦了！');
+
+// ===== 第5周 Day 31-37 =====
+D(31, '第一次写大作文', 5, [
+  {n:'单词',c:'扇贝 · 新词 30 + 复习（进入复习为主阶段）',t:'30min'},
+  {n:'听力',c:'剑桥真题12 Test2 Section1-2 · 做题+错题精听',t:'45min'},
+  {n:'写作',c:'🔥 第一次写大作文：选教育类话题 → 列提纲(5min) → 写全文(35min)',t:'50min'},
+  {n:'阅读',c:'扇贝阅读 · 读 1 篇',t:'20min'},
+  {n:'写作',c:'用 AI 批改刚写的作文（发给 ChatGPT/Claude：请按雅思评分标准批改）',t:'30min'},
+  {n:'口语',c:'扇贝听力口语 · 跟读',t:'20min'},
+  {n:'复盘',c:'记录 AI 批改意见，标注需要改进的语法/词汇问题',t:'25min'},
+], '', '🔧 AI 批改提示词：「你是雅思考官，请按四项评分标准给这篇大作文打分并给出具体改进建议。请指出3个最需要改进的地方。」');
+
+D(32, '第一次写小作文', 5, [
+  {n:'单词',c:'扇贝 · 复习',t:'30min'},
+  {n:'听力',c:'剑桥真题12 Test2 Section3-4 · 做题+精听',t:'50min'},
+  {n:'写作',c:'🔥 第一次写小作文：选线图 → 写概述+数据对比(20min)',t:'40min'},
+  {n:'阅读',c:'剑桥真题11 Test3 Passage1 · 不限时+平行阅读法',t:'45min'},
+  {n:'写作',c:'AI 批改小作文 + 对比 Simon 同类范文',t:'30min'},
+  {n:'口语',c:'扇贝听力口语 · 场景对话',t:'15min'},
+  {n:'复盘',c:'整理小作文数据描述错误',t:'10min'},
+]);
+
+D(33, '口语 Part 1 启动', 5, [
+  {n:'单词',c:'扇贝 · 复习',t:'25min'},
+  {n:'听力',c:'剑桥真题12 Test3 Section1-2 · 做题+精听',t:'45min'},
+  {n:'阅读',c:'剑桥真题11 Test3 Passage2-3 · 不限时',t:'55min'},
+  {n:'口语',c:'🔥 口语 Part 1 启动：下载雅思哥 App → 看 Part 1 话题列表 → 选 3 个话题，每个自己录音回答 30 秒',t:'40min'},
+  {n:'听力',c:'扇贝听力 · 精听 1 篇',t:'20min'},
+  {n:'写作',c:'看 Simon 大作文范文 1 篇（社会类），分析论证结构',t:'25min'},
+  {n:'复盘',c:'听自己的口语录音，标注卡顿/发音问题',t:'10min'},
+]);
+
+D(34, '科技类大作文', 5, [
+  {n:'单词',c:'扇贝 · 复习',t:'25min'},
+  {n:'听力',c:'剑桥真题12 Test3 Section3-4 · 做题+精听',t:'50min'},
+  {n:'写作',c:'🔥 大作文练习：科技类话题 · 列提纲→写全文(40min)→AI批改',t:'55min'},
+  {n:'口语',c:'雅思哥 Part 1 话题 × 3（录音+回听）',t:'30min'},
+  {n:'阅读',c:'扇贝阅读 · 读 1 篇',t:'20min'},
+  {n:'听力',c:'扇贝听力 · 泛听 BBC 6 Minute × 1',t:'20min'},
+  {n:'复盘',c:'整理写作+口语问题清单',t:'20min'},
+]);
+
+D(35, '柱状图小作文', 5, [
+  {n:'单词',c:'扇贝 · 复习',t:'25min'},
+  {n:'阅读',c:'剑桥真题11 Test4 Passage1-2 · 不限时+精析',t:'55min'},
+  {n:'写作',c:'🔥 小作文练习：柱状图 · 概述段+2个数据段(20min)→AI批改',t:'45min'},
+  {n:'口语',c:'雅思哥 Part 1 话题 × 3（录音+回听）',t:'30min'},
+  {n:'听力',c:'剑桥真题12 Test4 Section1 · 做题+精听',t:'30min'},
+  {n:'写作',c:'看 IELTS Liz 小作文柱状图范文 2 篇',t:'25min'},
+  {n:'复盘',c:'整理柱状图描述句型',t:'15min'},
+], 'IELTS Liz 小作文：<a href="https://ieltsliz.com/ielts-writing-task-1-lessons-and-tips/">ieltsliz.com</a>');
+
+D(36, '周小测', 5, [
+  {n:'单词',c:'扇贝 · 本周生词复习',t:'25min'},
+  {n:'听力',c:'剑桥真题12 Test4 Section2-4 · 模拟做题+精听',t:'60min'},
+  {n:'阅读',c:'剑桥真题11 Test4 Passage3 + 精析',t:'50min'},
+  {n:'写作',c:'大作文 × 1 篇限时(40min)· 本周第三种题型',t:'40min'},
+  {n:'口语',c:'雅思哥 Part 1 全部学过的回顾录音一遍',t:'25min'},
+  {n:'反思',c:'写本周学习总结：写作/口语感觉如何？',t:'20min'},
+]);
+
+D(37, '休息日', 5, [], '', '🎉 看英文脱口秀 1 集（推荐：The Ellen Show / Jimmy Fallon 片段），轻松跟读笑点台词。');
+
+// ===== 第6周 Day 38-44 =====
+D(38, 'T/F/NG 判断题专项', 6, [
+  {n:'单词',c:'扇贝 · 新词 30 + 复习',t:'30min'},
+  {n:'阅读',c:'🔥 B站 Charlie「11天训练营」Day1 — T/F/NG 判断题专项',t:'50min'},
+  {n:'阅读',c:'剑桥真题12 Test1 Passage1 · 限时 20min 做判断题',t:'40min'},
+  {n:'听力',c:'剑桥真题13 Test1 Section1-2 · 做题+精听',t:'45min'},
+  {n:'口语',c:'雅思哥 Part 1 话题 × 3',t:'30min'},
+  {n:'写作',c:'抄写 Simon 大作文范文 1 篇',t:'25min'},
+  {n:'复盘',c:'整理判断题答题逻辑（T=原文确认/F=原文矛盾/NG=原文未提及）',t:'20min'},
+], 'Charlie 11天训练营：<a href="https://www.bilibili.com/video/BV1gs4y1B7sD/">B站视频</a>');
+
+D(39, 'Matching Headings 专项', 6, [
+  {n:'单词',c:'扇贝 · 复习',t:'30min'},
+  {n:'阅读',c:'🔥 Charlie「11天训练营」Day2 — Matching Headings 段落匹配专项',t:'50min'},
+  {n:'阅读',c:'剑桥真题12 Test1 Passage2 · 限时 20min 做匹配题',t:'40min'},
+  {n:'写作',c:'大作文练习：环境类话题 · 列提纲→写全文→AI批改',t:'50min'},
+  {n:'口语',c:'雅思哥 Part 1 话题 × 3',t:'30min'},
+  {n:'听力',c:'扇贝听力 · 精听 1 篇',t:'20min'},
+  {n:'复盘',c:'整理匹配题技巧笔记',t:'20min'},
+]);
+
+D(40, 'Summary 填空 + 饼图', 6, [
+  {n:'单词',c:'扇贝 · 复习',t:'25min'},
+  {n:'听力',c:'剑桥真题13 Test1 Section3-4 · 做题+精听',t:'50min'},
+  {n:'阅读',c:'Charlie「11天训练营」Day3 — Summary 填空题专项',t:'40min'},
+  {n:'阅读',c:'剑桥真题12 Test1 Passage3 · 不限时做题',t:'40min'},
+  {n:'写作',c:'小作文：饼图 · 限时 20min → AI批改',t:'40min'},
+  {n:'口语',c:'雅思哥 Part 1 话题 × 3',t:'25min'},
+  {n:'复盘',c:'整理同义替换笔记',t:'20min'},
+]);
+
+D(41, '选择题专项', 6, [
+  {n:'单词',c:'扇贝 · 复习',t:'25min'},
+  {n:'听力',c:'剑桥真题13 Test2 Section1-2 · 做题+精听',t:'45min'},
+  {n:'阅读',c:'Charlie「11天训练营」Day4 — Multiple Choice 选择题专项',t:'40min'},
+  {n:'阅读',c:'剑桥真题12 Test2 Passage1-2 · 不限时做题',t:'50min'},
+  {n:'写作',c:'大作文：政府类话题 · 列提纲+写开头段+主体段1',t:'40min'},
+  {n:'口语',c:'雅思哥 Part 1 话题 × 3',t:'25min'},
+  {n:'复盘',c:'整理选择题+阅读技巧',t:'15min'},
+]);
+
+D(42, '句子匹配 + 表格', 6, [
+  {n:'单词',c:'扇贝 · 复习',t:'25min'},
+  {n:'听力',c:'剑桥真题13 Test2 Section3-4 · 做题+精听',t:'50min'},
+  {n:'阅读',c:'Charlie「11天训练营」Day5 — 句子匹配+段落信息匹配',t:'40min'},
+  {n:'阅读',c:'剑桥真题12 Test2 Passage3 · 不限时做题',t:'45min'},
+  {n:'写作',c:'小作文：表格 · 限时 20min → AI 批改',t:'40min'},
+  {n:'口语',c:'雅思哥 Part 1 话题 × 3（本周目标：完成 Part 1 题库 50%）',t:'25min'},
+  {n:'复盘',c:'整理本周所有同义替换',t:'15min'},
+]);
+
+D(43, '周小测', 6, [
+  {n:'单词',c:'扇贝 · 本周生词+同义替换复习',t:'30min'},
+  {n:'阅读',c:'剑桥真题12 Test3 全套阅读 · 不限时连续做 3 篇',t:'70min'},
+  {n:'听力',c:'剑桥真题13 Test3 Section1-2 · 做题',t:'40min'},
+  {n:'写作',c:'大作文 × 1 限时 40min（社会类话题）',t:'40min'},
+  {n:'口语',c:'雅思哥 Part 1 话题 × 5 集中复习',t:'30min'},
+  {n:'反思',c:'写本周学习总结',t:'15min'},
+]);
+
+D(44, '休息日', 6, [], '', '🎉 休息日！');
+
+// ===== 第7周 Day 45-51 =====
+D(45, '听力逐句听写', 7, [
+  {n:'单词',c:'扇贝 · 新词 30 + 复习',t:'30min'},
+  {n:'听力',c:'🔥 精听专项：剑桥真题13 Test3 Section3（学术对话）· 逐句听写',t:'60min'},
+  {n:'阅读',c:'剑桥真题12 Test3 Passage1 · 限时 18min',t:'40min'},
+  {n:'写作',c:'大作文：健康类话题 · 列提纲→写全文→AI批改',t:'45min'},
+  {n:'口语',c:'雅思哥 Part 1 话题 × 3',t:'25min'},
+  {n:'听力',c:'扇贝听力 · 泛听',t:'20min'},
+  {n:'复盘',c:'整理听力学术高频词汇',t:'20min'},
+]);
+
+D(46, 'Section 4 听写', 7, [
+  {n:'单词',c:'扇贝 · 复习',t:'25min'},
+  {n:'听力',c:'🔥 精听专项：剑桥真题13 Test3 Section4（学术独白）· 逐句听写',t:'60min'},
+  {n:'阅读',c:'剑桥真题12 Test3 Passage2-3 · 不限时',t:'55min'},
+  {n:'写作',c:'小作文：流程图 · 限时 20min→AI批改',t:'40min'},
+  {n:'口语',c:'雅思哥 Part 1 话题 × 3',t:'25min'},
+  {n:'听力',c:'扇贝听力 · 精听 1 篇',t:'20min'},
+  {n:'复盘',c:'整理 Section 4 笔记技巧（信号词）',t:'15min'},
+]);
+
+D(47, '审题训练 + Part 1 收尾', 7, [
+  {n:'单词',c:'扇贝 · 复习',t:'25min'},
+  {n:'听力',c:'🔥 听力审题训练：用剑桥真题13 Test4 全卷 · 不答题，只练习读题+预判答案类型',t:'50min'},
+  {n:'阅读',c:'扇贝阅读 · 读 2 篇',t:'30min'},
+  {n:'写作',c:'大作文：犯罪/法律类话题 · 列提纲→选写开头段+主体段1',t:'45min'},
+  {n:'口语',c:'🔥 雅思哥 Part 1 收尾：完成剩余全部话题',t:'40min'},
+  {n:'听力',c:'扇贝听力 · 泛听 BBC 6 Minute × 2',t:'30min'},
+  {n:'复盘',c:'整理审题预判技巧',t:'20min'},
+]);
+
+D(48, 'Part 1 标准化回答', 7, [
+  {n:'单词',c:'扇贝 · 复习',t:'25min'},
+  {n:'听力',c:'剑桥真题14 Test1 Section1-2 · 严格限时+审题预判→做题',t:'50min'},
+  {n:'阅读',c:'剑桥真题12 Test4 Passage1-2 · 不限时',t:'50min'},
+  {n:'写作',c:'大作文：全球化/文化类话题 · 列提纲→写全文→AI批改',t:'50min'},
+  {n:'口语',c:'🔥 雅思哥 Part 1 全部过完 → 总结 10 个最常见问题，准备标准化回答',t:'35min'},
+  {n:'听力',c:'扇贝听力 · 精听 1 篇',t:'15min'},
+  {n:'复盘',c:'整理口语 Part 1 常考回答模板',t:'15min'},
+]);
+
+D(49, '口语自拍模拟', 7, [
+  {n:'单词',c:'扇贝 · 复习',t:'25min'},
+  {n:'听力',c:'剑桥真题14 Test1 Section3-4 · 限定审题+做题+精听',t:'55min'},
+  {n:'阅读',c:'剑桥真题12 Test4 Passage3',t:'40min'},
+  {n:'写作',c:'小作文：地图题 · 限时 20min→AI批改',t:'40min'},
+  {n:'口语',c:'B站看「雅思口语 Part 1 常见问题回答技巧」',t:'30min'},
+  {n:'口语',c:'自拍视频模拟 Part 1 面试（选 8 个话题 × 30 秒，全程录像）',t:'30min'},
+  {n:'复盘',c:'看自己的口语视频，标注改进点',t:'20min'},
+], '雅思口语 Part 1 技巧：B站搜「莱斯莉的英语频道 口语」');
+
+D(50, '周小测', 7, [
+  {n:'单词',c:'扇贝 · 本周听力场景词复习',t:'25min'},
+  {n:'听力',c:'剑桥真题14 Test2 听力全套 → 严格模拟(30min+10min誊写)',t:'55min'},
+  {n:'阅读',c:'剑桥真题13 Test1 Passage1-2 · 不限时',t:'50min'},
+  {n:'写作',c:'大作文 × 1 限时 40min',t:'40min'},
+  {n:'口语',c:'Part 1 全真模拟（自问自答 15 题录音）',t:'30min'},
+  {n:'反思',c:'写本周学习总结',t:'20min'},
+]);
+
+D(51, '休息日', 7, [], '', '🎉 休息日！');
+
+// ===== 第8周 Day 52-60 =====
+D(52, '写作模板定型 + Part 2 入门', 8, [
+  {n:'单词',c:'扇贝 · 复习',t:'25min'},
+  {n:'写作',c:'🔥 大作文：四段式模板定型——整理自己的开头/结尾句型',t:'50min'},
+  {n:'阅读',c:'剑桥真题13 Test1 Passage3 + Test2 Passage1 · 开始限时(每篇20min)',t:'50min'},
+  {n:'听力',c:'剑桥真题14 Test2 Section3-4 · 做题+精听',t:'45min'},
+  {n:'口语',c:'🔥 B站看「雅思口语 Part 2 四句口诀法」→ 了解 Part 2 结构',t:'30min'},
+  {n:'听力',c:'扇贝听力 · 精听',t:'20min'},
+  {n:'复盘',c:'整理自己的写作模板',t:'20min'},
+], 'Part 2 四句口诀法：B站搜 BV1hRhgz5EK7');
+
+D(53, '小作文句型模板', 8, [
+  {n:'单词',c:'扇贝 · 复习',t:'25min'},
+  {n:'写作',c:'🔥 小作文：整理各图表类型的专属句型模板（线图/柱图/饼图/表格/流程图/地图）',t:'50min'},
+  {n:'阅读',c:'剑桥真题13 Test2 Passage2-3 · 限时 40min',t:'50min'},
+  {n:'听力',c:'剑桥真题14 Test3 Section1-2 · 做题+精听',t:'45min'},
+  {n:'口语',c:'🔥 雅思哥 Part 2 话题卡：读 5 个话题，练习 1 分钟列提纲',t:'40min'},
+  {n:'听力',c:'扇贝听力 · 泛听',t:'15min'},
+  {n:'复盘',c:'整理小作文万能句型',t:'15min'},
+]);
+
+D(54, '讨论类大作文', 8, [
+  {n:'单词',c:'扇贝 · 复习',t:'25min'},
+  {n:'听力',c:'剑桥真题14 Test3 Section3-4 · 做题+精听',t:'50min'},
+  {n:'写作',c:'🔥 大作文整篇练习：讨论类题型（Discuss both views）· 限时 40min → AI批改',t:'55min'},
+  {n:'阅读',c:'扇贝阅读 · 读 2 篇',t:'25min'},
+  {n:'口语',c:'雅思哥 Part 2 话题 × 3 · 每个话题 1min 准备 + 2min 录音回答',t:'45min'},
+  {n:'听力',c:'扇贝听力 · 精听',t:'20min'},
+  {n:'复盘',c:'听自己 Part 2 录音，看是否说满 2 分钟',t:'20min'},
+]);
+
+D(55, '混合图小作文', 8, [
+  {n:'单词',c:'扇贝 · 复习',t:'25min'},
+  {n:'听力',c:'剑桥真题14 Test4 Section1-2 · 做题+精听',t:'45min'},
+  {n:'阅读',c:'剑桥真题13 Test3 Passage1-2 · 限时 18min/篇',t:'50min'},
+  {n:'写作',c:'🔥 小作文整篇练习：混合图（线图+柱图组合）· 限时 20min → AI批改',t:'45min'},
+  {n:'口语',c:'雅思哥 Part 2 话题 × 3 · 录音',t:'40min'},
+  {n:'听力',c:'扇贝听力 · 泛听',t:'20min'},
+  {n:'复盘',c:'整理 Part 2 串题思路',t:'15min'},
+]);
+
+D(56, '利弊类大作文', 8, [
+  {n:'单词',c:'扇贝 · 复习',t:'25min'},
+  {n:'听力',c:'剑桥真题14 Test4 Section3-4 · 做题+精听',t:'50min'},
+  {n:'阅读',c:'剑桥真题13 Test3 Passage3 + Test4 Passage1 · 限时',t:'55min'},
+  {n:'写作',c:'🔥 大作文：利弊类题型（Advantages outweigh disadvantages?）· 限时 40min → AI批改',t:'55min'},
+  {n:'口语',c:'B站看「雅思口语8.5 用3个人串完所有人物类Part2」',t:'30min'},
+  {n:'复盘',c:'复习大作文四种题型结构',t:'15min'},
+], '串完人物类Part2：B站搜 BV1bq9RYyEkZ');
+
+D(57, '流程图小作文', 8, [
+  {n:'单词',c:'扇贝 · 复习',t:'25min'},
+  {n:'阅读',c:'剑桥真题13 Test4 Passage2-3 · 限时完成',t:'55min'},
+  {n:'听力',c:'剑桥真题15 Test1 Section1-2（新书）· 做题+精听',t:'50min'},
+  {n:'写作',c:'🔥 小作文：流程图 · 限时 20min → AI批改',t:'40min'},
+  {n:'口语',c:'雅思哥 Part 2 话题 × 3 · 录音（尝试用串题方法）',t:'40min'},
+  {n:'听力',c:'扇贝听力 · 精听',t:'15min'},
+  {n:'复盘',c:'整理流程图描述模板',t:'15min'},
+]);
+
+D(58, '问题解决类大作文', 8, [
+  {n:'单词',c:'扇贝 · 复习',t:'25min'},
+  {n:'听力',c:'剑桥真题15 Test1 Section3-4 · 做题+精听',t:'50min'},
+  {n:'写作',c:'🔥 大作文：问题解决类（Problems & Solutions）· 限时 40min → AI批改',t:'55min'},
+  {n:'阅读',c:'剑桥真题14 Test1 Passage1-2 · 限时',t:'50min'},
+  {n:'口语',c:'雅思哥 Part 2 话题 × 4 · 录音',t:'40min'},
+  {n:'复盘',c:'整理写作四大题型完成情况',t:'20min'},
+]);
+
+D(59, '月末综合检测', 8, [
+  {n:'单词',c:'扇贝 · 本月生词总复习',t:'35min'},
+  {n:'听力',c:'剑桥真题15 Test2 听力全套 · 严格模拟',t:'55min'},
+  {n:'阅读',c:'剑桥真题14 Test1 Passage3 + Test2 Passage1-2 · 限时',t:'60min'},
+  {n:'写作',c:'大作文 × 1 限时 40min（随机抽题型）',t:'40min'},
+  {n:'口语',c:'Part 1 + Part 2 全真模拟（全程录音+录像）',t:'35min'},
+  {n:'反思',c:'写第2个月总结：四项达标了吗？Part 1 是否流利？写作能否限时写完？',t:'15min'},
+], '', '📊 月末自检：听力Section3-4正确率60%+ / 阅读不限时正确率70%+ / 大小作文都能限时完成 / 口语Part1题库全部过完 / Part2能说满2分钟 / 同义替换笔记至少100组');
+
+D(60, '休息日', 8, [], '', '🎉 本月辛苦了！看一部英文电影庆祝，试试不开字幕。');
+
+// ===== 第9周 Day 61-67 =====
+D(61, '限时突破 + 暴力串题', 9, [
+  {n:'单词',c:'扇贝 · 快速复习',t:'20min'},
+  {n:'听力',c:'🔥 剑桥真题15 Test2 听力全套 · 第一次严格限时 30min + 誊写 10min',t:'40min'},
+  {n:'阅读',c:'🔥 剑桥真题14 Test2 Passage3 + Test3 Passage1 · 限时 18min/篇',t:'50min'},
+  {n:'写作',c:'大作文：观点类（To what extent do you agree?）· 限时 40min',t:'40min'},
+  {n:'口语',c:'🔥 B站看「雅思口语九分安 暴力串题 15in1」',t:'30min'},
+  {n:'听力',c:'错题精听+分析',t:'30min'},
+  {n:'口语',c:'雅思哥 Part 2 话题 × 3 · 录音+用串题法',t:'30min'},
+], '暴力串题15in1：B站搜「雅思口语九分安」');
+
+D(62, '阅读限时 + 人物类串题', 9, [
+  {n:'单词',c:'扇贝 · 快速复习',t:'20min'},
+  {n:'阅读',c:'🔥 剑桥真题14 Test3 Passage2-3 · 全套限时 40min',t:'50min'},
+  {n:'听力',c:'剑桥真题15 Test3 Section1-2 · 限时审题+做题',t:'45min'},
+  {n:'写作',c:'小作文：柱状图+线图混合 · 限时 20min',t:'30min'},
+  {n:'写作',c:'AI 批改大作文+小作文',t:'30min'},
+  {n:'口语',c:'开始整理 Part 2 串题素材：人物类（准备 3 个人物故事）',t:'35min'},
+  {n:'口语',c:'雅思哥 Part 2 人物类话题 × 3 · 用素材录音',t:'30min'},
+]);
+
+D(63, '讨论类大作文 + 事件类串题', 9, [
+  {n:'单词',c:'扇贝 · 快速复习',t:'20min'},
+  {n:'听力',c:'剑桥真题15 Test3 Section3-4 · 限时+精听',t:'50min'},
+  {n:'阅读',c:'剑桥真题14 Test4 Passage1-2 · 限时 18min/篇',t:'50min'},
+  {n:'写作',c:'大作文：讨论类 · 限时 40min',t:'40min'},
+  {n:'写作',c:'AI 批改',t:'25min'},
+  {n:'口语',c:'整理串题素材：事件类（准备 4 个经历故事）',t:'35min'},
+  {n:'口语',c:'雅思哥 Part 2 事件类话题 × 3 · 用素材录音',t:'25min'},
+]);
+
+D(64, '表格小作文 + 地点类串题', 9, [
+  {n:'单词',c:'扇贝 · 快速复习',t:'20min'},
+  {n:'听力',c:'剑桥真题15 Test4 Section1-2 · 限时+精听',t:'45min'},
+  {n:'阅读',c:'剑桥真题14 Test4 Passage3 + Test15 Test1 Passage1 · 限时',t:'55min'},
+  {n:'写作',c:'小作文：表格 · 限时 20min → AI批改',t:'40min'},
+  {n:'口语',c:'整理串题素材：地点类（准备 3 个地点故事）',t:'30min'},
+  {n:'口语',c:'雅思哥 Part 2 地点类话题 × 3 · 录音',t:'30min'},
+  {n:'听力',c:'扇贝听力 · 精听',t:'20min'},
+]);
+
+D(65, '利弊类大作文 + 事物类串题', 9, [
+  {n:'单词',c:'扇贝 · 快速复习',t:'20min'},
+  {n:'听力',c:'剑桥真题15 Test4 Section3-4 · 限时+精听',t:'50min'},
+  {n:'阅读',c:'剑桥真题15 Test1 Passage2-3 · 限时 18min/篇',t:'50min'},
+  {n:'写作',c:'大作文：利弊类 · 限时 40min → AI批改',t:'55min'},
+  {n:'口语',c:'整理串题素材：事物类（准备 4 个物品/经历）',t:'30min'},
+  {n:'口语',c:'雅思哥 Part 2 事物类话题 × 3 · 录音',t:'25min'},
+  {n:'复盘',c:'Part 2 串题素材库盘点（目标 15-20 个故事覆盖 50 个话题）',t:'10min'},
+]);
+
+D(66, '周小测', 9, [
+  {n:'单词',c:'扇贝 · 本周同义替换复习',t:'20min'},
+  {n:'听力',c:'剑桥真题16 Test1 听力全套 · 严格模拟',t:'55min'},
+  {n:'阅读',c:'剑桥真题15 Test2 Passage1-2 · 限时 18min/篇',t:'50min'},
+  {n:'写作',c:'大作文 × 1 限时 40min（随机抽题型）',t:'40min'},
+  {n:'口语',c:'Part 2 全真模拟（抽 5 个话题卡 × 1min准备+2min录音）',t:'35min'},
+  {n:'反思',c:'写本周学习总结',t:'20min'},
+]);
+
+D(67, '休息日', 9, [], '', '🎉 休息日！');
+
+// ===== 第10周 Day 68-74 =====
+D(68, '观点类大作文 + Part 3 入门', 10, [
+  {n:'单词',c:'扇贝 · 快速复习',t:'20min'},
+  {n:'写作',c:'🔥 大作文：观点类（Agree/Disagree）· 限时 40min',t:'40min'},
+  {n:'写作',c:'🔥 自我批改：对照 Simon 同类范文逐句对比，标注差距',t:'40min'},
+  {n:'听力',c:'剑桥真题16 Test1 听力全套错题精听',t:'40min'},
+  {n:'阅读',c:'剑桥真题15 Test2 Passage3 + Test3 Passage1 · 限时',t:'50min'},
+  {n:'口语',c:'B站看「雅思口语 Part 3 答题思路」',t:'30min'},
+  {n:'口语',c:'雅思哥 Part 3 话题 × 3 录音练习',t:'20min'},
+], 'Part 3 答题思路：B站搜「莱斯莉的英语频道 Part 3」');
+
+D(69, '讨论类大作文', 10, [
+  {n:'单词',c:'扇贝 · 快速复习',t:'20min'},
+  {n:'写作',c:'🔥 大作文：讨论类（Discuss both views + your opinion）· 限时 40min',t:'40min'},
+  {n:'写作',c:'自我批改+AI批改',t:'35min'},
+  {n:'听力',c:'剑桥真题16 Test2 Section1-2 · 限时+精听',t:'45min'},
+  {n:'阅读',c:'剑桥真题15 Test3 Passage2-3 · 限时',t:'50min'},
+  {n:'口语',c:'雅思哥 Part 3 话题 × 3（重点练「解释原因 + 举例说明」的回答结构）',t:'30min'},
+  {n:'口语',c:'扇贝听力口语 · 自由对话',t:'20min'},
+]);
+
+D(70, '利弊类大作文', 10, [
+  {n:'单词',c:'扇贝 · 快速复习',t:'20min'},
+  {n:'写作',c:'🔥 大作文：利弊类（Advantages vs Disadvantages）· 限时 40min',t:'40min'},
+  {n:'写作',c:'自我批改+AI批改',t:'35min'},
+  {n:'听力',c:'剑桥真题16 Test2 Section3-4 · 限时+精听',t:'45min'},
+  {n:'阅读',c:'剑桥真题15 Test4 Passage1-2 · 限时',t:'50min'},
+  {n:'口语',c:'雅思哥 Part 3 话题 × 3（重点练「分情况讨论」的回答思路）',t:'30min'},
+  {n:'口语',c:'扇贝听力口语 · 自由对话',t:'20min'},
+]);
+
+D(71, '问题解决类 + 全流程模拟', 10, [
+  {n:'单词',c:'扇贝 · 快速复习',t:'20min'},
+  {n:'写作',c:'🔥 大作文：问题解决类（Causes & Solutions）· 限时 40min',t:'40min'},
+  {n:'写作',c:'自我批改+AI批改',t:'35min'},
+  {n:'听力',c:'剑桥真题16 Test3 Section1-2 · 限时+精听',t:'45min'},
+  {n:'阅读',c:'剑桥真题15 Test4 Passage3 + Test16 Test1 Passage1 · 限时',t:'50min'},
+  {n:'口语',c:'🔥 Part 1 + Part 2 + Part 3 全流程模拟（自问自答全程录音）',t:'35min'},
+  {n:'复盘',c:'听全流程录音，评估流利度和回答质量',t:'15min'},
+]);
+
+D(72, '淘宝批改 + 教育类大作文', 10, [
+  {n:'单词',c:'扇贝 · 快速复习',t:'20min'},
+  {n:'写作',c:'🔥 选出本周最好的 2 篇大作文 → 淘宝下单批改（约 30-60 元）',t:'20min'},
+  {n:'写作',c:'大作文：教育类话题 · 限时 40min',t:'40min'},
+  {n:'听力',c:'剑桥真题16 Test3 Section3-4 · 限时+精听',t:'45min'},
+  {n:'阅读',c:'剑桥真题16 Test1 Passage2-3 · 限时 18min/篇',t:'50min'},
+  {n:'口语',c:'雅思哥 Part 2 全部话题回顾+串题素材巩固',t:'40min'},
+  {n:'复盘',c:'整理本周写作心得',t:'15min'},
+]);
+
+D(73, '周小测 + 批改反馈', 10, [
+  {n:'单词',c:'扇贝 · 本周写作词汇复习',t:'20min'},
+  {n:' 🔥',c:'收到淘宝批改反馈后：逐条分析扣分点 → 写改进清单 → 重写其中 1 篇',t:'1h'},
+  {n:'听力',c:'剑桥真题16 Test4 听力全套 · 严格模拟',t:'55min'},
+  {n:'阅读',c:'剑桥真题16 Test1 Passage3 + Test2 Passage1 · 限时',t:'50min'},
+  {n:'口语',c:'Part 1 + Part 2 模拟',t:'30min'},
+  {n:'反思',c:'写本周学习总结',t:'15min'},
+]);
+
+D(74, '休息日', 10, [], '', '🎉 休息日！');
+
+// ===== 第11周 Day 75-81 =====
+D(75, '人物类串题打磨', 11, [
+  {n:'单词',c:'扇贝 · 快速复习',t:'20min'},
+  {n:'口语',c:'🔥 Part 2 人物类串题：打磨 3 个人物故事（确保每个能流畅讲 2 分钟）',t:'50min'},
+  {n:'听力',c:'剑桥真题16 Test4 Section3-4 错题精听',t:'40min'},
+  {n:'阅读',c:'剑桥真题16 Test2 Passage2-3 · 限时 18min/篇',t:'50min'},
+  {n:'写作',c:'小作文：地图题 · 限时 20min',t:'30min'},
+  {n:'口语',c:'雅思哥 Part 3 话题 × 4（训练即兴回答不卡顿）',t:'30min'},
+  {n:'口语',c:'ChatGPT App 语音模式 · 模拟 Part 3 对话 15min',t:'15min'},
+]);
+
+D(76, '事件类串题打磨', 11, [
+  {n:'单词',c:'扇贝 · 快速复习',t:'20min'},
+  {n:'口语',c:'🔥 Part 2 事件类串题：打磨 4 个经历故事',t:'50min'},
+  {n:'听力',c:'剑桥真题17 Test1 Section1-2 · 限时+精听',t:'45min'},
+  {n:'阅读',c:'剑桥真题16 Test3 Passage1-2 · 限时 18min/篇',t:'50min'},
+  {n:'写作',c:'大作文：科技类 · 限时 40min → AI批改',t:'50min'},
+  {n:'口语',c:'雅思哥 Part 3 话题 × 4',t:'25min'},
+]);
+
+D(77, '地点类串题 + italki 模考', 11, [
+  {n:'单词',c:'扇贝 · 快速复习',t:'20min'},
+  {n:'口语',c:'🔥 Part 2 地点类串题：打磨 3 个地点故事',t:'45min'},
+  {n:'听力',c:'剑桥真题17 Test1 Section3-4 · 限时+精听',t:'50min'},
+  {n:'阅读',c:'剑桥真题16 Test3 Passage3 + Test4 Passage1 · 限时',t:'55min'},
+  {n:'写作',c:'小作文：流程图 · 限时 20min',t:'30min'},
+  {n:'口语',c:'italki 口语模考 × 1 次（强烈推荐，约 50-80 元/30min）',t:'30min'},
+  {n:'复盘',c:'整理模考反馈意见',t:'20min'},
+]);
+
+D(78, '事物类串题打磨', 11, [
+  {n:'单词',c:'扇贝 · 快速复习',t:'20min'},
+  {n:'口语',c:'🔥 Part 2 事物类串题：打磨 4 个物品/经历故事',t:'45min'},
+  {n:'听力',c:'剑桥真题17 Test2 Section1-2 · 限时+精听',t:'45min'},
+  {n:'阅读',c:'剑桥真题16 Test4 Passage2-3 · 限时',t:'55min'},
+  {n:'写作',c:'大作文：环境类 · 限时 40min → AI批改',t:'50min'},
+  {n:'口语',c:'雅思哥 Part 2 随机抽 10 题 · 1min准备+2min录音（检验串题效果）',t:'25min'},
+]);
+
+D(79, '串题素材库总结', 11, [
+  {n:'单词',c:'扇贝 · 快速复习',t:'20min'},
+  {n:'口语',c:'🔥 总结串题素材库（15-20 个故事），写成文字稿，标注每个故事可覆盖的话题',t:'50min'},
+  {n:'听力',c:'剑桥真题17 Test2 Section3-4 · 限时+精听',t:'50min'},
+  {n:'阅读',c:'剑桥真题17 Test1 Passage1-2 · 限时',t:'50min'},
+  {n:'写作',c:'大作文：社会类 · 限时 40min',t:'40min'},
+  {n:'口语',c:'雅思哥 Part 3 话题 × 4 + ChatGPT 语音对话',t:'30min'},
+]);
+
+D(80, '周小测', 11, [
+  {n:'单词',c:'扇贝 · 本周口语话题词汇复习',t:'20min'},
+  {n:'听力',c:'剑桥真题17 Test3 听力全套 · 严格模拟',t:'55min'},
+  {n:'阅读',c:'剑桥真题17 Test1 Passage3 + Test2 Passage1 · 限时',t:'50min'},
+  {n:'写作',c:'大作文 × 1 限时 40min',t:'40min'},
+  {n:'口语',c:'Part 1 + Part 2 + Part 3 全流程录像模拟',t:'45min'},
+  {n:'反思',c:'看录像找出 3 个最需要改进的地方',t:'20min'},
+]);
+
+D(81, '休息日', 11, [], '', '🎉 休息日！');
+
+// ===== 第12周 Day 82-90 =====
+D(82, '淘宝批改 + 政府类大作文', 12, [
+  {n:'单词',c:'扇贝 · 快速复习',t:'20min'},
+  {n:'听力',c:'剑桥真题17 Test3 听力错题精听+分析',t:'45min'},
+  {n:'阅读',c:'剑桥真题17 Test2 Passage2-3 · 限时',t:'55min'},
+  {n:'写作',c:'🔥 选出 3 篇大作文 淘宝下单批改（约 45-90 元）',t:'10min'},
+  {n:'写作',c:'大作文：政府类 · 限时 40min',t:'40min'},
+  {n:'口语',c:'Part 2 串题素材讲故事练习（不看稿，脱稿讲）',t:'35min'},
+  {n:'口语',c:'雅思哥 Part 3 话题 × 3',t:'20min'},
+]);
+
+D(83, '阅读弱项突破', 12, [
+  {n:'单词',c:'扇贝 · 快速复习',t:'20min'},
+  {n:'听力',c:'剑桥真题17 Test4 Section1-2 · 限时+精听',t:'45min'},
+  {n:'阅读',c:'阅读弱项题型专项：判断题+T/F/NG 专项 10 题',t:'50min'},
+  {n:'阅读',c:'剑桥真题17 Test3 Passage1-2 · 限时',t:'50min'},
+  {n:'写作',c:'小作文专项训练：挑最不擅长的图表类型 × 2 篇(每篇 20min)',t:'50min'},
+  {n:'口语',c:'雅思哥 Part 2 话题 × 3',t:'25min'},
+]);
+
+D(84, '匹配题专项 + 法律类大作文', 12, [
+  {n:'单词',c:'扇贝 · 快速复习',t:'20min'},
+  {n:'听力',c:'剑桥真题17 Test4 Section3-4 · 限时+精听',t:'50min'},
+  {n:'阅读',c:'阅读弱项题型专项：段落匹配+句子匹配 10 题',t:'50min'},
+  {n:'阅读',c:'剑桥真题17 Test3 Passage3 + Test4 Passage1 · 限时',t:'50min'},
+  {n:'写作',c:'大作文：犯罪/法律类 · 限时 40min（所有大题型完成一轮）',t:'40min'},
+  {n:'口语',c:'雅思哥 Part 3 话题 × 4 + ChatGPT 语音',t:'30min'},
+]);
+
+D(85, 'Section 4 弱项专项', 12, [
+  {n:'单词',c:'扇贝 · 快速复习',t:'20min'},
+  {n:'听力',c:'听力弱项专项：Section 4 学术独白 × 3 篇精听练习',t:'60min'},
+  {n:'阅读',c:'剑桥真题17 Test4 Passage2-3 · 限时 18min/篇',t:'50min'},
+  {n:'写作',c:'🔥 收到淘宝批改反馈 → 逐条分析 → 修改 → 重写',t:'60min'},
+  {n:'口语',c:'雅思哥 Part 1+2+3 全程模拟（录像）',t:'35min'},
+  {n:'复盘',c:'对比上周录像，看进步',t:'15min'},
+]);
+
+D(86, '剑18开始 + italki 模考', 12, [
+  {n:'单词',c:'扇贝 · 快速复习',t:'20min'},
+  {n:'听力',c:'剑桥真题18 Test1 Section1-2 · 限时（开始最新真题）',t:'45min'},
+  {n:'阅读',c:'剑桥真题18 Test1 Passage1-2 · 限时 18min/篇',t:'50min'},
+  {n:'写作',c:'大作文：全球化/文化类 · 限时 40min',t:'40min'},
+  {n:'口语',c:'B站看「雅思口语 Part 3 高分技巧」',t:'30min'},
+  {n:'口语',c:'italki 口语模考 × 1 次（第二次模考）',t:'30min'},
+  {n:'复盘',c:'对比两次模考进步',t:'15min'},
+]);
+
+D(87, '串题素材定稿', 12, [
+  {n:'单词',c:'扇贝 · 快速复习',t:'20min'},
+  {n:'听力',c:'剑桥真题18 Test1 Section3-4 · 限时+精听',t:'50min'},
+  {n:'阅读',c:'剑桥真题18 Test1 Passage3 + Test2 Passage1 · 限时',t:'55min'},
+  {n:'写作',c:'小作文：随机题型 · 限时 20min',t:'30min'},
+  {n:'口语',c:'串题素材最终版定稿（15-20 个故事明确标明覆盖的话题编号）',t:'40min'},
+  {n:'口语',c:'雅思哥 Part 2 随机抽 10 题快速过',t:'25min'},
+  {n:'复盘',c:'总结第 3 个月口语进展',t:'15min'},
+]);
+
+D(88, '全科模考 #1', 12, [
+  {n:'单词',c:'扇贝 · 全月生词复习',t:'30min'},
+  {n:'🔥',c:'全科模考：听力(40min) + 阅读(60min) + 写作(60min) · 严格按考试流程连续进行',t:'2h40min'},
+  {n:'写作',c:'对答案+AI批改',t:'40min'},
+  {n:'口语',c:'休息（模考太累了）',t:'—'},
+]);
+
+D(89, '模考精析 + 月总结', 12, [
+  {n:'模考',c:'模考精析（听力+阅读错题全部搞懂）',t:'1.5h'},
+  {n:'写作',c:'模考作文修改+AI批改',t:'1h'},
+  {n:'口语',c:'Part 1+2+3 全流程模拟',t:'40min'},
+  {n:'复盘',c:'写第3个月总结 + 制定第4个月冲刺策略',t:'30min'},
+], '', '📊 月末自检：听力全套限时稳定6.0+ / 阅读限时稳定6.0+ / 淘宝写作批改≥6.0 / 口语模考5.5-6.0 / 串题素材库完整可用');
+
+D(90, '休息日', 12, [], '', '🎉 三个月了！给自己一个大奖励！下周开始冲刺！');
+
+// ===== 第13周 Day 91-97 =====
+D(91, '全科模考 #1', 13, [
+  {n:'单词',c:'扇贝 · 快速复习',t:'20min'},
+  {n:'🔥',c:'全科模考 #1：剑桥真题18 Test2 · 听力(40min) + 阅读(60min) + 写作(60min)',t:'2h40min'},
+  {n:'口语',c:'休息',t:'—'},
+  {n:'复盘',c:'快速浏览错题',t:'20min'},
+]);
+
+D(92, '模考 #1 精析', 13, [
+  {n:'单词',c:'扇贝 · 快速复习',t:'20min'},
+  {n:'🔥',c:'模考 #1 精析：听力全部错题精听 + 同义替换整理',t:'1h'},
+  {n:'🔥',c:'模考 #1 精析：阅读全部错题分析错因 + 生词整理',t:'50min'},
+  {n:'写作',c:'模考作文 AI 批改 + 修改',t:'40min'},
+  {n:'口语',c:'Part 1 + Part 2 + Part 3 全流程',t:'40min'},
+  {n:'复盘',c:'整理模考暴露的问题清单',t:'20min'},
+]);
+
+D(93, '写作模板定型', 13, [
+  {n:'单词',c:'扇贝 · 快速复习',t:'20min'},
+  {n:'听力',c:'剑桥真题18 Test3 Section1-2 · 限时+精听',t:'45min'},
+  {n:'阅读',c:'剑桥真题18 Test2 阅读 · 错题专项补练',t:'50min'},
+  {n:'写作',c:'🔥 大作文模板定型：整理自己的四段式固定句型（不是背模板，是形成习惯表达）',t:'50min'},
+  {n:'写作',c:'大作文：随机话题 · 限时 40min',t:'40min'},
+  {n:'口语',c:'雅思哥 Part 2 随机抽 8 题快速过（巩固串题效果）',t:'30min'},
+  {n:'听力',c:'扇贝听力 · 精听',t:'15min'},
+]);
+
+D(94, '全科模考 #2', 13, [
+  {n:'单词',c:'扇贝 · 快速复习',t:'20min'},
+  {n:'🔥',c:'全科模考 #2：剑桥真题18 Test3 · 听力+阅读+写作',t:'2h40min'},
+  {n:'口语',c:'休息',t:'—'},
+  {n:'复盘',c:'快速浏览',t:'20min'},
+]);
+
+D(95, '模考 #2 精析 + italki', 13, [
+  {n:'单词',c:'扇贝 · 快速复习',t:'20min'},
+  {n:'🔥',c:'模考 #2 精析：听力+阅读全部错题',t:'1.5h'},
+  {n:'写作',c:'模考作文修改+AI批改',t:'40min'},
+  {n:'口语',c:'🔥 italki 口语模考 × 1 次（考前冲刺，第三次）',t:'30min'},
+  {n:'口语',c:'根据模考反馈调整 Part 2 表达',t:'30min'},
+  {n:'听力',c:'扇贝听力 · 泛听 BBC',t:'20min'},
+]);
+
+D(96, '小作文模板定型', 13, [
+  {n:'单词',c:'扇贝 · 快速复习',t:'20min'},
+  {n:'听力',c:'剑桥真题18 Test4 Section1-2 · 限时+精听',t:'45min'},
+  {n:'阅读',c:'剑桥真题18 Test3 阅读错题专项补练',t:'50min'},
+  {n:'写作',c:'🔥 小作文模板定型：整理各图表类型的固定描述句型',t:'50min'},
+  {n:'写作',c:'小作文 × 2 篇（最难的类型）限时 20min/篇',t:'40min'},
+  {n:'口语',c:'雅思哥 Part 3 热点话题 × 5',t:'30min'},
+  {n:'复盘',c:'写作模板最终确认',t:'15min'},
+]);
+
+D(97, '休息日', 13, [], '', '🎉 考前倒数第 3 周，保持节奏但别太累。');
+
+// ===== 第14周 Day 98-104 =====
+D(98, '拼写清单清零', 14, [
+  {n:'单词',c:'扇贝 · 拼写易错词清单复习',t:'25min'},
+  {n:'听力',c:'🔥 听力拼写专项：整理过去 3 个月所有拼错过的词 → 反复听写直到全对',t:'1h'},
+  {n:'阅读',c:'剑桥真题19 Test1 Passage1-2 · 限时 18min/篇',t:'50min'},
+  {n:'写作',c:'大作文：教育类 · 限时 40min',t:'40min'},
+  {n:'口语',c:'Part 2 串题素材脱稿练习（不看稿）',t:'30min'},
+  {n:'复盘',c:'拼写清单清零',t:'15min'},
+]);
+
+D(99, '阅读时间管理 + italki', 14, [
+  {n:'单词',c:'扇贝 · 快速复习',t:'20min'},
+  {n:'听力',c:'剑桥真题18 Test4 Section3-4 · 限时+精听',t:'50min'},
+  {n:'阅读',c:'🔥 阅读时间管理专项：连续做 3 篇阅读 · 严格掐表 18+20+22min',t:'60min'},
+  {n:'写作',c:'小作文：地图题 · 限时 20min',t:'30min'},
+  {n:'口语',c:'italki 口语模考 × 1 次（第四次）',t:'30min'},
+  {n:'口语',c:'根据反馈微调',t:'25min'},
+  {n:'复盘',c:'阅读时间分析',t:'15min'},
+]);
+
+D(100, '全科模考 #3', 14, [
+  {n:'单词',c:'扇贝 · 快速复习',t:'20min'},
+  {n:'🔥',c:'全科模考 #3：剑桥真题19 Test1 · 听力+阅读+写作',t:'2h40min'},
+  {n:'口语',c:'休息',t:'—'},
+  {n:'复盘',c:'快速浏览错题',t:'20min'},
+]);
+
+D(101, '模考 #3 精析', 14, [
+  {n:'单词',c:'扇贝 · 快速复习',t:'20min'},
+  {n:'🔥',c:'模考 #3 精析：听力错题精听',t:'1h'},
+  {n:'🔥',c:'模考 #3 精析：阅读错题分析',t:'50min'},
+  {n:'写作',c:'模考作文修改',t:'40min'},
+  {n:'口语',c:'Part 1 + Part 2 快速过一遍',t:'30min'},
+  {n:'听力',c:'扇贝听力 · 精听',t:'20min'},
+]);
+
+D(102, '全科模考 #4', 14, [
+  {n:'单词',c:'扇贝 · 快速复习',t:'20min'},
+  {n:'🔥',c:'全科模考 #4：剑桥真题19 Test2 · 听力+阅读+写作',t:'2h40min'},
+  {n:'口语',c:'休息',t:'—'},
+  {n:'复盘',c:'快速浏览',t:'20min'},
+]);
+
+D(103, '模考 #4 精析 + 最终调整', 14, [
+  {n:'单词',c:'扇贝 · 快速复习',t:'20min'},
+  {n:'🔥',c:'模考 #4 精析',t:'1.5h'},
+  {n:'写作',c:'模考作文修改 + 写作模板最终版定稿',t:'50min'},
+  {n:'口语',c:'🔥 italki 口语模考 × 1 次（第五次，考前最后一次外教模考）',t:'30min'},
+  {n:'口语',c:'最终调整+心理建设',t:'20min'},
+  {n:'复盘',c:'4 次模考成绩趋势分析',t:'20min'},
+]);
+
+D(104, '休息日', 14, [], '', '🎉 休息日！');
+
+// ===== 第15周 Day 105-111 =====
+D(105, '拼错词最终复习', 15, [
+  {n:'单词',c:'扇贝 · 全部拼错词最终复习',t:'30min'},
+  {n:'听力',c:'剑桥真题19 Test3 Section1-2 · 限时（不被错题影响心态，只保持手感）',t:'45min'},
+  {n:'阅读',c:'剑桥真题19 Test3 Passage1-2 · 限时',t:'50min'},
+  {n:'写作',c:'大作文：复习自己的写作模板 → 找一道新题限时 40min',t:'50min'},
+  {n:'口语',c:'串题素材最终脱稿练习',t:'30min'},
+  {n:'复盘',c:'整理「考前不看会后悔」的 10 条注意事项',t:'15min'},
+]);
+
+D(106, '保持手感', 15, [
+  {n:'单词',c:'扇贝 · 快速复习',t:'20min'},
+  {n:'听力',c:'剑桥真题19 Test3 Section3-4 · 限时',t:'45min'},
+  {n:'阅读',c:'剑桥真题19 Test3 Passage3 + Test4 Passage1 · 限时',t:'55min'},
+  {n:'写作',c:'小作文：随机抽题型 · 限时 20min',t:'30min'},
+  {n:'写作',c:'浏览 Simon 范文合集，重温经典句型',t:'40min'},
+  {n:'口语',c:'Part 1 + Part 2 快速过（不求完美，保持流利感）',t:'30min'},
+  {n:'听力',c:'扇贝听力 · 泛听',t:'20min'},
+]);
+
+D(107, '最后全科模考 #5', 15, [
+  {n:'单词',c:'扇贝 · 快速复习',t:'20min'},
+  {n:'🔥',c:'最后一次全科模考 #5：剑桥真题19 Test4 · 严格按考试时间 8:00-12:00 进行',t:'2h40min'},
+  {n:'口语',c:'Part 1+2+3 全程录像',t:'40min'},
+  {n:'复盘',c:'看重放，最后微调',t:'20min'},
+]);
+
+D(108, '最后模考精析', 15, [
+  {n:'单词',c:'扇贝 · 快速复习',t:'20min'},
+  {n:'模考精析',c:'最后一次模考精析（不要纠结分数，只看还有什么能补救的）',t:'1.5h'},
+  {n:'写作',c:'浏览自己过去写的所有大作文，看 AI 批改记录中反复出现的问题',t:'1h'},
+  {n:'口语',c:'串题素材最终快速过一遍',t:'30min'},
+  {n:'复盘',c:'更新「考前注意事项」清单',t:'20min'},
+]);
+
+D(109, '机经浏览', 15, [
+  {n:'单词',c:'❌ 不背新词了',t:'—'},
+  {n:'听力',c:'浏览听力机经/预测（雅思哥 App 考前预测板块）',t:'40min'},
+  {n:'阅读',c:'阅读机经/预测 + 同义替换最终复习',t:'1h'},
+  {n:'写作',c:'🔥 只看不写：浏览大作文高频话题预测 + Simon 范文各题型各 1 篇',t:'1h'},
+  {n:'口语',c:'雅思哥 App 当季口语题库最终快速过一遍',t:'40min'},
+  {n:'放松',c:'🔥 听轻松音乐 / 散步 30min',t:'30min'},
+], '机经资源：雅思哥 App →「预测」板块；B站搜「雅思写作预测 2026」');
+
+D(110, '考前3天：只复习', 15, [
+  {n:'单词',c:'❌ 不背新词',t:'—'},
+  {n:'🔥',c:'考前 3 天原则：只复习，不做新题！',t:'—'},
+  {n:'听力',c:'打开错题本：浏览所有拼写错误+Section 4 易错词',t:'1h'},
+  {n:'阅读',c:'打开错题本：浏览判断题+段落匹配的错题逻辑',t:'1h'},
+  {n:'写作',c:'看自己的写作模板+常用句型（背诵，考场直接输出）',t:'1h'},
+  {n:'口语',c:'串题素材快速过一遍（脱稿，保持语感）',t:'40min'},
+  {n:'放松',c:'早睡早起，调整作息',t:'—'},
+]);
+
+D(111, '考前2天：轻松保持', 15, [
+  {n:'🔥',c:'考前 2 天：轻松保持手感',t:'—'},
+  {n:'听力',c:'剑桥真题中挑 1 个 Section 1 + 1 个 Section 2 做一遍（只为保持题感）',t:'30min'},
+  {n:'阅读',c:'挑 1 篇 Passage 1 做一遍（保持阅读速度）',t:'25min'},
+  {n:'写作',c:'默写大作文四段式结构+小作文常用句型',t:'30min'},
+  {n:'口语',c:'串题素材快速过一遍',t:'30min'},
+  {n:'放松',c:'🔥 准备考试用品：准考证、身份证、笔、水、零食',t:'20min'},
+  {n:'放松',c:'查看考场交通路线，确认考试时间地点',t:'20min'},
+]);
+
+// ===== 第16周 Day 112-120 =====
+D(112, '考前1天', 16, [
+  {n:'🔥',c:'只动眼不动手！',t:'—'},
+  {n:'听力',c:'快速浏览听力错题本（30min）',t:'30min'},
+  {n:'阅读',c:'快速浏览阅读同义替换笔记',t:'20min'},
+  {n:'写作',c:'默读自己的写作模板+范文好句',t:'30min'},
+  {n:'口语',c:'串题素材最终脱稿过一遍',t:'20min'},
+  {n:'放松',c:'检查考试用品（准考证×2、身份证、笔×3、橡皮、水）',t:'15min'},
+  {n:'放松',c:'🛌 晚上 9:00 上床，手机放客厅！',t:'—'},
+]);
+
+D(113, '🎯 考试日！', 16, [
+  {n:'6:30',c:'起床，吃早餐（不要吃太饱，碳水+蛋白质）',t:'—'},
+  {n:'7:30',c:'到达考场',t:'—'},
+  {n:'8:00-9:00',c:'听力考试',t:'1h'},
+  {n:'9:00-10:00',c:'阅读考试',t:'1h'},
+  {n:'10:00-11:00',c:'写作考试',t:'1h'},
+  {n:'下午',c:'口语考试（根据准考证时间）',t:'—'},
+  {n:'考后',c:'🎉🎉🎉 庆祝！不管结果如何，你坚持了 4 个月！',t:'—'},
+], '', '💪 你已经准备好了！相信 4 个月的努力！');
+
+D(114, '考后休息', 16, [
+  {n:'🎉',c:'彻底放松！睡觉、追剧、旅行、吃好吃的！',t:'全天'},
+], '', '考后休息周，彻底放松！等成绩出来（约 13 天），如果达标了——恭喜你！如果差一点——没关系，你已经知道自己的水平了，再来一次更有底！');
+
+D(115, '考后休息', 16, [], '', '放松日！');
+D(116, '考后休息', 16, [], '', '放松日！');
+D(117, '考后休息', 16, [], '', '放松日！');
+D(118, '考后休息', 16, [], '', '放松日！');
+D(119, '考后休息', 16, [], '', '放松日！');
+D(120, '考后休息', 16, [], '', '🎉 备考计划完成！Poppy 辛苦了！');
+
+// ==================== 应用逻辑 ====================
+
+let currentView = 'dashboard'; // 'dashboard' | 'day' | 'resources'
+let currentDay = 1;
+let currentResourceCat = '全部';
+
+// ===== localStorage keys =====
+const STORAGE_KEY = 'ielts_plan_v2';
+const CUSTOM_KEY = 'ielts_plan_custom_v2';
+const THEME_KEY = 'ielts_plan_theme';
+
+// ===== Completed tasks (ID-based) =====
+function getCompleted() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch(e) { return {}; }
+}
+function setCompleted(data) { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+function isTaskDone(dayNum, taskId) {
+  const c = getCompleted();
+  return !!(c[dayNum] && c[dayNum][taskId]);
+}
+function toggleTask(dayNum, taskId) {
+  const c = getCompleted();
+  if (!c[dayNum]) c[dayNum] = {};
+  c[dayNum][taskId] = !c[dayNum][taskId];
+  setCompleted(c);
+  updateStats();
+  renderCurrentView();
+}
+
+// ===== Custom tasks (per day) =====
+function getCustomData() {
+  try { return JSON.parse(localStorage.getItem(CUSTOM_KEY) || '{}'); } catch(e) { return {}; }
+}
+function setCustomData(data) { localStorage.setItem(CUSTOM_KEY, JSON.stringify(data)); }
+
+// Get merged tasks for a day (original + custom, minus deleted)
+function getMergedTasks(dayNum) {
+  const origDay = days.find(x => x.day === dayNum);
+  if (!origDay) return [];
+  const custom = getCustomData();
+  const dayCustom = custom[dayNum];
+  const deleted = dayCustom && dayCustom.deleted ? dayCustom.deleted : [];
+  const added = dayCustom && dayCustom.added ? dayCustom.added : [];
+  const tasks = [];
+  // Original tasks with stable IDs
+  origDay.tasks.forEach((t, i) => {
+    const id = 'o-' + i;
+    if (!deleted.includes(id)) {
+      tasks.push({ id, n: t.n, c: t.c, t: t.t, isOriginal: true });
+    }
+  });
+  // Custom added tasks
+  added.forEach(t => { tasks.push({ id: t.id, n: t.n, c: t.c, t: t.t, isOriginal: false }); });
+  return tasks;
+}
+
+function addCustomTask(dayNum, n, c, t) {
+  const custom = getCustomData();
+  if (!custom[dayNum]) custom[dayNum] = { added: [], deleted: [] };
+  const id = 'c-' + Date.now();
+  custom[dayNum].added.push({ id, n, c, t });
+  setCustomData(custom);
+  return id;
+}
+
+function editCustomTask(dayNum, taskId, n, c, t) {
+  if (taskId.startsWith('o-')) {
+    // Editing an original task: delete original + add as custom
+    const custom = getCustomData();
+    if (!custom[dayNum]) custom[dayNum] = { added: [], deleted: [] };
+    if (!custom[dayNum].deleted.includes(taskId)) {
+      custom[dayNum].deleted.push(taskId);
+    }
+    const newId = 'c-' + Date.now();
+    custom[dayNum].added.push({ id: newId, n, c, t });
+    setCustomData(custom);
+    return newId;
+  } else {
+    // Editing a custom task
+    const custom = getCustomData();
+    if (!custom[dayNum] || !custom[dayNum].added) return;
+    const idx = custom[dayNum].added.findIndex(a => a.id === taskId);
+    if (idx >= 0) {
+      custom[dayNum].added[idx] = { id: taskId, n, c, t };
+    }
+    setCustomData(custom);
+  }
+}
+
+function deleteTask(dayNum, taskId) {
+  const custom = getCustomData();
+  if (!custom[dayNum]) custom[dayNum] = { added: [], deleted: [] };
+  if (taskId.startsWith('o-')) {
+    if (!custom[dayNum].deleted.includes(taskId)) {
+      custom[dayNum].deleted.push(taskId);
+    }
+  } else {
+    if (custom[dayNum].added) {
+      custom[dayNum].added = custom[dayNum].added.filter(a => a.id !== taskId);
+    }
+  }
+  // Also clear completion for this task
+  const c = getCompleted();
+  if (c[dayNum]) { delete c[dayNum][taskId]; setCompleted(c); }
+  setCustomData(custom);
+  updateStats();
+  renderCurrentView();
+}
+
+function resetDayTasks(dayNum) {
+  const custom = getCustomData();
+  delete custom[dayNum];
+  setCustomData(custom);
+  const c = getCompleted();
+  delete c[dayNum];
+  setCompleted(c);
+  updateStats();
+  renderCurrentView();
+}
+
+function dayAllDone(dayNum) {
+  const tasks = getMergedTasks(dayNum);
+  if (!tasks.length) return false;
+  const c = getCompleted();
+  if (!c[dayNum]) return false;
+  return tasks.every(t => c[dayNum][t.id]);
+}
+
+function dayDoneCount(dayNum) {
+  const tasks = getMergedTasks(dayNum);
+  if (!tasks.length) return 0;
+  const c = getCompleted();
+  if (!c[dayNum]) return 0;
+  return tasks.filter(t => c[dayNum][t.id]).length;
+}
+
+function totalCompletedDays() {
+  let count = 0;
+  for (let i = 1; i <= 120; i++) {
+    const tasks = getMergedTasks(i);
+    if (tasks.length > 0 && dayAllDone(i)) count++;
+  }
+  return count;
+}
+
+// ===== Modal =====
+let modalDay = null;
+let modalTaskId = null;
+
+function openAddModal(dayNum) {
+  modalDay = dayNum;
+  modalTaskId = null;
+  document.getElementById('modalTitle').textContent = '➕ 添加任务 — Day ' + dayNum;
+  document.getElementById('modalTaskName').value = '';
+  document.getElementById('modalTaskContent').value = '';
+  document.getElementById('modalTaskTime').value = '';
+  document.getElementById('taskModal').classList.add('show');
+  setTimeout(() => document.getElementById('modalTaskName').focus(), 100);
+}
+
+function openEditModal(dayNum, taskId, n, c, t) {
+  modalDay = dayNum;
+  modalTaskId = taskId;
+  document.getElementById('modalTitle').textContent = '✏️ 编辑任务 — Day ' + dayNum;
+  document.getElementById('modalTaskName').value = n;
+  document.getElementById('modalTaskContent').value = c;
+  document.getElementById('modalTaskTime').value = t;
+  document.getElementById('taskModal').classList.add('show');
+  setTimeout(() => document.getElementById('modalTaskName').focus(), 100);
+}
+
+function closeModal() {
+  document.getElementById('taskModal').classList.remove('show');
+  modalDay = null;
+  modalTaskId = null;
+}
+
+function saveTaskFromModal() {
+  const n = document.getElementById('modalTaskName').value.trim();
+  const c = document.getElementById('modalTaskContent').value.trim();
+  const t = document.getElementById('modalTaskTime').value.trim();
+  if (!n) { alert('任务名称不能为空'); return; }
+  if (!c) { alert('任务内容不能为空'); return; }
+
+  if (modalTaskId) {
+    editCustomTask(modalDay, modalTaskId, n, c, t);
+  } else {
+    addCustomTask(modalDay, n, c, t);
+  }
+  closeModal();
+  updateStats();
+  renderCurrentView();
+}
+
+// Close modal on overlay click
+document.addEventListener('click', function(e) {
+  if (e.target.id === 'taskModal') closeModal();
+});
+
+// ===== 主题
+function getTheme() { return localStorage.getItem(THEME_KEY) || 'light'; }
+function setTheme(t) { localStorage.setItem(THEME_KEY, t); applyTheme(t); }
+function applyTheme(t) {
+  if (t === 'dark') { document.body.classList.add('dark'); document.getElementById('themeToggle').textContent = '☀️'; }
+  else { document.body.classList.remove('dark'); document.getElementById('themeToggle').textContent = '🌙'; }
+}
+function toggleTheme() { setTheme(getTheme() === 'dark' ? 'light' : 'dark'); }
+
+// 导航
+function showDashboard() {
+  currentView = 'dashboard';
+  updateNavActive('dashboard');
+  renderCurrentView();
+}
+function showResources() {
+  currentView = 'resources';
+  updateNavActive('resources');
+  renderCurrentView();
+}
+function showDay(dayNum) {
+  currentView = 'day';
+  currentDay = dayNum;
+  updateNavActive('day' + dayNum);
+  window.location.hash = 'day' + dayNum;
+  renderCurrentView();
+}
+function updateNavActive(id) {
+  document.querySelectorAll('.nav-link-item, .nav-day').forEach(el => el.classList.remove('active'));
+  const el = document.querySelector(`[data-nav="${id}"]`) || document.querySelector(`[data-day="${id.replace('day','')}"]`);
+  if (el) el.classList.add('active');
+}
+
+function prevDay() { if (currentDay > 1) showDay(currentDay - 1); }
+function nextDay() { if (currentDay < 120) showDay(currentDay + 1); }
+
+// 键盘导航
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  if (e.key === 'ArrowLeft' && currentView === 'day') prevDay();
+  if (e.key === 'ArrowRight' && currentView === 'day') nextDay();
+});
+
+// 侧边栏（移动端）
+function toggleSidebar() {
+  const sb = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlay');
+  sb.classList.toggle('open');
+  overlay.classList.toggle('show');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+}
+
+// 统计
+function updateStats() {
+  document.getElementById('completedCount').textContent = totalCompletedDays();
+}
+
+// 渲染
+function renderCurrentView() {
+  const content = document.getElementById('content');
+  switch (currentView) {
+    case 'dashboard': content.innerHTML = renderDashboard(); break;
+    case 'day': content.innerHTML = renderDayDetail(currentDay); bindDayCheckboxes(); break;
+    case 'resources': content.innerHTML = renderResources(); bindResourceTabs(); break;
+  }
+  updateStats();
+  renderSidebar();
+}
+
+function renderDashboard() {
+  const completed = totalCompletedDays();
+  const m1 = monthCompletion(1, 30);
+  const m2 = monthCompletion(31, 60);
+  const m3 = monthCompletion(61, 90);
+  const m4 = monthCompletion(91, 120);
+  return `
+    <div class="dashboard">
+      <div class="goal-cards">
+        <div class="goal-card">
+          <div class="goal-icon">🎧</div>
+          <div class="goal-name">听力 Listening</div>
+          <div class="goal-target">目标 6.5 → 冲刺 7.0</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(completed/120*100,100)}%"></div></div>
+          <div class="progress-label"><span>总进度</span><span>${completed}/120 天</span></div>
+        </div>
+        <div class="goal-card">
+          <div class="goal-icon">📖</div>
+          <div class="goal-name">阅读 Reading</div>
+          <div class="goal-target">目标 6.5 → 冲刺 7.0</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(completed/120*100,100)}%"></div></div>
+          <div class="progress-label"><span>总进度</span><span>${completed}/120 天</span></div>
+        </div>
+        <div class="goal-card">
+          <div class="goal-icon">✍️</div>
+          <div class="goal-name">写作 Writing</div>
+          <div class="goal-target">目标 6.0 → 冲刺 6.5</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(completed/120*100,100)}%"></div></div>
+          <div class="progress-label"><span>总进度</span><span>${completed}/120 天</span></div>
+        </div>
+        <div class="goal-card">
+          <div class="goal-icon">🗣️</div>
+          <div class="goal-name">口语 Speaking</div>
+          <div class="goal-target">目标 6.0 → 冲刺 6.5</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(completed/120*100,100)}%"></div></div>
+          <div class="progress-label"><span>总进度</span><span>${completed}/120 天</span></div>
+        </div>
+      </div>
+
+      <div class="section-title">每月里程碑</div>
+      <table class="milestone-table">
+        <thead><tr><th>月份</th><th>真题使用</th><th>听力</th><th>阅读</th><th>写作</th><th>口语</th><th>进度</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="month-tag" style="background:var(--tag-bg-month1);color:var(--tag-text-month1)">Month 1</span></td>
+            <td>剑10-11</td><td>Sec1-2 70%+</td><td>不限时 60%+</td><td>了解题型+看范文</td><td>了解流程+跟读</td>
+            <td><div class="progress-bar"><div class="progress-fill" style="width:${m1}%"></div></div><span style="font-size:0.7rem">${m1}%</span></td>
+          </tr>
+          <tr>
+            <td><span class="month-tag" style="background:var(--tag-bg-month2);color:var(--tag-text-month2)">Month 2</span></td>
+            <td>剑12-14</td><td>Sec3-4 60%+</td><td>不限时 70%+</td><td>能限时写完</td><td>Part1 流利</td>
+            <td><div class="progress-bar"><div class="progress-fill" style="width:${m2}%"></div></div><span style="font-size:0.7rem">${m2}%</span></td>
+          </tr>
+          <tr>
+            <td><span class="month-tag" style="background:var(--tag-bg-month3);color:var(--tag-text-month3)">Month 3</span></td>
+            <td>剑15-17</td><td>全套 6.0+</td><td>限时 6.0+</td><td>批改 ≥6.0</td><td>模考 5.5-6.0</td>
+            <td><div class="progress-bar"><div class="progress-fill" style="width:${m3}%"></div></div><span style="font-size:0.7rem">${m3}%</span></td>
+          </tr>
+          <tr>
+            <td><span class="month-tag" style="background:var(--tag-bg-month4);color:var(--tag-text-month4)">Month 4</span></td>
+            <td>剑18-19</td><td>稳定 6.5+</td><td>稳定 6.5+</td><td>稳定 6.0+</td><td>稳定 6.0+</td>
+            <td><div class="progress-bar"><div class="progress-fill" style="width:${m4}%"></div></div><span style="font-size:0.7rem">${m4}%</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="chart-row">
+        <div class="chart-box">
+          <div class="section-title">时间分配参考</div>
+          <div class="pie-chart"></div>
+          <div class="pie-legend">
+            <span><span class="pie-dot" style="background:#E8485F"></span> 听力 25%</span>
+            <span><span class="pie-dot" style="background:#3182ce"></span> 阅读 20%</span>
+            <span><span class="pie-dot" style="background:#38a169"></span> 写作 20%</span>
+            <span><span class="pie-dot" style="background:#d69e2e"></span> 口语 20%</span>
+            <span><span class="pie-dot" style="background:#805ad5"></span> 单词+语法 15%</span>
+          </div>
+        </div>
+        <div class="chart-box">
+          <div class="section-title">关键提醒</div>
+          <ul class="tips-list">
+            <li>真题不要浪费：剑 10-17 用于练习和精析，剑 18-19 留给第 4 个月模考</li>
+            <li>每天 4h 是底线，如果某天实在没时间，至少保证单词+听力 1h</li>
+            <li>每周日必须休息半天，否则第 3 个月就会 burnout</li>
+            <li>AI 批改是省钱的利器，但不完全替代人工批改——第 3 个月至少淘宝批改 4-5 篇</li>
+            <li>italki 模考 3-5 次是唯一值得花大钱的地方</li>
+            <li>串题是口语提分的关键，不要背答案！准备故事素材→自然讲述</li>
+            <li>拼写是听力的隐形杀手——每月必须有拼错词清单</li>
+            <li>考前 3 天不做新题——只看错题+模板+素材</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section-title">目标分数计算</div>
+      <div style="background:var(--card-bg);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow-sm);border:1px solid var(--border);text-align:center">
+        <p style="font-size:0.95rem;margin-bottom:8px"><strong>保底目标</strong>：听力 6.5 + 阅读 6.5 + 写作 6.0 + 口语 6.0 = <span style="color:var(--accent);font-size:1.2rem;font-weight:700">总分 6.5</span></p>
+        <p style="font-size:0.95rem"><strong>冲刺目标</strong>：听力 7.0 + 阅读 7.0 + 写作 6.5 + 口语 6.5 = <span style="color:var(--accent);font-size:1.2rem;font-weight:700">总分 7.0</span></p>
+      </div>
+    </div>
+  `;
+}
+
+function monthCompletion(start, end) {
+  let done = 0, total = 0;
+  for (let i = start; i <= end; i++) {
+    const d = days.find(x => x.day === i);
+    if (d && d.tasks.length > 0) {
+      total++;
+      if (dayAllDone(i)) done++;
+    }
+  }
+  return total > 0 ? Math.round(done / total * 100) : 0;
+}
+
+function renderDayDetail(dayNum) {
+  const d = days.find(x => x.day === dayNum);
+  if (!d) return '<p>数据未找到</p>';
+  const w = weeks.find(x => x.range[0] <= dayNum && x.range[1] >= dayNum);
+  const m = months.find(x => x.id === (w ? w.month : 1));
+  const weekTitle = w ? w.title : '';
+  const tasks = getMergedTasks(dayNum);
+  const doneCount = dayDoneCount(dayNum);
+  const totalTasks = tasks.length;
+  const isComplete = totalTasks > 0 && doneCount === totalTasks;
+  const tagClass = m ? m.color : 'month1';
+
+  let tasksHtml = '';
+  window.__taskData = window.__taskData || {};
+  tasks.forEach((t, idx) => {
+    const done = isTaskDone(dayNum, t.id);
+    const isOrig = t.isOriginal;
+    var dataKey = dayNum + '_' + idx;
+    window.__taskData[dataKey] = { day: dayNum, id: t.id, n: t.n, c: t.c, t: t.t };
+    tasksHtml += '\
+      <div class="task-card ' + (done ? 'completed-task' : '') + '">\
+        <div class="task-checkbox ' + (done ? 'checked' : '') + '" onclick="toggleTask(' + dayNum + ',\'' + t.id + '\')">' + (done ? '✓' : '') + '</div>\
+        <div class="task-body">\
+          <div class="task-name">' + (isOrig ? '' : '<span style="font-size:0.6rem;color:var(--accent);vertical-align:top">🖊️ </span>') + t.n + '</div>\
+          <div class="task-content">' + t.c + '</div>\
+          <span class="task-time">' + t.t + '</span>\
+        </div>\
+        <div class="task-actions">\
+          <button class="task-action-btn" title="编辑" onclick="event.stopPropagation();openEditFromKey(\'' + dataKey + '\')">✏️</button>\
+          <button class="task-action-btn del-btn" title="删除" onclick="event.stopPropagation();if(confirm(\'确定删除此任务？\'))deleteTask(' + dayNum + ',\'' + t.id + '\')">🗑️</button>\
+        </div>\
+      </div>';
+  });
+
+  // Add task button
+  tasksHtml += '<button class="add-task-btn" onclick="openAddModal(' + dayNum + ')">\
+    <span style="font-size:1.2rem;line-height:1">+</span> 添加任务\
+  </button>';
+
+  let linksHtml = '';
+  if (d.links) {
+    linksHtml = `<div class="links-section"><h4>📺 今日课程链接</h4>${d.links}</div>`;
+  }
+
+  let noteHtml = '';
+  if (d.note) {
+    noteHtml = `<div class="day-note">${d.note.replace(/\n/g,'<br>')}</div>`;
+  }
+
+  // Check if day has custom modifications
+  const custom = getCustomData();
+  const hasCustom = custom[dayNum] && ((custom[dayNum].added && custom[dayNum].added.length > 0) || (custom[dayNum].deleted && custom[dayNum].deleted.length > 0));
+  const resetBtn = hasCustom ? '<button class="reset-tasks-btn" onclick="if(window.confirm(\'恢复为原始任务列表？\'))resetDayTasks(' + dayNum + ')" title="恢复默认">♻️ 恢复默认</button>' : '';
+
+  const progressDots = totalTasks > 0 ? doneCount + '/' + totalTasks : '无任务';
+  const customTag = hasCustom ? ' <span style="font-size:0.7rem;color:var(--accent);font-weight:600">(已自定义)</span>' : '';
+
+  return '\
+    <div class="day-detail">\
+      <div class="day-header">\
+        <div class="day-info">\
+          <h2>Day ' + dayNum + ' — ' + d.title + customTag + '</h2>\
+          <div class="day-meta">' + weekTitle + ' · ' + m.name + ' · 完成进度：' + progressDots + ' ' + (isComplete ? '✅' : '') + ' ' + resetBtn + '</div>\
+        </div>\
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">\
+          <span class="day-tag" style="background:var(--tag-bg-' + tagClass + ');color:var(--tag-text-' + tagClass + ')">' + (m.name.split('：')[1] || m.name) + '</span>\
+          <div class="day-nav-btns">\
+            <button class="day-nav-btn" onclick="prevDay()" ' + (dayNum<=1?'disabled':'') + '>←</button>\
+            <button class="day-nav-btn" onclick="nextDay()" ' + (dayNum>=120?'disabled':'') + '>→</button>\
+          </div>\
+        </div>\
+      </div>\
+      ' + tasksHtml + '\
+      ' + noteHtml + '\
+      ' + linksHtml + '\
+    </div>';
+}
+
+function openEditFromKey(key) {
+  var data = window.__taskData && window.__taskData[key];
+  if (!data) return;
+  openEditModal(data.day, data.id, data.n, data.c, data.t);
+}
+
+function bindDayCheckboxes() {}
+
+function renderResources() {
+  let html = '<div style="animation:fadeIn 0.3s ease">';
+  html += '<div class="section-title">📚 免费学习资源库</div>';
+  html += '<div class="resource-tabs" id="resourceTabs">';
+  const cats = ['全部','语法','听力','阅读','写作','口语','综合'];
+  cats.forEach(c => {
+    html += `<button class="resource-tab ${currentResourceCat===c?'active':''}" data-cat="${c}" onclick="setResourceCat('${c}')">${c}</button>`;
+  });
+  html += '</div>';
+  html += '<div class="resource-cards">';
+  const filtered = currentResourceCat === '全部' ? resources : resources.filter(r => r.cat === currentResourceCat);
+  filtered.forEach(r => {
+    const linkHtml = r.url === '#' ? r.desc : `<a href="${r.url}" target="_blank" class="res-link">${r.url}</a>`;
+    html += `
+      <div class="resource-card">
+        <div class="res-name">${r.name} ${r.upgrade ? '<span class="upgrade-badge">💰 升级</span>' : ''}</div>
+        <div class="res-desc">${r.desc}</div>
+        ${linkHtml}
+      </div>`;
+  });
+  html += '</div></div>';
+  return html;
+}
+
+function setResourceCat(cat) {
+  currentResourceCat = cat;
+  renderCurrentView();
+}
+function bindResourceTabs() {
+  // handled by inline onclick
+}
+
+// 侧边栏渲染
+function renderSidebar() {
+  const nav = document.getElementById('sidebarNav');
+  // Keep the first two nav-link-item, rebuild month sections
+  let html = '';
+  const existingLinks = nav.querySelectorAll('.nav-link-item');
+  existingLinks.forEach(el => { html += el.outerHTML; });
+
+  months.forEach(m => {
+    const mWeeks = weeks.filter(w => w.month === m.id);
+    html += `<div class="nav-section">`;
+    html += `<div class="nav-section-title" onclick="this.parentElement.classList.toggle('collapsed')"><span class="arrow">▼</span> ${m.name}</div>`;
+    html += `<div class="nav-sub">`;
+    mWeeks.forEach(w => {
+      html += `<div class="nav-week" onclick="event.stopPropagation();"><div class="nav-week-title" onclick="this.parentElement.classList.toggle('collapsed')"><span class="arrow">▼</span> ${w.title} <span style="font-size:0.7rem;opacity:0.5">${w.sub}</span></div>`;
+      html += `<div class="nav-days">`;
+      for (let d = w.range[0]; d <= w.range[1]; d++) {
+        const done = dayAllDone(d);
+        const partial = dayDoneCount(d);
+        const mergedTasks = getMergedTasks(d);
+        const hasTasks = mergedTasks.length > 0;
+        const cls = (currentView === 'day' && currentDay === d) ? 'active' : (done ? 'completed' : '');
+        html += '<div class="nav-day ' + cls + '" data-day="' + d + '" data-nav="day' + d + '" onclick="showDay(' + d + ')" title="Day ' + d + (hasTasks ? ' (' + partial + '/' + mergedTasks.length + ')' : '') + '">' + d + '</div>';
+      }
+      html += `</div></div>`;
+    });
+    html += `</div></div>`;
+  });
+
+  nav.innerHTML = html;
+
+  // Re-update active state
+  if (currentView === 'dashboard') {
+    const el = nav.querySelector('[data-nav="dashboard"]');
+    if (el) el.classList.add('active');
+  } else if (currentView === 'resources') {
+    const el = nav.querySelector('[data-nav="resources"]');
+    if (el) el.classList.add('active');
+  } else if (currentView === 'day') {
+    const el = nav.querySelector(`[data-nav="day${currentDay}"]`);
+    if (el) el.classList.add('active');
+  }
+}
+
+// 初始化
+function init() {
+  applyTheme(getTheme());
+
+  // URL hash
+  const hash = window.location.hash;
+  if (hash && hash.startsWith('#day')) {
+    const dn = parseInt(hash.replace('#day', ''));
+    if (dn >= 1 && dn <= 120) {
+      showDay(dn);
+    } else {
+      showDashboard();
+    }
+  } else {
+    showDashboard();
+  }
+
+  window.addEventListener('hashchange', () => {
+    const h = window.location.hash;
+    if (h && h.startsWith('#day')) {
+      const dn = parseInt(h.replace('#day', ''));
+      if (dn >= 1 && dn <= 120) showDay(dn);
+    }
+  });
+}
+
+init();
+</script>
+<!-- 任务编辑弹窗 -->
+<div class="modal-overlay" id="taskModal">
+<div class="modal-box">
+<h3 id="modalTitle">编辑任务</h3>
+<div class="modal-field">
+<label>任务名称</label>
+<input type="text" id="modalTaskName" placeholder="如：单词" maxlength="50">
+</div>
+<div class="modal-field">
+<label>具体内容</label>
+<textarea id="modalTaskContent" placeholder="如：扇贝单词 · 雅思核心 · 新词 50" maxlength="300"></textarea>
+</div>
+<div class="modal-field">
+<label>时长</label>
+<input type="text" id="modalTaskTime" placeholder="如：30min" maxlength="20">
+</div>
+<div class="modal-btns">
+<button class="modal-btn secondary" onclick="closeModal()">取消</button>
+<button class="modal-btn primary" id="modalSaveBtn" onclick="saveTaskFromModal()">保存</button>
+</div>
+</div>
+</div>
+</body>
+</html>
