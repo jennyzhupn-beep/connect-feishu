@@ -1,0 +1,3 @@
+name = "reading-proxy"
+main = "reading-proxy-worker.js"
+compatibility_date = "2026-07-13"

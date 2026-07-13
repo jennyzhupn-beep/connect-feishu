@@ -10,5 +10,9 @@ tmp_task.json
 oauth_exchange.ps1
 oauth_exchange2.ps1
 
+# Token 状态文件（含 access_token）
+.token_state.json
+task_tmp.json
+
 # Node
 node_modules/

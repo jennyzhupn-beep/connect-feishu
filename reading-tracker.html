@@ -1,0 +1,1579 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📚 阅读财 — Poppy 的读书 & 影片管理</title>
+<style>
+/* ===== CSS 变量 ===== */
+:root {
+  --bg: #fdf2f8;
+  --card-bg: #ffffff;
+  --text: #2c3e50;
+  --text-secondary: #6b7c93;
+  --text-muted: #a0aec0;
+  --border: #f0d5e7;
+  --header-bg: linear-gradient(135deg, #831843 0%, #be185d 100%);
+  --accent: #ec4899;
+  --accent-light: rgba(236,72,153,0.1);
+  --accent-hover: #db2777;
+  --book-color: #8b5cf6;
+  --book-bg: rgba(139,92,246,0.1);
+  --movie-color: #f59e0b;
+  --movie-bg: rgba(245,158,11,0.1);
+  --success: #38a169;
+  --success-bg: rgba(56,161,105,0.1);
+  --warning: #d69e2e;
+  --warning-bg: rgba(214,158,46,0.1);
+  --progress-bg: #fce7f3;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+  --shadow: 0 4px 16px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-lg: 16px;
+  --transition: 0.2s ease;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+  --scrollbar-thumb: #f0c5db;
+  --scrollbar-track: transparent;
+}
+
+body.dark {
+  --bg: #1a1025;
+  --card-bg: #2d2238;
+  --text: #e2e8f0;
+  --text-secondary: #a0aec0;
+  --text-muted: #718096;
+  --border: #4a3458;
+  --header-bg: linear-gradient(135deg, #500724 0%, #831843 100%);
+  --accent-light: rgba(236,72,153,0.2);
+  --book-bg: rgba(167,139,250,0.15);
+  --movie-bg: rgba(252,211,77,0.15);
+  --success-bg: rgba(56,161,105,0.2);
+  --warning-bg: rgba(214,158,46,0.2);
+  --progress-bg: #3d2a44;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.2);
+  --shadow: 0 4px 16px rgba(0,0,0,0.3);
+  --shadow-lg: 0 8px 30px rgba(0,0,0,0.4);
+  --scrollbar-thumb: #4a3458;
+}
+
+/* ===== 全局 ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  transition: background var(--transition), color var(--transition);
+  min-height: 100vh;
+}
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--scrollbar-track); }
+::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
+
+/* ===== Header ===== */
+.header {
+  background: var(--header-bg);
+  color: #fff;
+  padding: 28px 0 24px;
+  position: sticky; top: 0; z-index: 50;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+.header-inner {
+  max-width: 1000px; margin: 0 auto; padding: 0 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 16px;
+}
+.header-left h1 {
+  font-size: 1.5rem; font-weight: 700; letter-spacing: 1px;
+  display: flex; align-items: center; gap: 10px;
+}
+.header-left h1 span { color: #f9a8d4; }
+.header-left .subtitle { font-size: 0.82rem; color: rgba(255,255,255,0.6); margin-top: 2px; }
+.header-right { display: flex; align-items: center; gap: 12px; }
+.btn-theme {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.1);
+  color: #fff; cursor: pointer; font-size: 1.1rem;
+  display: flex; align-items: center; justify-content: center;
+  transition: all var(--transition);
+}
+.btn-theme:hover { background: rgba(255,255,255,0.2); }
+.proxy-status {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; cursor: pointer;
+  transition: all var(--transition);
+  border: 1px solid rgba(255,255,255,0.3);
+}
+.proxy-status.online { background: rgba(56,161,105,0.3); border-color: rgba(56,161,105,0.6); }
+.proxy-status.offline { background: rgba(232,72,95,0.3); border-color: rgba(232,72,95,0.6); }
+.proxy-status.checking { animation: coverPulse 1s ease-in-out infinite; }
+@keyframes coverPulse { 0%,100%{opacity:0.6} 50%{opacity:0.3} }
+
+/* ===== Stats Bar ===== */
+.stats-bar {
+  max-width: 1000px; margin: -12px auto 0; padding: 0 24px;
+  position: sticky; top: 100px; z-index: 40;
+}
+.stats-inner { display: flex; gap: 10px; flex-wrap: wrap; }
+.stat-card {
+  background: var(--card-bg); border-radius: var(--radius);
+  padding: 12px 16px; box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+  flex: 1; min-width: 100px;
+  transition: all var(--transition); cursor: pointer;
+}
+.stat-card:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
+.stat-card.active { border-color: var(--accent); background: var(--accent-light); }
+.stat-icon { font-size: 1.3rem; }
+.stat-info .stat-num { font-size: 1.2rem; font-weight: 700; color: var(--text); line-height: 1.2; }
+.stat-info .stat-lbl { font-size: 0.72rem; color: var(--text-secondary); }
+
+/* ===== Main Content ===== */
+.main-content { max-width: 1000px; margin: 0 auto; padding: 24px 24px 80px; }
+
+/* ===== Toolbar ===== */
+.toolbar {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 12px; margin-bottom: 24px;
+}
+.tab-group {
+  display: flex; gap: 4px; background: var(--card-bg);
+  border-radius: var(--radius); padding: 4px;
+  border: 1px solid var(--border); box-shadow: var(--shadow-sm);
+}
+.tab-btn {
+  padding: 8px 18px; border: none; border-radius: var(--radius-sm);
+  background: transparent; color: var(--text-secondary);
+  cursor: pointer; font-size: 0.9rem; font-weight: 500;
+  transition: all var(--transition); white-space: nowrap; font-family: inherit;
+}
+.tab-btn:hover { color: var(--text); background: var(--progress-bg); }
+.tab-btn.active { background: var(--accent); color: #fff; }
+.tab-count { font-size: 0.75rem; opacity: 0.7; margin-left: 2px; }
+.toolbar-right { display: flex; gap: 8px; align-items: center; }
+.sort-select {
+  padding: 8px 12px; border: 1px solid var(--border);
+  border-radius: var(--radius-sm); background: var(--card-bg);
+  color: var(--text); font-size: 0.85rem; cursor: pointer;
+  font-family: inherit; box-shadow: var(--shadow-sm);
+}
+
+/* ===== FAB ===== */
+.fab {
+  position: fixed; bottom: 32px; right: 32px;
+  width: 56px; height: 56px; border-radius: 50%;
+  background: var(--accent); color: #fff; border: none;
+  font-size: 1.6rem; cursor: pointer;
+  box-shadow: 0 4px 20px rgba(236,72,153,0.4);
+  display: flex; align-items: center; justify-content: center;
+  transition: all var(--transition); z-index: 30;
+}
+.fab:hover { transform: scale(1.08); box-shadow: 0 6px 28px rgba(236,72,153,0.5); }
+
+/* ===== 横向卡片 ===== */
+.card-list { display: flex; flex-direction: column; gap: 16px; }
+.card {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: all var(--transition);
+  display: flex;
+  overflow: hidden;
+  position: relative;
+}
+.card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+
+/* 封面区域 */
+.card-cover-wrap {
+  width: 140px; min-width: 140px; min-height: 160px;
+  position: relative; overflow: hidden;
+  background: linear-gradient(135deg, #fce7f3 0%, #f0c5db 100%);
+  display: flex; align-items: center; justify-content: center;
+}
+body.dark .card-cover-wrap { background: linear-gradient(135deg, #3d2a44 0%, #4a3458 100%); }
+.card-cover-wrap.book-cover { background: linear-gradient(135deg, #ede9fe 0%, #d8cef8 100%); }
+body.dark .card-cover-wrap.book-cover { background: linear-gradient(135deg, #2d2440 0%, #3d3058 100%); }
+.card-cover-wrap.movie-cover { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); }
+body.dark .card-cover-wrap.movie-cover { background: linear-gradient(135deg, #3d3020 0%, #4a3828 100%); }
+
+.card-cover-img {
+  width: 100%; height: 100%; object-fit: contain;
+  display: block;
+}
+.card-cover-wrap.has-cover { background: var(--card-bg); }
+.card-cover-placeholder {
+  font-size: 2.5rem; font-weight: 700;
+  font-family: var(--font-mono);
+}
+.cover-set-hint {
+  position: absolute; bottom: 4px; left: 0; right: 0;
+  text-align: center; font-size: 0.63rem;
+  color: rgba(0,0,0,0.3); cursor: pointer;
+  padding: 4px 0; transition: all var(--transition);
+  font-family: inherit; font-weight: 500;
+}
+.cover-set-hint:hover { color: var(--accent); background: rgba(236,72,153,0.08); }
+body.dark .cover-set-hint { color: rgba(255,255,255,0.3); }
+body.dark .cover-set-hint:hover { color: var(--accent); background: rgba(236,72,153,0.12); }
+.card-cover-wrap.book-cover .card-cover-placeholder { color: rgba(139,92,246,0.2); }
+body.dark .card-cover-wrap.book-cover .card-cover-placeholder { color: rgba(167,139,250,0.15); }
+.card-cover-wrap.movie-cover .card-cover-placeholder { color: rgba(245,158,11,0.2); }
+body.dark .card-cover-wrap.movie-cover .card-cover-placeholder { color: rgba(252,211,77,0.15); }
+
+
+/* 内容区域 */
+.card-content {
+  flex: 1; min-width: 0;
+  padding: 16px 18px;
+  display: flex; flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+}
+.card-title {
+  font-size: 1.05rem; font-weight: 700; color: var(--text);
+  line-height: 1.3;
+  display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.card-subtitle {
+  font-size: 0.82rem; color: var(--text-secondary);
+  min-height: 1.2em;
+}
+.card-meta-row {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.status-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 10px; border-radius: 12px;
+  font-size: 0.7rem; font-weight: 600;
+}
+.status-badge.reading { background: var(--warning-bg); color: var(--warning); }
+.status-badge.completed { background: var(--success-bg); color: var(--success); }
+.status-badge.watching { background: var(--movie-bg); color: var(--movie-color); }
+.type-badge {
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 2px 10px; border-radius: 12px;
+  font-size: 0.7rem; font-weight: 600;
+}
+.type-badge.book { background: var(--book-bg); color: var(--book-color); }
+.type-badge.movie { background: var(--movie-bg); color: var(--movie-color); }
+.card-date-info {
+  font-size: 0.7rem; color: var(--text-muted);
+  display: flex; gap: 12px; flex-wrap: wrap;
+}
+.card-date-info .read-date { color: var(--accent); font-weight: 500; }
+.card-note-preview {
+  font-size: 0.78rem; color: var(--text-secondary);
+  background: var(--bg); border-radius: 6px;
+  padding: 8px 12px; margin-top: 4px;
+  line-height: 1.5;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden;
+  border-left: 2px solid var(--accent);
+}
+.card-note-preview .note-prefix { color: var(--accent); font-size: 0.7rem; margin-right: 4px; }
+
+.card-actions {
+  position: absolute; top: 8px; right: 8px;
+  display: flex; gap: 4px; opacity: 0;
+  transition: opacity var(--transition); z-index: 2;
+}
+.card:hover .card-actions { opacity: 1; }
+.card-action-btn {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: none; background: rgba(0,0,0,0.5); color: #fff;
+  cursor: pointer; font-size: 0.75rem;
+  display: flex; align-items: center; justify-content: center;
+  transition: all var(--transition);
+  backdrop-filter: blur(4px);
+}
+.card-action-btn:hover { background: var(--accent); }
+.card-action-btn.delete:hover { background: #e53e3e; }
+
+/* ===== 空态 ===== */
+.empty-state {
+  text-align: center; padding: 80px 20px; color: var(--text-muted);
+}
+.empty-state .empty-icon { font-size: 4rem; margin-bottom: 16px; }
+.empty-state h3 { font-size: 1.2rem; color: var(--text-secondary); margin-bottom: 8px; }
+.empty-state p { font-size: 0.9rem; margin-bottom: 20px; }
+
+/* ===== Modal ===== */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5); z-index: 100;
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.2s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.modal {
+  background: var(--card-bg); border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  width: 100%; max-width: 520px; max-height: 85vh;
+  overflow-y: auto;
+  animation: slideUp 0.25s ease;
+}
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.modal-header h2 { font-size: 1.15rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.modal-close {
+  width: 32px; height: 32px; border-radius: 50%;
+  border: none; background: var(--progress-bg);
+  color: var(--text-secondary); cursor: pointer;
+  font-size: 1rem; display: flex; align-items: center; justify-content: center;
+  transition: all var(--transition);
+}
+.modal-close:hover { background: var(--accent); color: #fff; }
+.modal-body { padding: 20px 24px; }
+.modal-footer {
+  display: flex; gap: 10px; justify-content: flex-end;
+  padding: 16px 24px 20px;
+  border-top: 1px solid var(--border);
+}
+
+/* ===== 表单 ===== */
+.form-group { margin-bottom: 16px; }
+.form-label {
+  display: block; font-size: 0.85rem; font-weight: 600;
+  color: var(--text); margin-bottom: 6px;
+}
+.form-label .hint { font-weight: 400; color: var(--text-muted); font-size: 0.78rem; }
+.form-input, .form-textarea, .form-select {
+  width: 100%; padding: 10px 14px;
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--bg); color: var(--text);
+  font-size: 0.9rem; font-family: inherit;
+  transition: all var(--transition);
+}
+.form-input:focus, .form-textarea:focus, .form-select:focus {
+  outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light);
+}
+.form-textarea { resize: vertical; min-height: 80px; }
+.form-hint { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
+.type-toggle { display: flex; gap: 8px; }
+.type-toggle-btn {
+  flex: 1; padding: 10px; border: 1px solid var(--border);
+  border-radius: var(--radius-sm); background: var(--bg);
+  color: var(--text-secondary); cursor: pointer; font-size: 0.9rem;
+  font-weight: 500; text-align: center; transition: all var(--transition);
+  font-family: inherit;
+}
+.type-toggle-btn:hover { border-color: var(--accent); color: var(--text); }
+.type-toggle-btn.active.book { border-color: var(--book-color); background: var(--book-bg); color: var(--book-color); font-weight: 700; }
+.type-toggle-btn.active.movie { border-color: var(--movie-color); background: var(--movie-bg); color: var(--movie-color); font-weight: 700; }
+
+/* 阅读时间双模式 */
+.date-input-row { display: flex; gap: 8px; align-items: center; }
+.date-input-row .form-input { flex: 1; }
+.date-mode-toggle {
+  font-size: 0.72rem; color: var(--accent); cursor: pointer;
+  white-space: nowrap; user-select: none; padding: 4px 0;
+}
+.date-mode-toggle:hover { text-decoration: underline; }
+input[type="date"] {
+  flex: 1; padding: 10px 14px;
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--bg); color: var(--text);
+  font-size: 0.9rem; font-family: inherit; cursor: pointer;
+}
+
+/* 名称搜索行 */
+.name-search-row { display: flex; gap: 8px; }
+.name-search-row .form-input { flex: 1; }
+
+/* ===== 粘贴图片区 ===== */
+.paste-zone {
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-sm);
+  padding: 4px;
+  cursor: pointer;
+  transition: all var(--transition);
+  background: var(--bg);
+  outline: none;
+}
+.paste-zone:hover, .paste-zone:focus { border-color: var(--accent); background: var(--accent-light); }
+.paste-zone-inner {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 24px 16px;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  text-align: center;
+  pointer-events: none;
+}
+.paste-zone.has-image { border-color: var(--success); border-style: solid; }
+.paste-zone.has-image .paste-zone-inner { padding: 8px; }
+.paste-zone.has-image img {
+  width: 100%; border-radius: 4px; display: block;
+}
+
+/* 封面预览 */
+.cover-preview {
+  margin-top: 8px; display: flex; align-items: center; gap: 10px;
+}
+.cover-preview img {
+  width: 60px; height: 80px; object-fit: cover; border-radius: 6px;
+  border: 1px solid var(--border);
+}
+/* ===== 按钮 ===== */
+.btn {
+  padding: 10px 20px; border: none; border-radius: var(--radius-sm);
+  font-size: 0.9rem; font-weight: 600; cursor: pointer;
+  transition: all var(--transition); font-family: inherit;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-secondary { background: var(--progress-bg); color: var(--text); }
+.btn-secondary:hover { background: var(--border); }
+.btn-success { background: var(--success); color: #fff; }
+.btn-success:hover { filter: brightness(0.9); }
+.btn-danger { background: transparent; color: #e53e3e; border: 1px solid #e53e3e; }
+.btn-danger:hover { background: #e53e3e; color: #fff; }
+.btn-sm { padding: 6px 12px; font-size: 0.8rem; }
+
+/* ===== 详情弹窗 ===== */
+.detail-modal { max-width: 560px; }
+.detail-header-section {
+  display: flex; gap: 20px; padding-bottom: 16px;
+  border-bottom: 1px solid var(--border); margin-bottom: 16px;
+}
+.detail-cover {
+  width: 100px; height: 140px; border-radius: var(--radius-sm);
+  object-fit: contain; flex-shrink: 0;
+  background: linear-gradient(135deg, #fce7f3, #f0c5db);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2rem; color: rgba(0,0,0,0.1);
+}
+body.dark .detail-cover { background: linear-gradient(135deg, #3d2a44, #4a3458); }
+.detail-info { flex: 1; min-width: 0; }
+.detail-info h3 { font-size: 1.2rem; margin-bottom: 4px; }
+.detail-info .detail-subtitle { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 8px; min-height: 1.3em; }
+.detail-info .detail-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.detail-info .detail-date { font-size: 0.78rem; color: var(--text-muted); }
+.detail-actions-row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* 评分星星 */
+.star-rating { display: flex; gap: 4px; align-items: center; }
+.star-rating .star {
+  font-size: 1.4rem; cursor: pointer; color: #cbd5e0;
+  transition: all 0.1s; user-select: none;
+}
+body.dark .star-rating .star { color: #4a5568; }
+.star-rating .star.active { color: #f6ad55; }
+
+/* 笔记区域 */
+.notes-section { margin-top: 16px; }
+.notes-section h4 {
+  font-size: 0.95rem; font-weight: 700;
+  display: flex; align-items: center; gap: 6px;
+  margin-bottom: 12px;
+}
+.notes-count { font-size: 0.75rem; color: var(--text-muted); font-weight: 400; }
+.note-item {
+  background: var(--bg); border-radius: var(--radius-sm);
+  padding: 12px 16px; margin-bottom: 10px;
+  border: 1px solid var(--border);
+}
+.note-item .note-time {
+  font-size: 0.72rem; color: var(--text-muted);
+  font-family: var(--font-mono); margin-bottom: 6px;
+  display: flex; align-items: center; gap: 8px;
+}
+.note-item .note-content {
+  font-size: 0.9rem; color: var(--text); line-height: 1.6;
+  white-space: pre-wrap;
+}
+.note-delete {
+  font-size: 0.7rem; color: var(--text-muted); cursor: pointer;
+  background: none; border: none; padding: 2px 6px; border-radius: 4px;
+  transition: all var(--transition);
+}
+.note-delete:hover { color: #e53e3e; background: rgba(229,62,62,0.1); }
+.new-note-box { margin-top: 12px; }
+.new-note-box .form-textarea { margin-bottom: 8px; }
+
+/* ===== 确认弹窗 ===== */
+.confirm-modal { max-width: 380px; text-align: center; }
+.confirm-modal .modal-body p { margin-bottom: 20px; color: var(--text-secondary); line-height: 1.7; }
+
+/* ===== 封面搜索结果弹窗 ===== */
+.cover-search-modal { max-width: 480px; }
+.cover-results {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+  margin-top: 12px;
+}
+.cover-result {
+  border: 2px solid var(--border); border-radius: var(--radius-sm);
+  overflow: hidden; cursor: pointer; transition: all var(--transition);
+  background: var(--bg);
+}
+.cover-result:hover { border-color: var(--accent); transform: scale(1.03); }
+.cover-result.selected { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-light); }
+.cover-result img {
+  width: 100%; height: 150px; object-fit: cover; display: block;
+}
+.cover-result .cover-result-title {
+  padding: 6px 8px; font-size: 0.7rem; color: var(--text-secondary);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* ===== Footer ===== */
+.footer {
+  text-align: center; padding: 32px 20px;
+  color: var(--text-muted); font-size: 0.8rem;
+  max-width: 1000px; margin: 0 auto;
+}
+
+/* ===== 响应式 ===== */
+@media (max-width: 768px) {
+  .card-cover-wrap { width: 110px; min-width: 110px; }
+  .card-content { padding: 12px 14px; gap: 4px; }
+  .card-title { font-size: 0.95rem; }
+  .card-note-preview { font-size: 0.73rem; }
+  .header-inner { padding: 0 16px; }
+  .header-left h1 { font-size: 1.25rem; }
+  .stats-bar { top: 88px; }
+  .stat-card { padding: 10px 12px; min-width: 70px; }
+  .stat-info .stat-num { font-size: 1rem; }
+  .detail-header-section { flex-direction: column; align-items: center; text-align: center; }
+  .detail-info { text-align: center; }
+  .detail-actions-row { justify-content: center; }
+  .modal { max-width: 95vw; }
+  .cover-results { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 480px) {
+  .card { flex-direction: column; }
+  .card-cover-wrap { width: 100%; min-width: 100%; height: 180px; }
+  .toolbar { flex-direction: column; align-items: stretch; }
+  .toolbar-right { justify-content: space-between; }
+  .fab { bottom: 20px; right: 20px; width: 48px; height: 48px; font-size: 1.3rem; }
+  .header-inner { flex-direction: column; text-align: center; }
+}
+
+/* ===== Toast ===== */
+.toast {
+  position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%);
+  background: var(--text); color: var(--bg);
+  padding: 10px 24px; border-radius: 20px;
+  font-size: 0.85rem; font-weight: 600;
+  z-index: 200; box-shadow: var(--shadow-lg);
+  animation: slideUp 0.3s ease;
+  pointer-events: none;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="header-left">
+      <h1>📚 阅读<span>财</span></h1>
+      <div class="subtitle">Poppy 的读书 & 影片小书架</div>
+    </div>
+    <div class="header-right">
+      <span class="proxy-status" id="proxyStatus" title="豆瓣代理状态">🔗</span>
+      <button class="btn-theme" id="btnTheme" title="切换暗色模式" onclick="toggleTheme()">🌙</button>
+    </div>
+  </div>
+</div>
+
+<div class="stats-bar" id="statsBar">
+  <div class="stats-inner" id="statsInner"></div>
+</div>
+
+<div class="main-content">
+  <div class="toolbar">
+    <div class="tab-group" id="tabGroup"></div>
+    <div class="toolbar-right">
+      <select class="sort-select" id="sortSelect" onchange="renderCards()">
+        <option value="recent">🕐 最近添加</option>
+        <option value="completed">✅ 最近完成</option>
+        <option value="title">🔤 标题 A-Z</option>
+      </select>
+    </div>
+  </div>
+  <div class="card-list" id="cardGrid"></div>
+  <div class="footer">📖 由阅读财整理 · 每一本书都是一段旅程</div>
+</div>
+
+<button class="fab" id="fabBtn" title="新增书籍/影片" onclick="openAddModal()">＋</button>
+
+<div id="modalContainer"></div>
+<div id="toastContainer"></div>
+
+<script>
+// ===== 常量 =====
+var STORAGE_KEY = "reading_fortune_data";
+var THEME_KEY = "reading_fortune_theme";
+var FIREBASE_URL = "https://poppy-reading-default-rtdb.firebaseio.com";
+var _fireHash = "";
+
+function loadData() {
+  try { var r = localStorage.getItem(STORAGE_KEY); if (r) return JSON.parse(r); } catch(e) {}
+  return { items: [] };
+}
+// 保存：localStorage 立即写，Firebase 异步推（不阻塞 UI）
+function saveData(d) {
+  var json = JSON.stringify(d.items);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(d));
+  _fireHash = json;
+  var x = new XMLHttpRequest();
+  x.open("PUT", FIREBASE_URL + "/items.json", true);
+  x.setRequestHeader("Content-Type", "application/json");
+  x.timeout = 5000;
+  x.send(json);
+}
+// 启动：先显示本地数据，再从 Firebase 补充
+function fireBoot() {
+  if (!data || !data.items) return;
+  if (data.items.length > 0) _fireHash = JSON.stringify(data.items);
+  // 异步拉 Firebase
+  var x = new XMLHttpRequest();
+  x.open("GET", FIREBASE_URL + "/items.json", true);
+  x.timeout = 8000;
+  x.onload = function() {
+    if (x.status !== 200 || !x.responseText || x.responseText === "null") return;
+    try {
+      var cloud = JSON.parse(x.responseText);
+      if (!cloud || cloud.length === 0) return;
+      // 策略：云端数据更多时用云端（其他设备可能写了新数据）
+      if (cloud.length >= data.items.length) {
+        _fireHash = JSON.stringify(cloud);
+        data.items = cloud;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        renderAll();
+        showToast("☁️ 已同步 " + cloud.length + " 条");
+      } else {
+        // 本地更多 → 推本地到云端
+        _fireHash = JSON.stringify(data.items);
+        var px = new XMLHttpRequest();
+        px.open("PUT", FIREBASE_URL + "/items.json", true);
+        px.setRequestHeader("Content-Type", "application/json");
+        px.timeout = 5000;
+        px.send(_fireHash);
+      }
+    } catch(e) {}
+  };
+  x.send();
+  // 5 秒轮询
+  setInterval(function() {
+    var px = new XMLHttpRequest();
+    px.open("GET", FIREBASE_URL + "/items.json", true);
+    px.timeout = 5000;
+    px.onload = function() {
+      if (px.status !== 200) return;
+      try {
+        var c = JSON.parse(px.responseText);
+        if (!c || c.length === 0) return;
+        var h = JSON.stringify(c);
+        if (h !== _fireHash) {
+          _fireHash = h;
+          data.items = c;
+          localStorage.setItem(STORAGE_KEY, h);
+          renderAll();
+          showToast("☁️ 数据已更新");
+        }
+      } catch(e) {}
+    };
+    px.send();
+  }, 5000);
+}
+function genId(prefix) {
+  return prefix + '-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6);
+}
+function formatTime(isoStr) {
+  if (!isoStr) return '';
+  var d = new Date(isoStr);
+  var pad = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+function formatDateShort(isoStr) {
+  if (!isoStr) return '';
+  var d = new Date(isoStr);
+  return `${d.getMonth()+1}月${d.getDate()}日`;
+}
+function nowISO() {
+  var d = new Date();
+  var off = -d.getTimezoneOffset();
+  var sign = off >= 0 ? '+' : '-';
+  var h = String(Math.floor(Math.abs(off) / 60)).padStart(2, '0');
+  var m = String(Math.abs(off) % 60).padStart(2, '0');
+  return d.getFullYear() + '-' +
+    String(d.getMonth()+1).padStart(2,'0') + '-' +
+    String(d.getDate()).padStart(2,'0') + 'T' +
+    String(d.getHours()).padStart(2,'0') + ':' +
+    String(d.getMinutes()).padStart(2,'0') + ':' +
+    String(d.getSeconds()).padStart(2,'0') + sign + h + ':' + m;
+}
+
+
+function loadTheme() { return localStorage.getItem(THEME_KEY) || 'light'; }
+function saveTheme(theme) { localStorage.setItem(THEME_KEY, theme); }
+
+var currentTab = 'all';
+var data = loadData();
+if (!data || !data.items) data = { items: [] };
+
+// ===== 暗色模式 =====
+function applyTheme(theme) {
+  if (theme === 'dark') {
+    document.body.classList.add('dark');
+    document.getElementById('btnTheme').textContent = '☀️';
+  } else {
+    document.body.classList.remove('dark');
+    document.getElementById('btnTheme').textContent = '🌙';
+  }
+}
+function toggleTheme() {
+  var cur = document.body.classList.contains('dark') ? 'dark' : 'light';
+  applyTheme(cur === 'dark' ? 'light' : 'dark');
+  saveTheme(cur === 'dark' ? 'light' : 'dark');
+}
+applyTheme(loadTheme());
+
+// ===== 代理状态检测 =====
+var proxyOnline = false;
+
+function checkProxy() {
+  var el = document.getElementById("proxyStatus"); if (!el) return;
+  el.className = "proxy-status checking"; el.textContent = "⏳";
+  var x = new XMLHttpRequest();
+  x.open("GET", "http://localhost:3456/health", true);
+  x.timeout = 3000;
+  x.onload = function() {
+    if (x.status === 200) {
+      proxyOnline = true;
+      el.className = "proxy-status online"; el.textContent = "✅"; el.title = "代理已连接";
+    } else {
+      off();
+    }
+  };
+  x.onerror = function() { off(); };
+  x.ontimeout = function() { off(); };
+  x.send();
+  function off() { proxyOnline = false; el.className = "proxy-status offline"; el.textContent = "⚠️"; el.title = "代理未连接"; }
+}
+checkProxy();
+
+document.addEventListener('click', function(e) {
+  if (e.target.id === 'proxyStatus' && !proxyOnline) { checkProxy(); }
+});
+
+// ===== Toast =====
+function showToast(msg) {
+  var c = document.getElementById('toastContainer');
+  var el = document.createElement('div');
+  el.className = 'toast'; el.textContent = msg;
+  c.appendChild(el);
+  setTimeout(function() { el.remove(); }, 2200);
+}
+
+// ===== 统计栏 =====
+function renderStats() {
+  if (!data || !data.items) return;
+  var items = data.items;
+  var books = items.filter(function(i) { return i.type === "book"; });
+  var movies = items.filter(i => i.type === 'movie');
+  var reading = items.filter(i => i.status === 'reading');
+  var completed = items.filter(i => i.status === 'completed');
+  var stats = [
+    { icon: '📚', num: items.length, lbl: '全部', filter: 'all' },
+    { icon: '📖', num: books.length, lbl: '书籍', filter: 'book' },
+    { icon: '🎬', num: movies.length, lbl: '影片', filter: 'movie' },
+    { icon: '📝', num: reading.length, lbl: '进行中', filter: 'reading' },
+    { icon: '✅', num: completed.length, lbl: '已完成', filter: 'completed' },
+  ];
+  document.getElementById('statsInner').innerHTML = stats.map(s =>
+    `<div class="stat-card${currentTab === s.filter ? ' active' : ''}" onclick="setTab('${s.filter}')">
+      <div class="stat-icon">${s.icon}</div>
+      <div class="stat-info"><div class="stat-num">${s.num}</div><div class="stat-lbl">${s.lbl}</div></div>
+    </div>`
+  ).join('');
+}
+function renderTabs() {
+  var items = data.items;
+  var tabs = [
+    { key: 'all', label: '📋 全部', count: items.length },
+    { key: 'book', label: '📖 读书', count: items.filter(i => i.type === 'book').length },
+    { key: 'movie', label: '🎬 影片', count: items.filter(i => i.type === 'movie').length },
+  ];
+  document.getElementById('tabGroup').innerHTML = tabs.map(t =>
+    `<button class="tab-btn${currentTab === t.key ? ' active' : ''}" onclick="setTab('${t.key}')">
+      ${t.label}<span class="tab-count">${t.count}</span></button>`
+  ).join('');
+}
+function setTab(tab) { currentTab = tab; renderStats(); renderTabs(); renderCards(); }
+
+function getFilteredItems() {
+  if (!data || !data.items) return [];
+  var items = [].concat(data.items);
+  if (currentTab === 'book') items = items.filter(i => i.type === 'book');
+  else if (currentTab === 'movie') items = items.filter(i => i.type === 'movie');
+  else if (currentTab === 'reading') items = items.filter(i => i.status === 'reading');
+  else if (currentTab === 'completed') items = items.filter(i => i.status === 'completed');
+  var sort = document.getElementById('sortSelect').value;
+  if (sort === 'recent') items.sort((a, b) => new Date(b.addedAt) - new Date(a.addedAt));
+  else if (sort === 'completed') {
+    items.sort((a, b) => {
+      if (!a.completedAt && !b.completedAt) return new Date(b.addedAt) - new Date(a.addedAt);
+      if (!a.completedAt) return 1; if (!b.completedAt) return -1;
+      return new Date(b.completedAt) - new Date(a.completedAt);
+    });
+  } else if (sort === 'title') items.sort((a, b) => a.title.localeCompare(b.title, 'zh'));
+  return items;
+}
+
+// ===== 渲染横向卡片 =====
+function renderCards() {
+  var items = getFilteredItems();
+  var grid = document.getElementById('cardGrid');
+
+  if (items.length === 0) {
+    var labels = { all: '书籍或影片', book: '书籍', movie: '影片', reading: '进行中的项目', completed: '已完成的项目' };
+    grid.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">📭</div>
+      <h3>还没有${labels[currentTab] || '内容'}</h3>
+      <p>点击右下角 ＋ 按钮添加你的第一本书或影片吧～</p></div>`;
+    renderStats(); return;
+  }
+
+  grid.innerHTML = items.map(item => {
+    var isBook = item.type === 'book';
+    var isReading = item.status === 'reading';
+    var statusLabel = isBook ? (isReading ? '在读' : '已读') : (isReading ? '在看' : '已看');
+    var statusClass = isReading ? (isBook ? 'reading' : 'watching') : 'completed';
+    var typeIcon = isBook ? '📖' : '🎬';
+    var coverClass = isBook ? 'book-cover' : 'movie-cover';
+
+    // 副标题
+    var subtitleHTML = '';
+    if (isBook && item.creator) subtitleHTML = escapeHTML(item.creator);
+    else if (item.category) subtitleHTML = '🏷️ ' + escapeHTML(item.category);
+    if (!subtitleHTML) subtitleHTML = '&nbsp;';
+
+    // 最新笔记预览
+    var notePreviewHTML = '';
+    if (item.notes && item.notes.length > 0) {
+      var latest = item.notes[item.notes.length - 1];
+      notePreviewHTML = `<div class="card-note-preview"><span class="note-prefix">📝</span>${escapeHTML(latest.content)}</div>`;
+    }
+
+    // 封面
+    var hasCover = item.cover && item.cover.length > 0;
+    var safeSrc = hasCover ? (item.cover.startsWith('data:') ? item.cover : escapeHTML(item.cover)) : '';
+    var coverBlockHTML = hasCover
+      ? `<div class="card-cover-wrap ${coverClass} has-cover" style="background:#fff;"><img class="card-cover-img" src="${safeSrc}" alt="${escapeHTML(item.title)}"></div>`
+      : `<div class="card-cover-wrap ${coverClass}">
+           <span class="card-cover-placeholder">${item.title.charAt(0)}</span>
+           <div class="cover-set-hint" onclick="event.stopPropagation();openDoubanSearch('${escapeHTML(item.title).replace(/'/g, "\\'")}', '${item.type}')" title="在豆瓣搜索封面">📷 设置封面</div>
+         </div>`;
+
+    return `<div class="card" onclick="openDetailModal('${item.id}')">
+      ${coverBlockHTML}
+      <div class="card-actions" onclick="event.stopPropagation()">
+        <button class="card-action-btn" title="编辑" onclick="openEditModal('${item.id}')">✏️</button>
+        <button class="card-action-btn delete" title="删除" onclick="deleteItem('${item.id}')">🗑️</button>
+      </div>
+      <div class="card-content">
+        <div class="card-title">${escapeHTML(item.title)}</div>
+        <div class="card-subtitle">${subtitleHTML}</div>
+        <div class="card-meta-row">
+          <span class="status-badge ${statusClass}">${isReading ? '●' : '✓'} ${statusLabel}</span>
+          <span class="type-badge ${item.type}">${typeIcon}</span>
+          ${item.rating > 0 ? `<span style="font-size:0.72rem;color:#f6ad55;">${'⭐'.repeat(item.rating)}</span>` : ''}
+        </div>
+        <div class="card-date-info">
+          ${item.readDate ? `<span class="read-date">📅 ${escapeHTML(item.readDate)}</span>` : ''}
+          ${item.completedAt ? `<span>完成于 ${formatDateShort(item.completedAt)}</span>` : ''}
+        </div>
+        ${notePreviewHTML}
+      </div>
+    </div>`;
+  }).join('');
+
+  renderStats();
+}
+
+function escapeHTML(str) {
+  var el = document.createElement('span');
+  el.textContent = str;
+  return el.innerHTML;
+}
+
+// ===== Modal 工具 =====
+function openModal(html) {
+  document.getElementById('modalContainer').innerHTML = `<div class="modal-overlay" onclick="if(event.target===this)closeModal()">${html}</div>`;
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modalContainer').innerHTML = '';
+  document.body.style.overflow = '';
+}
+
+// ===== 豆瓣搜索 =====
+function openDoubanSearch(title, type) {
+  var url = type === 'book'
+    ? `https://search.douban.com/book/subject_search?search_text=${encodeURIComponent(title)}`
+    : `https://search.douban.com/movie/subject_search?search_text=${encodeURIComponent(title)}`;
+  window.open(url, '_blank');
+}
+
+// ===== 自动搜索作者（本地代理 + 豆瓣直连降级）=====
+async function autoSearchAuthor(title) {
+  if (!title) return null;
+
+  // 方案 1: 本地作者代理（最可靠）
+  try {
+    var ctrl = new AbortController();
+    var timer = setTimeout(function() { ctrl.abort(); }, 6000);
+    var resp = await fetch(
+      'http://localhost:3456/author?title=' + encodeURIComponent(title),
+      { signal: ctrl.signal }
+    );
+    clearTimeout(timer);
+    var json = await resp.json();
+    if (json.author) return json.author;
+  } catch(e) { console.log('本地代理不可达:', e.message); }
+
+  // 方案 2: 直连豆瓣（CORS 几乎必失败，但有代理就不需要这个）
+  try {
+    var ctrl2 = new AbortController();
+    var timer2 = setTimeout(function() { ctrl2.abort(); }, 3000);
+    var resp2 = await fetch(
+      'https://book.douban.com/subject_search?search_text=' + encodeURIComponent(title),
+      { signal: ctrl2.signal }
+    );
+    clearTimeout(timer2);
+    var html = await resp2.text();
+    var match = html.match(/window\.__DATA__\s*=\s*(\{[\s\S]*?\});/);
+    if (match) {
+      var sd = JSON.parse(match[1]);
+      for (var i = 0; i < (sd.items || []).length; i++) {
+        if (sd.items[i].tpl_name === 'search_subject' && sd.items[i].abstract) {
+          var parts = sd.items[i].abstract.split('/');
+          var a = parts[0].trim().replace(/^\[[\s\S]*?\]\s*/, '').trim();
+          if (a) return a;
+        }
+      }
+    }
+  } catch(e) {}
+
+  return null;
+}
+
+// ===== 粘贴图片区 =====
+function setupPasteZone(zoneId, previewId) {
+  var zone = document.getElementById(zoneId);
+  var preview = document.getElementById(previewId);
+  if (!zone) return;
+
+  function handleImage(file) {
+    if (!file || !file.type.startsWith('image/')) { showToast('请粘贴图片'); return; }
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var dataUrl = e.target.result;
+      if (dataUrl.length > 500 * 1024) {
+        var img = new Image();
+        img.onload = function() {
+          var w = Math.min(img.width, 800);
+          var h = Math.round(img.height * (w / img.width));
+          var c = document.createElement('canvas');
+          c.width = w; c.height = h;
+          c.getContext('2d').drawImage(img, 0, 0, w, h);
+          dataUrl = c.toDataURL('image/jpeg', 0.85);
+          setCover(dataUrl);
+        };
+        img.src = dataUrl;
+      } else {
+        setCover(dataUrl);
+      }
+    };
+    reader.onerror = function() { showToast('图片读取失败，请尝试粘贴图片链接到下方输入框'); };
+    reader.readAsDataURL(file);
+  }
+
+  function setCover(dataUrl) {
+    window._addCoverDataUrl = dataUrl;
+    if (window._editItemId !== undefined) window._editCoverDataUrl = dataUrl;
+    zone.classList.add('has-image');
+    zone.querySelector('.paste-zone-inner').innerHTML =
+      '<img src="' + dataUrl + '" alt="封面预览">';
+    if (preview) { preview.innerHTML = '<span style="font-size:0.78rem;color:var(--success);">✅ 图片已粘贴</span>'; }
+    showToast('✅ 图片已粘贴！');
+  }
+
+  function setCoverUrl(url) {
+    window._addCoverDataUrl = url;
+    if (window._editItemId !== undefined) window._editCoverDataUrl = url;
+    zone.classList.add('has-image');
+    zone.querySelector('.paste-zone-inner').innerHTML =
+      '<img src="' + url + '" alt="封面预览" onerror="var p=this.parentElement;p.classList.remove(\'has-image\');p.querySelector(\'.paste-zone-inner\').innerHTML=\'<span style=font-size:0.85rem>⚠️ 图片加载失败</span>\'">';
+    if (preview) { preview.innerHTML = '<span style="font-size:0.78rem;color:var(--success);">✅ 链接已粘贴</span>'; }
+    showToast('✅ 图片链接已粘贴！');
+  }
+
+  zone.addEventListener('paste', function(e) {
+    e.preventDefault();
+    var items = e.clipboardData.items;
+    // 优先取图片
+    for (var i = 0; i < items.length; i++) {
+      if (items[i].type.startsWith('image/')) { handleImage(items[i].getAsFile()); return; }
+    }
+    // 其次取文本（可能是图片URL）
+    var text = e.clipboardData.getData('text/plain');
+    if (text && text.match(/\.(jpg|jpeg|png|gif|webp|bmp)(\?|$)/i)) {
+      setCoverUrl(text);
+    } else if (text) {
+      showToast('已粘贴文本，但未检测到图片URL，请复制图片本身或图片链接');
+    }
+  });
+
+  zone.addEventListener('dragover', function(e) { e.preventDefault(); });
+  zone.addEventListener('drop', function(e) {
+    e.preventDefault();
+    var file = e.dataTransfer.files[0];
+    if (file) handleImage(file);
+  });
+
+  zone.addEventListener('click', function() {
+    zone.focus();
+  });
+}
+
+// ===== 新增 Modal =====
+function openAddModal(presetType) {
+  var type = presetType || (currentTab === 'movie' ? 'movie' : 'book');
+  var isBook = type === 'book';
+  var typeLabel = isBook ? '书籍' : '影片';
+
+  var creatorFieldHTML = isBook ? `
+    <div class="form-group">
+      <label class="form-label">作者</label>
+      <input class="form-input" id="addCreator" placeholder="作者名字">
+    </div>` : '';
+
+  openModal(`
+    <div class="modal">
+      <div class="modal-header">
+        <h2>✨ 新增${typeLabel}</h2>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">类型</label>
+          <div class="type-toggle">
+            <button class="type-toggle-btn book${isBook ? ' active' : ''}" onclick="switchAddType('book')">📖 书籍</button>
+            <button class="type-toggle-btn movie${!isBook ? ' active' : ''}" onclick="switchAddType('movie')">🎬 影片</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">名称 <span style="color:var(--accent)">*</span></label>
+          <div class="name-search-row">
+            <input class="form-input" id="addTitle" placeholder="${isBook ? '输入书名' : '输入影片名'}" autofocus>
+            <button class="btn btn-secondary btn-sm" id="btnAddDouban" onclick="searchAddDouban()" style="white-space:nowrap;">🔍 搜封面</button>
+          </div>
+          <div class="form-hint">先输入名称，点击搜封面 → 豆瓣搜到后在图片上右键复制图片地址 → 粘贴到下方封面框</div>
+        </div>
+        ${creatorFieldHTML}
+        <div style="display:flex;gap:12px;">
+          <div class="form-group" style="flex:1;">
+            <label class="form-label">阅读时间</label>
+            <div class="date-input-row" id="addDateRow">
+              <input type="date" class="form-input" id="addReadDatePicker" style="display:none;">
+              <input class="form-input" id="addReadDateText" placeholder="如：2026年7月13日">
+              <span class="date-mode-toggle" id="addDateModeToggle" onclick="toggleAddDateMode()">📅 选择日期</span>
+            </div>
+          </div>
+          <div class="form-group" style="flex:1;">
+            <label class="form-label">分类标签</label>
+            <input class="form-input" id="addCategory" placeholder="如：科幻、文学">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">封面图片 <span class="hint">— 方式1: 复制图片后点击下方虚线框 Ctrl+V 粘贴 | 方式2: 粘贴图片URL</span></label>
+          <div class="paste-zone" id="addPasteZone" tabindex="0">
+            <div class="paste-zone-inner">
+              <span style="font-size:2rem;">🖼️</span>
+              <span>点击此处，Ctrl+V 粘贴图片或链接</span>
+            </div>
+          </div>
+          <div id="addCoverPreview" style="margin-top:8px;"></div>
+          <input class="form-input" id="addCoverUrl" placeholder="或手动粘贴图片链接（如豆瓣图床地址）" style="margin-top:8px;">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+        <button class="btn btn-primary" onclick="saveAddItem('${type}')">💾 保存</button>
+      </div>
+    </div>
+  `);
+
+  document.getElementById('addTitle').dataset.type = type;
+  window._addDateMode = 'text';
+  window._addCoverDataUrl = '';
+  setupPasteZone('addPasteZone', 'addCoverPreview');
+}
+
+function toggleAddDateMode() {
+  var picker = document.getElementById('addReadDatePicker');
+  var text = document.getElementById('addReadDateText');
+  var toggle = document.getElementById('addDateModeToggle');
+
+  if (window._addDateMode === 'text') {
+    window._addDateMode = 'picker';
+    picker.style.display = '';
+    text.style.display = 'none';
+    toggle.textContent = '✏️ 手动输入';
+  } else {
+    window._addDateMode = 'text';
+    picker.style.display = 'none';
+    text.style.display = '';
+    toggle.textContent = '📅 选择日期';
+  }
+}
+
+function getAddReadDate() {
+  if (window._addDateMode === 'picker') {
+    var val = document.getElementById('addReadDatePicker').value;
+    if (!val) return '';
+    var[y, m, d] = val.split('-');
+    return `${y}年${parseInt(m)}月${parseInt(d)}日`;
+  }
+  return document.getElementById('addReadDateText').value.trim();
+}
+
+function switchAddType(type) { openAddModal(type); }
+
+function searchAddDouban() {
+  var title = document.getElementById('addTitle').value.trim();
+  if (!title) { showToast('请先输入名称'); return; }
+  var type = document.getElementById('addTitle').dataset.type || 'book';
+  openDoubanSearch(title, type);
+}
+
+async function saveAddItem(type) {
+  var title = document.getElementById('addTitle').value.trim();
+  if (!title) { showToast('请输入名称'); return; }
+
+  var isBook = type === 'book';
+  var creatorEl = document.getElementById('addCreator');
+  var creator = isBook ? (creatorEl ? creatorEl.value.trim() : '') : '';
+  var coverData = window._addCoverDataUrl || '';
+  if (!coverData) { coverData = document.getElementById('addCoverUrl').value.trim(); }
+  var readDate = getAddReadDate();
+  var category = document.getElementById('addCategory').value.trim();
+
+  var item = {
+    id: genId(isBook ? 'b' : 'm'),
+    type: type,
+    title: title,
+    creator: creator,
+    cover: coverData,
+    status: 'reading',
+    addedAt: nowISO(),
+    completedAt: null,
+    rating: 0,
+    readDate: readDate || null,
+    category: category,
+    notes: [],
+  };
+
+  data.items.unshift(item);
+  saveData(data);
+  closeModal();
+  renderAll();
+  var coverSize = coverData ? '（封面: ' + Math.round(coverData.length/1024) + 'KB）' : '';
+  showToast('✅ 已添加「' + title + '」' + coverSize);
+
+  // 自动搜索豆瓣信息（作者 + 封面）
+  var needAuthor = isBook && !creator;
+  var needCover = !coverData;
+  if (needAuthor || needCover) {
+    fetchDoubanInfo(item.id, title, isBook, needAuthor, needCover);
+  }
+}
+
+// ===== 豆瓣代理 URL 列表（自动发现 tunnel）=====
+var DOUBAN_PROXY_URLS = [
+  'http://localhost:3456',
+  'https://discovery-starter-petition-learn.trycloudflare.com',
+];
+
+function fetchDoubanProxyJSON(endpoint, onOk, onFail) {
+  var idx = 0;
+  function tryNext() {
+    if (idx >= DOUBAN_PROXY_URLS.length) { if (onFail) onFail('全部不可达'); return; }
+    var url = DOUBAN_PROXY_URLS[idx] + endpoint;
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.timeout = 8000;
+    xhr.onload = function() {
+      if (xhr.status === 200) {
+        try { onOk(JSON.parse(xhr.responseText)); } catch(e) { idx++; tryNext(); }
+      } else { idx++; tryNext(); }
+    };
+    xhr.onerror = function() { idx++; tryNext(); };
+    xhr.ontimeout = function() { idx++; tryNext(); };
+    xhr.send();
+  }
+  tryNext();
+}
+
+function fetchDoubanInfo(itemId, title, isBook, needAuthor, needCover) {
+  var endpoint = '/' + (isBook ? 'book-info' : 'movie-info') + '?title=' + encodeURIComponent(title);
+  fetchDoubanProxyJSON(endpoint, function(info) {
+    var fi = data.items.find(function(x) { return x.id === itemId; });
+    if (!fi) return;
+    var authorSet = false;
+
+    if (needAuthor && info.author) {
+      fi.creator = info.author;
+      authorSet = true;
+    }
+    // 先保存作者信息（如果有的话）
+    if (authorSet) {
+      saveData(data);
+      renderCards();
+      showToast('✅ 作者自动填入：' + info.author);
+    }
+
+    if (needCover && info.cover_url) {
+      // 通过代理下载封面
+      var coverProxyUrl = DOUBAN_PROXY_URLS[0] + '/cover?url=' + encodeURIComponent(info.cover_url);
+      var imgXhr = new XMLHttpRequest();
+      imgXhr.open('GET', coverProxyUrl, true);
+      imgXhr.responseType = 'blob';
+      imgXhr.timeout = 10000;
+      imgXhr.onload = function() {
+        if (imgXhr.status === 200 && imgXhr.response && imgXhr.response.size > 100) {
+          var reader = new FileReader();
+          reader.onload = function() {
+            fi.cover = reader.result;
+            saveData(data);
+            renderCards();
+            showToast('🎉 封面已自动设置！');
+          };
+          reader.onerror = function() { reader.abort(); };
+          reader.readAsDataURL(imgXhr.response);
+        }
+      };
+      imgXhr.send();
+    }
+  }, function(err) {
+    // 静默忽略搜索失败
+  });
+}
+
+// ===== 编辑 Modal =====
+function openEditModal(id) {
+  var item = data.items.find(i => i.id === id);
+  if (!item) return;
+  var isBook = item.type === 'book';
+  var typeLabel = isBook ? '书籍' : '影片';
+
+  var creatorFieldHTML = isBook ? `
+    <div class="form-group">
+      <label class="form-label">作者</label>
+      <input class="form-input" id="editCreator" value="${escapeHTML(item.creator || '')}">
+    </div>` : '';
+
+  // 解析 readDate 判断默认用哪种模式
+  var hasReadDate = item.readDate;
+  window._editDateMode = 'text';
+
+  openModal(`
+    <div class="modal">
+      <div class="modal-header">
+        <h2>✏️ 编辑${typeLabel}</h2>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">名称 <span style="color:var(--accent)">*</span></label>
+          <div class="name-search-row">
+            <input class="form-input" id="editTitle" value="${escapeHTML(item.title)}">
+            <button class="btn btn-secondary btn-sm" onclick="searchEditDouban()" style="white-space:nowrap;">🔍 搜封面</button>
+          </div>
+          <div class="form-hint">修改名称后点搜封面 → 豆瓣搜到后在图片上右键复制图片地址 → 粘贴到下方封面框</div>
+        </div>
+        ${creatorFieldHTML}
+        <div style="display:flex;gap:12px;">
+          <div class="form-group" style="flex:1;">
+            <label class="form-label">阅读时间</label>
+            <div class="date-input-row" id="editDateRow">
+              <input type="date" class="form-input" id="editReadDatePicker" style="display:none;">
+              <input class="form-input" id="editReadDateText" value="${escapeHTML(item.readDate || '')}" placeholder="如：2026年7月13日">
+              <span class="date-mode-toggle" id="editDateModeToggle" onclick="toggleEditDateMode()">📅 选择日期</span>
+            </div>
+          </div>
+          <div class="form-group" style="flex:1;">
+            <label class="form-label">分类标签</label>
+            <input class="form-input" id="editCategory" value="${escapeHTML(item.category || '')}" placeholder="如：科幻、文学">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">封面图片 <span class="hint">— 粘贴图片或链接</span></label>
+          <div class="paste-zone" id="editPasteZone" tabindex="0">
+            <div class="paste-zone-inner">
+              ${item.cover
+                ? `<img src="${item.cover.startsWith('data:') ? item.cover : escapeHTML(item.cover)}" alt="当前封面">`
+                : `<span style="font-size:2rem;">🖼️</span><span>点击此处，Ctrl+V 粘贴</span>`
+              }
+            </div>
+          </div>
+          <div id="editCoverPreview" style="margin-top:8px;">${item.cover ? '<span style="font-size:0.78rem;color:var(--text-muted);">📷 当前封面，可粘贴替换</span>' : ''}</div>
+          <input class="form-input" id="editCoverUrl" placeholder="或手动粘贴图片链接" style="margin-top:8px;">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-danger btn-sm" onclick="deleteItem('${id}')" style="margin-right:auto;">🗑️ 删除</button>
+        <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+        <button class="btn btn-primary" onclick="saveEditItem('${id}')">💾 保存</button>
+      </div>
+    </div>
+  `);
+
+  window._editItemId = id;
+  window._editCoverDataUrl = item.cover || '';
+  // 如果已有封面，标记 paste zone
+  if (item.cover) {
+    document.getElementById('editPasteZone').classList.add('has-image');
+  }
+  setupPasteZone('editPasteZone', 'editCoverPreview');
+}
+
+function toggleEditDateMode() {
+  var picker = document.getElementById('editReadDatePicker');
+  var text = document.getElementById('editReadDateText');
+  var toggle = document.getElementById('editDateModeToggle');
+  if (window._editDateMode === 'text') {
+    window._editDateMode = 'picker';
+    picker.style.display = '';
+    text.style.display = 'none';
+    toggle.textContent = '✏️ 手动输入';
+  } else {
+    window._editDateMode = 'text';
+    picker.style.display = 'none';
+    text.style.display = '';
+    toggle.textContent = '📅 选择日期';
+  }
+}
+
+function getEditReadDate() {
+  if (window._editDateMode === 'picker') {
+    var val = document.getElementById('editReadDatePicker').value;
+    if (!val) return '';
+    var[y, m, d] = val.split('-');
+    return `${y}年${parseInt(m)}月${parseInt(d)}日`;
+  }
+  return document.getElementById('editReadDateText').value.trim();
+}
+
+function searchEditDouban() {
+  var title = document.getElementById('editTitle').value.trim();
+  if (!title) { showToast('请先输入名称'); return; }
+  var id = window._editItemId;
+  var item = data.items.find(i => i.id === id);
+  var type = item ? item.type : 'book';
+  openDoubanSearch(title, type);
+}
+
+function saveEditItem(id) {
+  var item = data.items.find(function(x) { return x.id === id; });
+  if (!item) return;
+  var title = document.getElementById('editTitle');
+  if (!title) { showToast('编辑弹窗异常，请重新打开'); closeModal(); return; }
+  var titleVal = title.value.trim();
+  if (!titleVal) { showToast('请输入名称'); return; }
+
+  var isBook = item.type === 'book';
+  item.title = titleVal;
+  if (isBook) {
+    var ce = document.getElementById('editCreator');
+    if (ce) item.creator = ce.value.trim();
+  }
+  var ce2 = document.getElementById('editCategory');
+  if (ce2) item.category = ce2.value.trim();
+  item.readDate = getEditReadDate() || null;
+
+  // 封面：优先粘贴区，其次手动输入框
+  var coverVal = window._editCoverDataUrl || '';
+  if (!coverVal) {
+    var ci = document.getElementById('editCoverUrl');
+    if (ci) coverVal = ci.value.trim();
+  }
+  item.cover = coverVal;
+
+  saveData(data); closeModal(); renderAll();
+  showToast('✅ 已更新「' + titleVal + '」');
+}
+
+// ===== 删除 =====
+function deleteItem(id) {
+  var item = data.items.find(i => i.id === id);
+  if (!item) return;
+  openModal(`
+    <div class="modal confirm-modal">
+      <div class="modal-header"><h2>⚠️ 确认删除</h2><button class="modal-close" onclick="closeModal()">✕</button></div>
+      <div class="modal-body"><p>确定要删除「<strong>${escapeHTML(item.title)}</strong>」吗？<br>相关的笔记也会一并删除，此操作不可撤销。</p></div>
+      <div class="modal-footer" style="justify-content:center;">
+        <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+        <button class="btn btn-danger" onclick="confirmDelete('${id}')">🗑️ 确认删除</button>
+      </div>
+    </div>`);
+}
+function confirmDelete(id) {
+  data.items = data.items.filter(i => i.id !== id);
+  saveData(data); closeModal(); renderAll();
+  showToast('🗑️ 已删除');
+}
+
+// ===== 详情 Modal =====
+function openDetailModal(id) {
+  var item = data.items.find(i => i.id === id);
+  if (!item) return;
+  var isBook = item.type === 'book';
+  var isReading = item.status === 'reading';
+  var typeIcon = isBook ? '📖' : '🎬';
+  var typeLabel = isBook ? '书籍' : '影片';
+  var statusLabel = isBook ? (isReading ? '在读中' : '已读完') : (isReading ? '在看中' : '已看完');
+  var completeBtnLabel = isBook ? '✅ 标记已读' : '✅ 标记已看';
+  var undoBtnLabel = isBook ? '🔄 重新在读' : '🔄 重新在看';
+
+  var subtitleHTML = '';
+  if (isBook && item.creator) subtitleHTML = `作者：${escapeHTML(item.creator)}`;
+  else if (item.category) subtitleHTML = `🏷️ ${escapeHTML(item.category)}`;
+  if (!subtitleHTML) subtitleHTML = '&nbsp;';
+
+  var notesHTML = item.notes.length === 0
+    ? '<div style="text-align:center;padding:24px;color:var(--text-muted);">📝 还没有笔记，写下你的想法吧～</div>'
+    : [...item.notes].reverse().map(n => `
+      <div class="note-item">
+        <div class="note-time">🕐 ${formatTime(n.createdAt)}<button class="note-delete" onclick="event.stopPropagation();deleteNote('${id}','${n.id}')">删除</button></div>
+        <div class="note-content">${escapeHTML(n.content)}</div>
+      </div>`).join('');
+
+  var starHTML = Array.from({length:5}, (_,i) =>
+    `<span class="star${i < item.rating ? ' active' : ''}" onclick="event.stopPropagation();setRating('${id}',${i+1})">★</span>`
+  ).join('');
+
+  openModal(`
+    <div class="modal detail-modal">
+      <div class="modal-header"><h2>${typeIcon} 详情</h2><button class="modal-close" onclick="closeModal()">✕</button></div>
+      <div class="modal-body">
+        <div class="detail-header-section">
+          ${item.cover ? `<img class="detail-cover" src="${item.cover.startsWith('data:') ? item.cover : escapeHTML(item.cover)}" alt="${escapeHTML(item.title)} 封面">` : ''}
+          <div class="detail-cover" style="${item.cover ? 'display:none' : ''}background:linear-gradient(135deg,${isBook ? '#ede9fe' : '#fef3c7'},${isBook ? '#d8cef8' : '#fde68a'});">
+            <span style="font-size:2rem;font-weight:700;color:${isBook ? 'rgba(139,92,246,0.25)' : 'rgba(245,158,11,0.25)'}">${item.title.charAt(0)}</span>
+          </div>
+          <div class="detail-info">
+            <h3>${escapeHTML(item.title)}</h3>
+            <div class="detail-subtitle">${subtitleHTML}</div>
+            <div class="detail-meta">
+              <span class="status-badge ${isReading ? (isBook ? 'reading' : 'watching') : 'completed'}">${isReading ? '●' : '✓'} ${statusLabel}</span>
+              <span class="type-badge ${item.type}">${typeIcon} ${typeLabel}</span>
+              ${item.category ? `<span style="font-size:0.72rem;color:var(--text-muted);">🏷️ ${escapeHTML(item.category)}</span>` : ''}
+            </div>
+            <div class="detail-date">添加于 ${formatTime(item.addedAt)}</div>
+            ${item.readDate ? `<div class="detail-date" style="color:var(--accent);">📅 阅读时间：${escapeHTML(item.readDate)}</div>` : ''}
+            ${item.completedAt ? `<div class="detail-date">完成于 ${formatTime(item.completedAt)}</div>` : ''}
+            <div style="margin-top:12px;">
+              <div style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:4px;">评分</div>
+              <div class="star-rating">${starHTML}</div>
+            </div>
+            <div class="detail-actions-row" style="margin-top:12px;">
+              ${isReading
+                ? `<button class="btn btn-success btn-sm" onclick="markCompleted('${id}')">${completeBtnLabel}</button>`
+                : `<button class="btn btn-secondary btn-sm" onclick="markReading('${id}')">${undoBtnLabel}</button>`}
+              <button class="btn btn-secondary btn-sm" onclick="closeModal();openEditModal('${id}')">✏️ 编辑</button>
+            </div>
+          </div>
+        </div>
+        <div class="notes-section">
+          <h4>📝 笔记 <span class="notes-count">${item.notes.length} 条</span></h4>
+          ${notesHTML}
+          <div class="new-note-box">
+            <textarea class="form-textarea" id="newNoteContent" placeholder="写下你的读后感/观后感..." rows="3"></textarea>
+            <button class="btn btn-primary btn-sm" onclick="addNote('${id}')">💬 添加笔记</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal()">关闭</button></div>
+    </div>`);
+}
+
+// ===== 笔记操作 =====
+function addNote(itemId) {
+  var content = document.getElementById('newNoteContent').value.trim();
+  if (!content) { showToast('请输入笔记内容'); return; }
+  var item = data.items.find(i => i.id === itemId);
+  if (!item) return;
+  item.notes.push({ id: genId('n'), content: content, createdAt: nowISO() });
+  saveData(data); openDetailModal(itemId); renderCards();
+  showToast('✅ 笔记已保存');
+}
+function deleteNote(itemId, noteId) {
+  var item = data.items.find(i => i.id === itemId);
+  if (!item) return;
+  item.notes = item.notes.filter(n => n.id !== noteId);
+  saveData(data); openDetailModal(itemId); renderCards();
+  showToast('🗑️ 笔记已删除');
+}
+
+// ===== 完成标记 =====
+function markCompleted(id) {
+  var item = data.items.find(i => i.id === id);
+  if (!item) return;
+  item.status = 'completed'; item.completedAt = nowISO();
+  saveData(data); openDetailModal(id); renderAll();
+  showToast(`🎉「${item.title}」已标记完成！`);
+}
+function markReading(id) {
+  var item = data.items.find(i => i.id === id);
+  if (!item) return;
+  item.status = 'reading'; item.completedAt = null;
+  saveData(data); openDetailModal(id); renderAll();
+  showToast(`🔄「${item.title}」已回到进行中`);
+}
+
+// ===== 评分 =====
+function setRating(id, rating) {
+  var item = data.items.find(i => i.id === id);
+  if (!item) return;
+  item.rating = rating; saveData(data); openDetailModal(id); renderCards();
+}
+
+// ===== 全局渲染 =====
+function renderAll() {
+  if (!data || !data.items) return;
+  renderStats(); renderTabs(); renderCards();
+}
+
+// ===== 键盘快捷键 =====
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') { var o = document.querySelector('.modal-overlay'); if (o) closeModal(); }
+  if ((e.ctrlKey || e.metaKey) && e.key === 'n') { e.preventDefault(); openAddModal(); }
+});
+
+// ===== 初始化 =====
+(function init() {
+  try { renderAll(); } catch(e) { showToast("渲染失败: " + e.message); }
+  checkProxy();
+  fireBoot();
+})();
+</script>
+</body>
+</html>
