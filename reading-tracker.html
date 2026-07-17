@@ -625,6 +625,15 @@ function loadData() {
   try { var r = localStorage.getItem(STORAGE_KEY); if (r) return JSON.parse(r); } catch(e) {}
   return { items: [] };
 }
+// 修复旧数据中可能缺失的字段
+function repairData() {
+  var dirty = false;
+  for (var ri = 0; ri < data.items.length; ri++) {
+    if (!data.items[ri].notes) { data.items[ri].notes = []; dirty = true; }
+    if (data.items[ri].rating === undefined) { data.items[ri].rating = 0; dirty = true; }
+  }
+  if (dirty) { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+}
 // 保存：localStorage 立即写，Firebase 异步推（不阻塞 UI）
 function saveData(d) {
   var json = JSON.stringify(d.items);
@@ -1279,79 +1288,43 @@ function fetchDoubanInfo(itemId, title, isBook, needAuthor, needCover) {
 
 // ===== 编辑 Modal =====
 function openEditModal(id) {
-  var item = data.items.find(i => i.id === id);
+  var item = null;
+  for (var fi1 = 0; fi1 < data.items.length; fi1++) { if (data.items[fi1].id === id) { item = data.items[fi1]; break; } }
   if (!item) return;
   var isBook = item.type === 'book';
   var typeLabel = isBook ? '书籍' : '影片';
-
-  var creatorFieldHTML = isBook ? `
-    <div class="form-group">
-      <label class="form-label">作者</label>
-      <input class="form-input" id="editCreator" value="${escapeHTML(item.creator || '')}">
-    </div>` : '';
-
-  // 解析 readDate 判断默认用哪种模式
-  var hasReadDate = item.readDate;
-  window._editDateMode = 'text';
-
-  openModal(`
-    <div class="modal">
-      <div class="modal-header">
-        <h2>✏️ 编辑${typeLabel}</h2>
-        <button class="modal-close" onclick="closeModal()">✕</button>
-      </div>
-      <div class="modal-body">
-        <div class="form-group">
-          <label class="form-label">名称 <span style="color:var(--accent)">*</span></label>
-          <div class="name-search-row">
-            <input class="form-input" id="editTitle" value="${escapeHTML(item.title)}">
-            <button class="btn btn-secondary btn-sm" onclick="searchEditDouban()" style="white-space:nowrap;">🔍 搜封面</button>
-          </div>
-          <div class="form-hint">修改名称后点搜封面 → 豆瓣搜到后在图片上右键复制图片地址 → 粘贴到下方封面框</div>
-        </div>
-        ${creatorFieldHTML}
-        <div style="display:flex;gap:12px;">
-          <div class="form-group" style="flex:1;">
-            <label class="form-label">阅读时间</label>
-            <div class="date-input-row" id="editDateRow">
-              <input type="date" class="form-input" id="editReadDatePicker" style="display:none;">
-              <input class="form-input" id="editReadDateText" value="${escapeHTML(item.readDate || '')}" placeholder="如：2026年7月13日">
-              <span class="date-mode-toggle" id="editDateModeToggle" onclick="toggleEditDateMode()">📅 选择日期</span>
-            </div>
-          </div>
-          <div class="form-group" style="flex:1;">
-            <label class="form-label">分类标签</label>
-            <input class="form-input" id="editCategory" value="${escapeHTML(item.category || '')}" placeholder="如：科幻、文学">
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">封面图片 <span class="hint">— 粘贴图片或链接</span></label>
-          <div class="paste-zone" id="editPasteZone" tabindex="0">
-            <div class="paste-zone-inner">
-              ${item.cover
-                ? `<img src="${item.cover.startsWith('data:') ? item.cover : escapeHTML(item.cover)}" alt="当前封面">`
-                : `<span style="font-size:2rem;">🖼️</span><span>点击此处，Ctrl+V 粘贴</span>`
-              }
-            </div>
-          </div>
-          <div id="editCoverPreview" style="margin-top:8px;">${item.cover ? '<span style="font-size:0.78rem;color:var(--text-muted);">📷 当前封面，可粘贴替换</span>' : ''}</div>
-          <input class="form-input" id="editCoverUrl" placeholder="或手动粘贴图片链接" style="margin-top:8px;">
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-danger btn-sm" onclick="deleteItem('${id}')" style="margin-right:auto;">🗑️ 删除</button>
-        <button class="btn btn-secondary" onclick="closeModal()">取消</button>
-        <button class="btn btn-primary" onclick="saveEditItem('${id}')">💾 保存</button>
-      </div>
-    </div>
-  `);
-
+  var creatorHTML = '';
+  if (isBook) { creatorHTML = '<div class="form-group"><label class="form-label">作者</label><input class="form-input" id="editCreator" value="' + escapeHTML(item.creator || '') + '"></div>'; }
+  var coverIsData = item.cover && item.cover.indexOf('data:') === 0;
+  var pasteHTML = item.cover ? '<img src="' + (coverIsData ? item.cover : escapeHTML(item.cover)) + '" alt="当前封面">' : '<span style="font-size:2rem;">🖼️</span><span>点击此处，Ctrl+V 粘贴</span>';
+  var coverHint = item.cover ? '<span style="font-size:0.78rem;color:var(--text-muted);">📷 当前封面，可粘贴替换</span>' : '';
+  var h = '';
+  h += '<div class="modal"><div class="modal-header"><h2>✏️ 编辑' + typeLabel + '</h2><button class="modal-close" onclick="closeModal()">✕</button></div>';
+  h += '<div class="modal-body">';
+  h += '<div class="form-group"><label class="form-label">名称 <span style="color:var(--accent)">*</span></label>';
+  h += '<div class="name-search-row"><input class="form-input" id="editTitle" value="' + escapeHTML(item.title) + '">';
+  h += '<button class="btn btn-secondary btn-sm" onclick="searchEditDouban()" style="white-space:nowrap;">🔍 搜封面</button></div>';
+  h += '<div class="form-hint">修改名称后点搜封面 → 豆瓣搜到后在图片上右键复制图片地址 → 粘贴到下方封面框</div></div>';
+  h += creatorHTML;
+  h += '<div style="display:flex;gap:12px;">';
+  h += '<div class="form-group" style="flex:1;"><label class="form-label">阅读时间</label>';
+  h += '<div class="date-input-row"><input type="date" class="form-input" id="editReadDatePicker" style="display:none;">';
+  h += '<input class="form-input" id="editReadDateText" value="' + escapeHTML(item.readDate || '') + '" placeholder="如：2026年7月13日">';
+  h += '<span class="date-mode-toggle" onclick="toggleEditDateMode()">📅 选择日期</span></div></div>';
+  h += '<div class="form-group" style="flex:1;"><label class="form-label">分类标签</label>';
+  h += '<input class="form-input" id="editCategory" value="' + escapeHTML(item.category || '') + '" placeholder="如：科幻、文学"></div></div>';
+  h += '<div class="form-group"><label class="form-label">封面图片 <span class="hint">— 粘贴图片或链接</span></label>';
+  h += '<div class="paste-zone" id="editPasteZone" tabindex="0"><div class="paste-zone-inner">' + pasteHTML + '</div></div>';
+  h += '<div id="editCoverPreview" style="margin-top:8px;">' + coverHint + '</div>';
+  h += '<input class="form-input" id="editCoverUrl" placeholder="或手动粘贴图片链接" style="margin-top:8px;"></div></div>';
+  h += '<div class="modal-footer"><button class="btn btn-danger btn-sm" onclick="deleteItem(\'' + id + '\')" style="margin-right:auto;">🗑️ 删除</button>';
+  h += '<button class="btn btn-secondary" onclick="closeModal()">取消</button>';
+  h += '<button class="btn btn-primary" onclick="saveEditItem(\'' + id + '\')">💾 保存</button></div></div>';
+  openModal(h);
   window._editItemId = id;
   window._editCoverDataUrl = item.cover || '';
-  // 如果已有封面，标记 paste zone
-  if (item.cover) {
-    document.getElementById('editPasteZone').classList.add('has-image');
-  }
+  window._editDateMode = 'text';
+  if (item.cover) document.getElementById('editPasteZone').classList.add('has-image');
   setupPasteZone('editPasteZone', 'editCoverPreview');
 }
 
@@ -1360,15 +1333,9 @@ function toggleEditDateMode() {
   var text = document.getElementById('editReadDateText');
   var toggle = document.getElementById('editDateModeToggle');
   if (window._editDateMode === 'text') {
-    window._editDateMode = 'picker';
-    picker.style.display = '';
-    text.style.display = 'none';
-    toggle.textContent = '✏️ 手动输入';
+    window._editDateMode = 'picker'; picker.style.display = ''; text.style.display = 'none'; toggle.textContent = '✏️ 手动输入';
   } else {
-    window._editDateMode = 'text';
-    picker.style.display = 'none';
-    text.style.display = '';
-    toggle.textContent = '📅 选择日期';
+    window._editDateMode = 'text'; picker.style.display = 'none'; text.style.display = ''; toggle.textContent = '📅 选择日期';
   }
 }
 
@@ -1376,182 +1343,184 @@ function getEditReadDate() {
   if (window._editDateMode === 'picker') {
     var val = document.getElementById('editReadDatePicker').value;
     if (!val) return '';
-    var[y, m, d] = val.split('-');
-    return `${y}年${parseInt(m)}月${parseInt(d)}日`;
+    var parts = val.split('-');
+    return parts[0] + '年' + parseInt(parts[1]) + '月' + parseInt(parts[2]) + '日';
   }
   return document.getElementById('editReadDateText').value.trim();
 }
 
 function searchEditDouban() {
-  var title = document.getElementById('editTitle').value.trim();
-  if (!title) { showToast('请先输入名称'); return; }
-  var id = window._editItemId;
-  var item = data.items.find(i => i.id === id);
-  var type = item ? item.type : 'book';
-  openDoubanSearch(title, type);
+  var t = document.getElementById('editTitle').value.trim();
+  if (!t) { showToast('请先输入名称'); return; }
+  var item = null;
+  for (var fi2 = 0; fi2 < data.items.length; fi2++) { if (data.items[fi2].id === window._editItemId) { item = data.items[fi2]; break; } }
+  openDoubanSearch(t, item ? item.type : 'book');
 }
 
 function saveEditItem(id) {
-  var item = data.items.find(function(x) { return x.id === id; });
+  var item = null;
+  for (var fi3 = 0; fi3 < data.items.length; fi3++) { if (data.items[fi3].id === id) { item = data.items[fi3]; break; } }
   if (!item) return;
-  var title = document.getElementById('editTitle');
-  if (!title) { showToast('编辑弹窗异常，请重新打开'); closeModal(); return; }
-  var titleVal = title.value.trim();
+  var titleEl = document.getElementById('editTitle');
+  if (!titleEl) { showToast('编辑弹窗异常，请重新打开'); closeModal(); return; }
+  var titleVal = titleEl.value.trim();
   if (!titleVal) { showToast('请输入名称'); return; }
-
   var isBook = item.type === 'book';
   item.title = titleVal;
-  if (isBook) {
-    var ce = document.getElementById('editCreator');
-    if (ce) item.creator = ce.value.trim();
-  }
-  var ce2 = document.getElementById('editCategory');
-  if (ce2) item.category = ce2.value.trim();
+  if (isBook) { var ce = document.getElementById('editCreator'); if (ce) item.creator = ce.value.trim(); }
+  var ct = document.getElementById('editCategory'); if (ct) item.category = ct.value.trim();
   item.readDate = getEditReadDate() || null;
-
-  // 封面：优先粘贴区，其次手动输入框
   var coverVal = window._editCoverDataUrl || '';
-  if (!coverVal) {
-    var ci = document.getElementById('editCoverUrl');
-    if (ci) coverVal = ci.value.trim();
-  }
+  if (!coverVal) { var ci = document.getElementById('editCoverUrl'); if (ci) coverVal = ci.value.trim(); }
   item.cover = coverVal;
-
   saveData(data); closeModal(); renderAll();
   showToast('✅ 已更新「' + titleVal + '」');
 }
 
 // ===== 删除 =====
 function deleteItem(id) {
-  var item = data.items.find(i => i.id === id);
+  var item = null;
+  for (var fi4 = 0; fi4 < data.items.length; fi4++) { if (data.items[fi4].id === id) { item = data.items[fi4]; break; } }
   if (!item) return;
-  openModal(`
-    <div class="modal confirm-modal">
-      <div class="modal-header"><h2>⚠️ 确认删除</h2><button class="modal-close" onclick="closeModal()">✕</button></div>
-      <div class="modal-body"><p>确定要删除「<strong>${escapeHTML(item.title)}</strong>」吗？<br>相关的笔记也会一并删除，此操作不可撤销。</p></div>
-      <div class="modal-footer" style="justify-content:center;">
-        <button class="btn btn-secondary" onclick="closeModal()">取消</button>
-        <button class="btn btn-danger" onclick="confirmDelete('${id}')">🗑️ 确认删除</button>
-      </div>
-    </div>`);
+  openModal('<div class="modal confirm-modal"><div class="modal-header"><h2>⚠️ 确认删除</h2><button class="modal-close" onclick="closeModal()">✕</button></div><div class="modal-body"><p>确定要删除「<strong>' + escapeHTML(item.title) + '</strong>」吗？<br>相关的笔记也会一并删除，此操作不可撤销。</p></div><div class="modal-footer" style="justify-content:center;"><button class="btn btn-secondary" onclick="closeModal()">取消</button><button class="btn btn-danger" onclick="confirmDelete(\'' + id + '\')">🗑️ 确认删除</button></div></div>');
 }
 function confirmDelete(id) {
-  data.items = data.items.filter(i => i.id !== id);
-  saveData(data); closeModal(); renderAll();
-  showToast('🗑️ 已删除');
+  var keep = [];
+  for (var fi5 = 0; fi5 < data.items.length; fi5++) { if (data.items[fi5].id !== id) keep.push(data.items[fi5]); }
+  data.items = keep;
+  saveData(data); closeModal(); renderAll(); showToast('🗑️ 已删除');
 }
 
 // ===== 详情 Modal =====
 function openDetailModal(id) {
-  var item = data.items.find(i => i.id === id);
+  var item = null;
+  for (var fi6 = 0; fi6 < data.items.length; fi6++) { if (data.items[fi6].id === id) { item = data.items[fi6]; break; } }
   if (!item) return;
   var isBook = item.type === 'book';
   var isReading = item.status === 'reading';
   var typeIcon = isBook ? '📖' : '🎬';
   var typeLabel = isBook ? '书籍' : '影片';
+  var statusClass = isReading ? (isBook ? 'reading' : 'watching') : 'completed';
+  var statusDot = isReading ? '●' : '✓';
   var statusLabel = isBook ? (isReading ? '在读中' : '已读完') : (isReading ? '在看中' : '已看完');
   var completeBtnLabel = isBook ? '✅ 标记已读' : '✅ 标记已看';
   var undoBtnLabel = isBook ? '🔄 重新在读' : '🔄 重新在看';
 
-  var subtitleHTML = '';
-  if (isBook && item.creator) subtitleHTML = `作者：${escapeHTML(item.creator)}`;
-  else if (item.category) subtitleHTML = `🏷️ ${escapeHTML(item.category)}`;
-  if (!subtitleHTML) subtitleHTML = '&nbsp;';
+  var subtitleHTML = '&nbsp;';
+  if (isBook && item.creator) subtitleHTML = '作者：' + escapeHTML(item.creator);
+  else if (item.category) subtitleHTML = '🏷️ ' + escapeHTML(item.category);
 
-  var notesHTML = item.notes.length === 0
-    ? '<div style="text-align:center;padding:24px;color:var(--text-muted);">📝 还没有笔记，写下你的想法吧～</div>'
-    : [...item.notes].reverse().map(n => `
-      <div class="note-item">
-        <div class="note-time">🕐 ${formatTime(n.createdAt)}<button class="note-delete" onclick="event.stopPropagation();deleteNote('${id}','${n.id}')">删除</button></div>
-        <div class="note-content">${escapeHTML(n.content)}</div>
-      </div>`).join('');
+  var notes = item.notes || [];
+  var notesHTML = '';
+  if (notes.length === 0) {
+    notesHTML = '<div style="text-align:center;padding:24px;color:var(--text-muted);">📝 还没有笔记，写下你的想法吧～</div>';
+  } else {
+    for (var ni = notes.length - 1; ni >= 0; ni--) {
+      var n = notes[ni];
+      notesHTML += '<div class="note-item"><div class="note-time">🕐 ' + formatTime(n.createdAt) + '<button class="note-delete" onclick="event.stopPropagation();deleteNote(\'' + id + '\',\'' + n.id + '\')">删除</button></div><div class="note-content">' + escapeHTML(n.content) + '</div></div>';
+    }
+  }
 
-  var starHTML = Array.from({length:5}, (_,i) =>
-    `<span class="star${i < item.rating ? ' active' : ''}" onclick="event.stopPropagation();setRating('${id}',${i+1})">★</span>`
-  ).join('');
+  var starHTML = '';
+  for (var s = 0; s < 5; s++) {
+    starHTML += '<span class="star' + (s < item.rating ? ' active' : '') + '" onclick="event.stopPropagation();setRating(\'' + id + '\',' + (s+1) + ')">★</span>';
+  }
 
-  openModal(`
-    <div class="modal detail-modal">
-      <div class="modal-header"><h2>${typeIcon} 详情</h2><button class="modal-close" onclick="closeModal()">✕</button></div>
-      <div class="modal-body">
-        <div class="detail-header-section">
-          ${item.cover ? `<img class="detail-cover" src="${item.cover.startsWith('data:') ? item.cover : escapeHTML(item.cover)}" alt="${escapeHTML(item.title)} 封面">` : ''}
-          <div class="detail-cover" style="${item.cover ? 'display:none' : ''}background:linear-gradient(135deg,${isBook ? '#ede9fe' : '#fef3c7'},${isBook ? '#d8cef8' : '#fde68a'});">
-            <span style="font-size:2rem;font-weight:700;color:${isBook ? 'rgba(139,92,246,0.25)' : 'rgba(245,158,11,0.25)'}">${item.title.charAt(0)}</span>
-          </div>
-          <div class="detail-info">
-            <h3>${escapeHTML(item.title)}</h3>
-            <div class="detail-subtitle">${subtitleHTML}</div>
-            <div class="detail-meta">
-              <span class="status-badge ${isReading ? (isBook ? 'reading' : 'watching') : 'completed'}">${isReading ? '●' : '✓'} ${statusLabel}</span>
-              <span class="type-badge ${item.type}">${typeIcon} ${typeLabel}</span>
-              ${item.category ? `<span style="font-size:0.72rem;color:var(--text-muted);">🏷️ ${escapeHTML(item.category)}</span>` : ''}
-            </div>
-            <div class="detail-date">添加于 ${formatTime(item.addedAt)}</div>
-            ${item.readDate ? `<div class="detail-date" style="color:var(--accent);">📅 阅读时间：${escapeHTML(item.readDate)}</div>` : ''}
-            ${item.completedAt ? `<div class="detail-date">完成于 ${formatTime(item.completedAt)}</div>` : ''}
-            <div style="margin-top:12px;">
-              <div style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:4px;">评分</div>
-              <div class="star-rating">${starHTML}</div>
-            </div>
-            <div class="detail-actions-row" style="margin-top:12px;">
-              ${isReading
-                ? `<button class="btn btn-success btn-sm" onclick="markCompleted('${id}')">${completeBtnLabel}</button>`
-                : `<button class="btn btn-secondary btn-sm" onclick="markReading('${id}')">${undoBtnLabel}</button>`}
-              <button class="btn btn-secondary btn-sm" onclick="closeModal();openEditModal('${id}')">✏️ 编辑</button>
-            </div>
-          </div>
-        </div>
-        <div class="notes-section">
-          <h4>📝 笔记 <span class="notes-count">${item.notes.length} 条</span></h4>
-          ${notesHTML}
-          <div class="new-note-box">
-            <textarea class="form-textarea" id="newNoteContent" placeholder="写下你的读后感/观后感..." rows="3"></textarea>
-            <button class="btn btn-primary btn-sm" onclick="addNote('${id}')">💬 添加笔记</button>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal()">关闭</button></div>
-    </div>`);
+  var coverHTML = '';
+  if (item.cover) {
+    var isData = item.cover.indexOf('data:') === 0;
+    coverHTML = '<img class="detail-cover" src="' + (isData ? item.cover : escapeHTML(item.cover)) + '" alt="' + escapeHTML(item.title) + ' 封面">';
+  }
+  var coverStyle = item.cover ? 'display:none;' : '';
+  var coverBg1 = isBook ? '#ede9fe' : '#fef3c7';
+  var coverBg2 = isBook ? '#d8cef8' : '#fde68a';
+  var coverColor = isBook ? 'rgba(139,92,246,0.25)' : 'rgba(245,158,11,0.25)';
+  var catHTML = item.category ? '<span style="font-size:0.72rem;color:var(--text-muted);">🏷️ ' + escapeHTML(item.category) + '</span>' : '';
+  var readDateHTML = item.readDate ? '<div class="detail-date" style="color:var(--accent);">📅 阅读时间：' + escapeHTML(item.readDate) + '</div>' : '';
+  var completedHTML = item.completedAt ? '<div class="detail-date">完成于 ' + formatTime(item.completedAt) + '</div>' : '';
+  var actionBtnHTML = isReading
+    ? '<button class="btn btn-success btn-sm" onclick="markCompleted(\'' + id + '\')">' + completeBtnLabel + '</button>'
+    : '<button class="btn btn-secondary btn-sm" onclick="markReading(\'' + id + '\')">' + undoBtnLabel + '</button>';
+
+  var html = '';
+  html += '<div class="modal detail-modal">';
+  html += '<div class="modal-header"><h2>' + typeIcon + ' 详情</h2><button class="modal-close" onclick="closeModal()">✕</button></div>';
+  html += '<div class="modal-body">';
+  html += '<div class="detail-header-section">';
+  html += coverHTML;
+  html += '<div class="detail-cover" style="' + coverStyle + 'background:linear-gradient(135deg,' + coverBg1 + ',' + coverBg2 + ');">';
+  html += '<span style="font-size:2rem;font-weight:700;color:' + coverColor + '">' + item.title.charAt(0) + '</span></div>';
+  html += '<div class="detail-info">';
+  html += '<h3>' + escapeHTML(item.title) + '</h3>';
+  html += '<div class="detail-subtitle">' + subtitleHTML + '</div>';
+  html += '<div class="detail-meta">';
+  html += '<span class="status-badge ' + statusClass + '">' + statusDot + ' ' + statusLabel + '</span>';
+  html += '<span class="type-badge ' + item.type + '">' + typeIcon + ' ' + typeLabel + '</span>' + catHTML;
+  html += '</div>';
+  html += '<div class="detail-date">添加于 ' + formatTime(item.addedAt) + '</div>';
+  html += readDateHTML + completedHTML;
+  html += '<div style="margin-top:12px;"><div style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:4px;">评分</div>';
+  html += '<div class="star-rating">' + starHTML + '</div></div>';
+  html += '<div class="detail-actions-row" style="margin-top:12px;">';
+  html += actionBtnHTML;
+  html += '<button class="btn btn-secondary btn-sm" onclick="closeModal();openEditModal(\'' + id + '\')">✏️ 编辑</button>';
+  html += '</div></div></div>';
+  html += '<div class="notes-section"><h4>📝 笔记 <span class="notes-count">' + notes.length + ' 条</span></h4>';
+  html += notesHTML;
+  html += '<div class="new-note-box">';
+  html += '<textarea class="form-textarea" id="newNoteContent" placeholder="写下你的读后感/观后感..." rows="3"></textarea>';
+  html += '<button class="btn btn-primary btn-sm" onclick="addNote(\'' + id + '\')">💬 添加笔记</button>';
+  html += '</div></div></div>';
+  html += '<div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal()">关闭</button></div></div>';
+
+  openModal(html);
 }
 
 // ===== 笔记操作 =====
 function addNote(itemId) {
   var content = document.getElementById('newNoteContent').value.trim();
   if (!content) { showToast('请输入笔记内容'); return; }
-  var item = data.items.find(i => i.id === itemId);
+  var item = null;
+  for (var fi7 = 0; fi7 < data.items.length; fi7++) { if (data.items[fi7].id === itemId) { item = data.items[fi7]; break; } }
   if (!item) return;
+  if (!item.notes) item.notes = [];
   item.notes.push({ id: genId('n'), content: content, createdAt: nowISO() });
   saveData(data); openDetailModal(itemId); renderCards();
   showToast('✅ 笔记已保存');
 }
 function deleteNote(itemId, noteId) {
-  var item = data.items.find(i => i.id === itemId);
+  var item = null;
+  for (var fi8 = 0; fi8 < data.items.length; fi8++) { if (data.items[fi8].id === itemId) { item = data.items[fi8]; break; } }
   if (!item) return;
-  item.notes = item.notes.filter(n => n.id !== noteId);
+  var keep = [];
+  var notes2 = item.notes || [];
+  for (var nj = 0; nj < notes2.length; nj++) { if (notes2[nj].id !== noteId) keep.push(notes2[nj]); }
+  item.notes = keep;
   saveData(data); openDetailModal(itemId); renderCards();
   showToast('🗑️ 笔记已删除');
 }
 
 // ===== 完成标记 =====
 function markCompleted(id) {
-  var item = data.items.find(i => i.id === id);
+  var item = null;
+  for (var fi9 = 0; fi9 < data.items.length; fi9++) { if (data.items[fi9].id === id) { item = data.items[fi9]; break; } }
   if (!item) return;
   item.status = 'completed'; item.completedAt = nowISO();
   saveData(data); openDetailModal(id); renderAll();
-  showToast(`🎉「${item.title}」已标记完成！`);
+  showToast('🎉「' + item.title + '」已标记完成！');
 }
 function markReading(id) {
-  var item = data.items.find(i => i.id === id);
+  var item = null;
+  for (var f20 = 0; f20 < data.items.length; f20++) { if (data.items[f20].id === id) { item = data.items[f20]; break; } }
   if (!item) return;
   item.status = 'reading'; item.completedAt = null;
   saveData(data); openDetailModal(id); renderAll();
-  showToast(`🔄「${item.title}」已回到进行中`);
+  showToast('🔄「' + item.title + '」已回到进行中');
 }
-
 // ===== 评分 =====
 function setRating(id, rating) {
-  var item = data.items.find(i => i.id === id);
+  var item = null;
+  for (var f11 = 0; f11 < data.items.length; f11++) { if (data.items[f11].id === id) { item = data.items[f11]; break; } }
   if (!item) return;
   item.rating = rating; saveData(data); openDetailModal(id); renderCards();
 }
@@ -1570,6 +1539,7 @@ document.addEventListener('keydown', function(e) {
 
 // ===== 初始化 =====
 (function init() {
+  repairData();
   try { renderAll(); } catch(e) { showToast("渲染失败: " + e.message); }
   checkProxy();
   fireBoot();

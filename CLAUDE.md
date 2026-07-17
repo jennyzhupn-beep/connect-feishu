@@ -4,11 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 项目概述
 
-这是宁（Poppy）的个人 AI 生活助理系统「财财团队」，通过 Claude Code 子代理 + 飞书 API 实现每日新闻简报、任务管理、食谱规划、反思教练、雅思备考和读书影片管理。完整设计文档见 `agent设计.md`。
+这是宁（Poppy）的个人 AI 生活助理系统「财财团队」，通过 Claude Code 子代理 + 飞书 API 实现每日新闻简报、任务管理、食谱规划、反思教练、雅思备考、读书影片管理和每日综合记录。完整设计文档见 `agent设计.md`。
 
 ## 核心架构
 
-### 6 个 Agent（Subagent）
+### 7 个 Agent（Subagent）
 
 所有 agent 定义在 `.claude/agents/`，通过 frontmatter 指定 model：
 
@@ -20,6 +20,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | 反思财 | Opus | 「工作结束了」 | `reflections/{date}/反思.md` |
 | 雅思财 | Opus | 「雅思财」/ 雅思相关 | `ielts-plan.html` 维护 + surge.sh 发布 |
 | 阅读财 | Sonnet | 「阅读财」「记本书」「我的书架」 | `reading-tracker.html` 维护 |
+| 记录财 | Sonnet | 「记录财」「今天过得怎么样」 | `daily-tracker.html` 维护 |
 
 ### 数据和存档目录
 
@@ -29,7 +30,9 @@ meals/{YYYY-MM-DD}/       # 本周食谱 HTML（周刊）
 reflections/{YYYY-MM-DD}/ # 反思 Markdown（日报）
 context/poppy-profile.md  # Poppy 个人档案（所有 agent 共享）
 reading-tracker.html      # 读书影片管理（单页应用，localStorage）
+daily-tracker.html        # 每日综合记录（单页应用，localStorage）
 ```
+context/poppy-profile.md  # Poppy 个人档案（所有 agent 共享）
 
 ### 飞书集成
 
