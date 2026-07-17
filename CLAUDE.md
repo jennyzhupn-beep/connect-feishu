@@ -148,6 +148,23 @@ npx surge "E:\reading-deploy" poppy-reading.surge.sh
 | `feishu_token.ps1` | 含 App Secret | ⚠️ 谨慎提交 |
 | `memory/feishu-auto-send.md` | 含 App Secret | ⚠️ 已提交 |
 
+## 记录财 — 每日综合记录
+
+### 产品
+**生产地址**：https://poppy-daily-tracker.surge.sh（国内直连）
+
+**更新命令**：
+```powershell
+copy "E:\claude code\connect feishu\daily-tracker.html" "E:\daily-deploy\index.html" /Y
+npx surge "E:\daily-deploy" poppy-daily-tracker.surge.sh
+```
+
+### 网页技术架构
+- 纯 HTML + CSS + Vanilla JS，localStorage + Firebase 双存储（key: `daily_tracker_data`）
+- Firebase 5 秒轮询多设备同步，路径 `/daily-records.json`
+- 橙粉色主题 `#f97316` + 暗色模式
+- 6 大模块：日期头、时间轴（24 整点/点击展开/标签/摘要）、精力总结（按小时饼图）、餐食、感恩日记、状态打分
+
 ## 雅思备考网页
 
 ### 线上部署

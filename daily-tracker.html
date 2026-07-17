@@ -92,8 +92,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
 .tl-node-actions{display:none;margin-left:auto}
 .tl-node.active .tl-node-actions{display:flex}
 /* 有内容的节点显示摘要文字，点击展开编辑 */
-.tl-node.has-entry .tl-summary{font-size:0.82rem;color:var(--text);padding:2px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:300px}
-.tl-node.has-entry .tl-summary .tl-tag-dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:4px;vertical-align:middle}
+.tl-node.has-entry .tl-summary{font-size:0.82rem;color:var(--text);padding:2px 0;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.tl-node.has-entry .tl-summary .tl-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tl-node.has-entry .tl-summary .tl-tags-right{display:flex;gap:4px;flex-shrink:0}
+.tl-node.has-entry .tl-summary .tl-tag-dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:2px;vertical-align:middle}
 .tl-node-delete{width:20px;height:20px;border-radius:50%;border:none;background:transparent;color:var(--text-muted);cursor:pointer;font-size:0.6rem;display:flex;align-items:center;justify-content:center}
 .tl-node-delete:hover{background:rgba(229,62,62,0.15);color:#e53e3e}
 .tl-node .tag-row{padding-left:0}
@@ -204,12 +206,76 @@ function fmtDate(dateStr) {
   return parseInt(p[1]) + "月" + parseInt(p[2]) + "日";
 }
 
-// 数据管理
+// 数据管理 + Firebase 同步
+var FIREBASE_URL = "https://poppy-reading-default-rtdb.firebaseio.com";
+var _fireHash = "";
+
 function loadData() {
   try { var r = localStorage.getItem(STORAGE_KEY); if (r) return JSON.parse(r); } catch(e) {}
   return { records: {} };
 }
-function saveData(d) { localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); }
+function saveData(d) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(d));
+  _fireHash = JSON.stringify(d);
+  var x = new XMLHttpRequest();
+  x.open("PUT", FIREBASE_URL + "/daily-records.json", true);
+  x.setRequestHeader("Content-Type", "application/json");
+  x.timeout = 5000;
+  x.send(_fireHash);
+}
+function fireBoot() {
+  if (data.records && Object.keys(data.records).length > 0) _fireHash = JSON.stringify(data);
+  var x = new XMLHttpRequest();
+  x.open("GET", FIREBASE_URL + "/daily-records.json", true);
+  x.timeout = 8000;
+  x.onload = function() {
+    if (x.status !== 200 || !x.responseText || x.responseText === "null") return;
+    try {
+      var cloud = JSON.parse(x.responseText);
+      if (!cloud || !cloud.records) return;
+      var localLen = Object.keys(data.records).length, cloudLen = Object.keys(cloud.records).length;
+      if (cloudLen >= localLen) {
+        _fireHash = JSON.stringify(cloud);
+        data.records = cloud.records;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        renderAll();
+        showToast("☁️ 已同步 " + cloudLen + " 天记录");
+      } else {
+        saveData(data);
+      }
+    } catch(e) {}
+    startPoll();
+  };
+  x.onerror = function() { startPoll(); };
+  x.ontimeout = function() { startPoll(); };
+  x.send();
+
+  function startPoll() {
+    setInterval(function() {
+      var px = new XMLHttpRequest();
+      px.open("GET", FIREBASE_URL + "/daily-records.json", true);
+      px.timeout = 5000;
+      px.onload = function() {
+        if (px.status !== 200) return;
+        try {
+          var c = JSON.parse(px.responseText);
+          if (!c || !c.records) return;
+          var h = JSON.stringify(c);
+          if (h !== _fireHash) {
+            _fireHash = h;
+            data.records = c.records;
+            localStorage.setItem(STORAGE_KEY, h);
+            var dateKeys = Object.keys(data.records);
+            if (dateKeys.length > 0) { currentDate = dateKeys.sort().reverse()[0]; currentRecord = data.records[currentDate]; }
+            renderAll();
+            showToast("☁️ 数据已更新");
+          }
+        } catch(e) {}
+      };
+      px.send();
+    }, 5000);
+  }
+}
 
 var data = loadData();
 var currentDate = "";
@@ -317,11 +383,15 @@ function renderAll() {
     html += '<span class="tl-dot"></span>';
     html += '<span class="tl-label hour-mark">' + hh + '</span>';
 
-    // 有内容但未展开：显示摘要文字
+    // 有内容但未展开：显示摘要文字（左） + 标签（右）
     if (hasEntry && !active) {
-      html += '<div class="tl-summary">' + esc(title);
-      for (var ti = 0; ti < tags.length; ti++) {
-        html += ' <span class="tl-tag-dot" style="background:' + ({"工作":"#3b82f6","学习":"#8b5cf6","娱乐":"#f59e0b","生活":"#10b981"}[tags[ti]] || "#ccc") + ';"></span>' + tags[ti];
+      html += '<div class="tl-summary"><span class="tl-text">' + esc(title) + '</span>';
+      if (tags.length > 0) {
+        html += '<span class="tl-tags-right">';
+        for (var ti = 0; ti < tags.length; ti++) {
+          html += '<span class="tag ' + TAG_COLORS[tags[ti]] + '" style="pointer-events:none;">' + tags[ti] + '</span>';
+        }
+        html += '</span>';
       }
       html += '</div>';
     }
@@ -532,6 +602,28 @@ function deleteRecord() {
   showToast("🗑️ 已删除");
 }
 
+// 点击空白处自动收起并保存当前编辑的事项
+document.addEventListener("click", function(e) {
+  if (!_activeHour || !currentRecord) return;
+  // 检查是否点击了时间轴节点内部
+  var t = e.target;
+  while (t && t !== document.body) {
+    if (t.classList && (t.classList.contains("tl-node") || t.classList.contains("tl-node-body"))) return;
+    t = t.parentElement;
+  }
+  // 点击了时间轴外部 → 保存并收起
+  var idx = findEntry(_activeHour);
+  if (idx >= 0) {
+    var entry = currentRecord.timeline[idx];
+    if (entry && !entry.title && (!entry.tags || entry.tags.length === 0)) {
+      currentRecord.timeline.splice(idx, 1);
+    }
+  }
+  saveData(data);
+  _activeHour = "";
+  renderAll();
+});
+
 // 初始化
 (function init() {
   renderDateList();
@@ -539,6 +631,7 @@ function deleteRecord() {
   if (dates.length > 0) {
     openDate(dates.sort().reverse()[0]);
   }
+  fireBoot();
 })();
 </script>
 </body>
