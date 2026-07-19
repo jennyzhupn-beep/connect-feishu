@@ -206,12 +206,43 @@ function fmtDate(dateStr) {
   return parseInt(p[1]) + "月" + parseInt(p[2]) + "日";
 }
 
-// 数据管理
+// 数据管理 + Firebase
+var FIREBASE_URL = "https://poppy-reading-default-rtdb.firebaseio.com";
+
 function loadData() {
   try { var r = localStorage.getItem(STORAGE_KEY); if (r) return JSON.parse(r); } catch(e) {}
   return { records: {} };
 }
-function saveData(d) { localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); }
+function saveData(d) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(d));
+  // 后台推云端（统一格式：{records: {...}}）
+  var x = new XMLHttpRequest();
+  x.open("PUT", FIREBASE_URL + "/daily-records.json", true);
+  x.setRequestHeader("Content-Type", "application/json");
+  x.timeout = 5000;
+  x.send(JSON.stringify(d));
+}
+function fireBoot() {
+  var x = new XMLHttpRequest();
+  x.open("GET", FIREBASE_URL + "/daily-records.json", true);
+  x.timeout = 8000;
+  x.onload = function() {
+    if (x.status !== 200 || !x.responseText || x.responseText === "null") return;
+    try {
+      var cloud = JSON.parse(x.responseText);
+      if (!cloud || typeof cloud !== "object") return;
+      // 兼容旧格式 {records:{...}} → 提取内层
+      if (cloud.records && typeof cloud.records === "object") cloud = cloud.records;
+      if (Object.keys(cloud).length === 0) return;
+      data.records = cloud;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      var dk = Object.keys(data.records);
+      if (dk.length > 0) { currentDate = dk.sort().reverse()[0]; currentRecord = data.records[currentDate]; }
+      renderAll();
+    } catch(e) { showToast("⚠️ 同步失败"); }
+  };
+  x.send();
+}
 
 var data = loadData();
 var currentDate = "";
@@ -277,9 +308,9 @@ function openDate(dateStr) {
 
 // 渲染主内容
 function renderAll() {
+  if (!currentDate || !currentRecord) return;
   renderDateList();
   var main = document.getElementById("mainContent");
-  if (!currentDate) return;
 
   var rec = currentRecord;
   var d = currentDate;
@@ -567,6 +598,7 @@ document.addEventListener("click", function(e) {
   if (dates.length > 0) {
     openDate(dates.sort().reverse()[0]);
   }
+  fireBoot();
 })();
 </script>
 </body>

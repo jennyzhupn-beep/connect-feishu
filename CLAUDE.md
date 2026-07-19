@@ -6,6 +6,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 这是宁（Poppy）的个人 AI 生活助理系统「财财团队」，通过 Claude Code 子代理 + 飞书 API 实现每日新闻简报、任务管理、食谱规划、反思教练、雅思备考、读书影片管理和每日综合记录。完整设计文档见 `agent设计.md`。
 
+## 开发原则
+
+1. **数据安全第一** — 修改已有页面时，禁止清空或覆盖用户已有的 localStorage/Firebase 数据。新增字段须向后兼容（`|| []` / `|| {}`降级），数据结构变更须写迁移逻辑。
+2. **交付前自测** — 给宁验证前，必须先在本地打开页面测试核心流程（新增→保存→刷新验证数据仍在→编辑→删除），确认无报错。不可将明显有 bug 的版本交给用户。
+
 ## 核心架构
 
 ### 7 个 Agent（Subagent）
