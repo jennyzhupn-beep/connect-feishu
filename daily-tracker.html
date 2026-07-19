@@ -206,76 +206,12 @@ function fmtDate(dateStr) {
   return parseInt(p[1]) + "月" + parseInt(p[2]) + "日";
 }
 
-// 数据管理 + Firebase 同步
-var FIREBASE_URL = "https://poppy-reading-default-rtdb.firebaseio.com";
-var _fireHash = "";
-
+// 数据管理
 function loadData() {
   try { var r = localStorage.getItem(STORAGE_KEY); if (r) return JSON.parse(r); } catch(e) {}
   return { records: {} };
 }
-function saveData(d) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(d));
-  _fireHash = JSON.stringify(d);
-  var x = new XMLHttpRequest();
-  x.open("PUT", FIREBASE_URL + "/daily-records.json", true);
-  x.setRequestHeader("Content-Type", "application/json");
-  x.timeout = 5000;
-  x.send(_fireHash);
-}
-function fireBoot() {
-  if (data.records && Object.keys(data.records).length > 0) _fireHash = JSON.stringify(data);
-  var x = new XMLHttpRequest();
-  x.open("GET", FIREBASE_URL + "/daily-records.json", true);
-  x.timeout = 8000;
-  x.onload = function() {
-    if (x.status !== 200 || !x.responseText || x.responseText === "null") return;
-    try {
-      var cloud = JSON.parse(x.responseText);
-      if (!cloud || !cloud.records) return;
-      var localLen = Object.keys(data.records).length, cloudLen = Object.keys(cloud.records).length;
-      if (cloudLen >= localLen) {
-        _fireHash = JSON.stringify(cloud);
-        data.records = cloud.records;
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-        renderAll();
-        showToast("☁️ 已同步 " + cloudLen + " 天记录");
-      } else {
-        saveData(data);
-      }
-    } catch(e) {}
-    startPoll();
-  };
-  x.onerror = function() { startPoll(); };
-  x.ontimeout = function() { startPoll(); };
-  x.send();
-
-  function startPoll() {
-    setInterval(function() {
-      var px = new XMLHttpRequest();
-      px.open("GET", FIREBASE_URL + "/daily-records.json", true);
-      px.timeout = 5000;
-      px.onload = function() {
-        if (px.status !== 200) return;
-        try {
-          var c = JSON.parse(px.responseText);
-          if (!c || !c.records) return;
-          var h = JSON.stringify(c);
-          if (h !== _fireHash) {
-            _fireHash = h;
-            data.records = c.records;
-            localStorage.setItem(STORAGE_KEY, h);
-            var dateKeys = Object.keys(data.records);
-            if (dateKeys.length > 0) { currentDate = dateKeys.sort().reverse()[0]; currentRecord = data.records[currentDate]; }
-            renderAll();
-            showToast("☁️ 数据已更新");
-          }
-        } catch(e) {}
-      };
-      px.send();
-    }, 5000);
-  }
-}
+function saveData(d) { localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); }
 
 var data = loadData();
 var currentDate = "";
@@ -631,7 +567,6 @@ document.addEventListener("click", function(e) {
   if (dates.length > 0) {
     openDate(dates.sort().reverse()[0]);
   }
-  fireBoot();
 })();
 </script>
 </body>
