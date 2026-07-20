@@ -2,17 +2,43 @@
 *.tmp
 task_body.json
 tmp_task.json
+*.txt
+*.json
 
 # 敏感配置（含 App Secret 和 Token）
 .claude/settings.local.json
+.claude/scheduled_tasks.json
+.claude/scheduled_tasks.lock
 
 # OAuth 脚本（含 token）
 oauth_exchange.ps1
 oauth_exchange2.ps1
+.oauth_body.txt
+.oauth_result.json
+.token_swap.json
+feishu_oauth_body.txt
+feishu_oauth_result.json
 
 # Token 状态文件（含 access_token）
 .token_state.json
 task_tmp.json
 
+# 临时/备份文件
+reading-tracker-part*.txt
+explore_pdf.js
+fix-*.js
+pdf2pptx.js
+deploy.js
+known_hosts
+C*Users*Temp*
+
 # Node
 node_modules/
+package-lock.json
+package.json
+
+# 数据文件
+reading-data.json
+
+# 个人记忆（可选，根据需要）
+# memory/

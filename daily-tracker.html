@@ -14,6 +14,7 @@
   --study-color: #8b5cf6; --study-bg: rgba(139,92,246,0.1);
   --play-color: #f59e0b; --play-bg: rgba(245,158,11,0.1);
   --life-color: #10b981; --life-bg: rgba(16,185,129,0.1);
+  --sport-color: #ef4444; --sport-bg: rgba(239,68,68,0.1);
   --success: #38a169; --success-bg: rgba(56,161,105,0.1);
   --warning: #d69e2e; --warning-bg: rgba(214,158,46,0.1);
   --progress-bg: #fff0e5;
@@ -31,7 +32,7 @@ body.dark {
   --shadow-sm: 0 1px 3px rgba(0,0,0,0.2); --shadow: 0 4px 16px rgba(0,0,0,0.3);
   --shadow-lg: 0 8px 30px rgba(0,0,0,0.4);
   --work-bg: rgba(59,130,246,0.15); --study-bg: rgba(139,92,246,0.15);
-  --play-bg: rgba(245,158,11,0.15); --life-bg: rgba(16,185,129,0.15);
+  --play-bg: rgba(245,158,11,0.15); --life-bg: rgba(16,185,129,0.15); --sport-bg: rgba(239,68,68,0.15);
 }
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -107,6 +108,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
 .tag.study{background:var(--study-bg);color:var(--study-color)}
 .tag.play{background:var(--play-bg);color:var(--play-color)}
 .tag.life{background:var(--life-bg);color:var(--life-color)}
+.tag.sport{background:var(--sport-bg);color:var(--sport-color)}
 .tag.selected{border-color:currentColor;box-shadow:0 0 0 2px var(--accent-light)}
 
 /* 精力饼图 */
@@ -184,8 +186,8 @@ body.dark .star-btn{color:#4a5568}
 <script>
 var STORAGE_KEY = "daily_tracker_data";
 var THEME_KEY = "daily_tracker_theme";
-var TAG_COLORS = { "工作": "work", "学习": "study", "娱乐": "play", "生活": "life" };
-var TAG_LIST = ["工作", "学习", "娱乐", "生活"];
+var TAG_COLORS = { "工作": "work", "学习": "study", "娱乐": "play", "生活": "life", "运动": "sport" };
+var TAG_LIST = ["工作", "学习", "娱乐", "生活", "运动"];
 var MEAL_KEYS = ["早餐", "午餐", "晚餐", "加餐"];
 var MEAL_ICONS = {"早餐":"🥐","午餐":"🍱","晚餐":"🍲","加餐":"🍪"};
 
@@ -198,50 +200,134 @@ function nowISO() {
   return String(d.getHours()).padStart(2,"0") + ":" + String(d.getMinutes()).padStart(2,"0");
 }
 function weekday(dateStr) {
-  var d = new Date(dateStr + "T00:00:00");
-  return "周" + ["日","一","二","三","四","五","六"][d.getDay()];
+  try {
+    var parts = dateStr.split("-");
+    if (parts.length !== 3) return "周日";
+    var d = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
+    var days = ["日","一","二","三","四","五","六"];
+    return "周" + days[d.getDay()];
+  } catch(e) {
+    return "周日";
+  }
 }
 function fmtDate(dateStr) {
-  var p = dateStr.split("-");
-  return parseInt(p[1]) + "月" + parseInt(p[2]) + "日";
+  try {
+    var p = dateStr.split("-");
+    if (p.length !== 3) return dateStr;
+    return parseInt(p[1], 10) + "月" + parseInt(p[2], 10) + "日";
+  } catch(e) {
+    return dateStr;
+  }
 }
 
-// 数据管理 + Firebase
+// 数据管理（localStorage + Firebase 同步，参考阅读财成熟方案）
 var FIREBASE_URL = "https://poppy-reading-default-rtdb.firebaseio.com";
+var _fireHash = "";
 
 function loadData() {
-  try { var r = localStorage.getItem(STORAGE_KEY); if (r) return JSON.parse(r); } catch(e) {}
+  try {
+    var r = localStorage.getItem(STORAGE_KEY);
+    if (r) {
+      var parsed = JSON.parse(r);
+      // 数据迁移：清理可能损坏的 keys
+      if (parsed && parsed.records && typeof parsed.records === "object") {
+        var cleanRecords = {};
+        for (var k in parsed.records) {
+          if (k && k.match(/^\d{4}-\d{2}-\d{2}$/)) {
+            cleanRecords[k] = parsed.records[k];
+          }
+        }
+        parsed.records = cleanRecords;
+      }
+      return parsed;
+    }
+  } catch(e) {}
   return { records: {} };
 }
 function saveData(d) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(d));
-  // 后台推云端（统一格式：{records: {...}}）
+  _fireHash = JSON.stringify(d.records);
   var x = new XMLHttpRequest();
   x.open("PUT", FIREBASE_URL + "/daily-records.json", true);
   x.setRequestHeader("Content-Type", "application/json");
   x.timeout = 5000;
-  x.send(JSON.stringify(d));
+  x.send(_fireHash);
 }
 function fireBoot() {
+  if (data.records && Object.keys(data.records).length > 0) _fireHash = JSON.stringify(data.records);
   var x = new XMLHttpRequest();
   x.open("GET", FIREBASE_URL + "/daily-records.json", true);
   x.timeout = 8000;
   x.onload = function() {
-    if (x.status !== 200 || !x.responseText || x.responseText === "null") return;
+    if (x.status !== 200 || !x.responseText || x.responseText === "null" || x.responseText === "{}") { startPoll(); return; }
     try {
       var cloud = JSON.parse(x.responseText);
-      if (!cloud || typeof cloud !== "object") return;
-      // 兼容旧格式 {records:{...}} → 提取内层
+      if (!cloud || typeof cloud !== "object" || Array.isArray(cloud)) { startPoll(); return; }
       if (cloud.records && typeof cloud.records === "object") cloud = cloud.records;
-      if (Object.keys(cloud).length === 0) return;
-      data.records = cloud;
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-      var dk = Object.keys(data.records);
-      if (dk.length > 0) { currentDate = dk.sort().reverse()[0]; currentRecord = data.records[currentDate]; }
-      renderAll();
-    } catch(e) { showToast("⚠️ 同步失败"); }
+      // 校验：所有 key 必须是 yyyy-mm-dd 格式的日期，否则拒绝
+      var validKeys = 0;
+      var validCloud = {};
+      for (var ck in cloud) {
+        if (ck.match(/^\d{4}-\d{2}-\d{2}$/)) {
+          validKeys++;
+          validCloud[ck] = cloud[ck];
+        }
+      }
+      if (validKeys === 0) { startPoll(); return; }
+      var cloudLen = validKeys;
+      if (cloudLen === 0) { startPoll(); return; }
+      var localLen = Object.keys(data.records).length;
+      if (cloudLen >= localLen) {
+        _fireHash = JSON.stringify(validCloud);
+        data.records = validCloud;
+        refreshRecord();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        renderAll();
+      } else {
+        _fireHash = JSON.stringify(data.records);
+        saveData(data);
+      }
+    } catch(e) {}
+    startPoll();
   };
+  x.onerror = function() { startPoll(); };
+  x.ontimeout = function() { startPoll(); };
   x.send();
+
+  function startPoll() {
+    if (window.__dailyPollId) return;
+    window.__dailyPollId = setInterval(function() {
+      var px = new XMLHttpRequest();
+      px.open("GET", FIREBASE_URL + "/daily-records.json", true);
+      px.timeout = 5000;
+      px.onload = function() {
+        if (px.status !== 200) return;
+        try {
+          var c = JSON.parse(px.responseText);
+          if (!c || typeof c !== "object" || Array.isArray(c)) return;
+          if (c.records && typeof c.records === "object") c = c.records;
+          var validCloud = {};
+          var vk = 0;
+          for (var ck in c) {
+            if (ck.match(/^\d{4}-\d{2}-\d{2}$/)) {
+              validCloud[ck] = c[ck];
+              vk++;
+            }
+          }
+          if (vk === 0) return;
+          var h = JSON.stringify(validCloud);
+          if (h !== _fireHash) {
+            _fireHash = h;
+            data.records = validCloud;
+            refreshRecord();
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            renderAll();
+          }
+        } catch(e) {}
+      };
+      px.send();
+    }, 5000);
+  }
 }
 
 var data = loadData();
@@ -278,11 +364,15 @@ function showToast(msg) {
 
 // 侧边栏日期列表
 function renderDateList() {
-  var dates = Object.keys(data.records).sort().reverse();
+  var dates = Object.keys(data.records).filter(function(d) {
+    return d && d.match(/^\d{4}-\d{2}-\d{2}$/);
+  }).sort().reverse();
   var html = "";
   for (var i = 0; i < dates.length; i++) {
     var d = dates[i];
-    html += '<div class="date-item' + (d === currentDate ? " active" : "") + '" onclick="openDate(\'' + d + '\')"><span class="dot"></span>' + fmtDate(d) + " " + weekday(d) + '</div>';
+    var dateDisplay = fmtDate(d);
+    var weekDisplay = weekday(d);
+    html += '<div class="date-item' + (d === currentDate ? ' active' : '') + '" onclick="openDate(\'' + d + '\')"><span class="dot"></span>' + dateDisplay + ' ' + weekDisplay + '</div>';
   }
   document.getElementById("dateList").innerHTML = html;
 }
@@ -297,6 +387,7 @@ function createToday() {
 }
 
 function openDate(dateStr) {
+  if (!dateStr || !dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) return;
   currentDate = dateStr;
   currentRecord = getRecord(dateStr);
   ensureTimeline(currentRecord);
@@ -308,17 +399,28 @@ function openDate(dateStr) {
 
 // 渲染主内容
 function renderAll() {
-  if (!currentDate || !currentRecord) return;
+  if (!currentDate) return;
+  // 始终从 data.records 取最新引用
+  currentRecord = data.records[currentDate];
+  if (!currentRecord) { document.getElementById("mainContent").innerHTML = '<div class="welcome"><div class="wel-icon">📋</div><h3>暂无记录</h3><p>点击左侧「＋ 创建今日记录」开始</p></div>'; return; }
+  // 确保必需字段存在
+  if (!currentRecord.timeline) currentRecord.timeline = [];
+  if (!currentRecord.meals) currentRecord.meals = {};
+  if (!currentRecord.gratitude) currentRecord.gratitude = "";
+  if (currentRecord.mood === undefined) currentRecord.mood = 0;
+  if (currentRecord.learn === undefined) currentRecord.learn = 0;
+  if (!currentRecord.comment) currentRecord.comment = "";
   renderDateList();
   var main = document.getElementById("mainContent");
 
   var rec = currentRecord;
   var d = currentDate;
   var w = weekday(d);
+  var dateDisplay = fmtDate(d);
 
   // === 日期头 ===
   var html = '<div class="day-header">';
-  html += '<div class="day-date">📅 ' + fmtDate(d) + ' <span class="day-week">' + w + '</span>';
+  html += '<div class="day-date">📅 ' + dateDisplay + ' <span class="day-week">' + w + '</span>';
   html += '<input type="date" value="' + d + '" onchange="changeDate(this.value)" style="margin-left:12px;padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);font-size:0.85rem;font-family:inherit;">';
   html += '<button class="btn btn-danger btn-sm" onclick="deleteRecord()" style="margin-left:auto;">🗑️ 删除此日</button>';
   html += '</div></div>';
@@ -346,7 +448,7 @@ function renderAll() {
     var title = entry ? (entry.title || "") : "";
     var active = (hKey === _activeHour);
 
-    html += '<div class="tl-node' + (hasEntry ? " has-entry" : "") + (active ? " active" : "") + '" onclick="activateHour(\'' + hKey + '\')">';
+    html += '<div class="tl-node' + (hasEntry ? ' has-entry' : '') + (active ? ' active' : '') + '" onclick="activateHour(\'' + hKey + '\')">';
     html += '<span class="tl-dot"></span>';
     html += '<span class="tl-label hour-mark">' + hh + '</span>';
 
@@ -356,7 +458,7 @@ function renderAll() {
       if (tags.length > 0) {
         html += '<span class="tl-tags-right">';
         for (var ti = 0; ti < tags.length; ti++) {
-          html += '<span class="tag ' + TAG_COLORS[tags[ti]] + '" style="pointer-events:none;">' + tags[ti] + '</span>';
+          html += '<span class="tag ' + (TAG_COLORS[tags[ti]] || '') + '" style="pointer-events:none;">' + esc(tags[ti]) + '</span>';
         }
         html += '</span>';
       }
@@ -372,10 +474,10 @@ function renderAll() {
       if (hasEntry) html += '<button class="tl-node-delete" onclick="event.stopPropagation();deleteEntryByHour(\'' + hKey + '\')" title="删除">✕</button>';
       html += '</div></div>';
       html += '<div class="tag-row">';
-      for (var ti = 0; ti < TAG_LIST.length; ti++) {
-        var t = TAG_LIST[ti], atag = false;
+      for (var ti2 = 0; ti2 < TAG_LIST.length; ti2++) {
+        var t = TAG_LIST[ti2], atag = false;
         for (var ai = 0; ai < tags.length; ai++) { if (tags[ai] === t) { atag = true; break; } }
-        html += '<span class="tag ' + TAG_COLORS[t] + (atag ? " selected" : "") + '" onclick="event.stopPropagation();toggleTagByHour(\'' + hKey + '\',\'' + t + '\')">' + t + '</span>';
+        html += '<span class="tag ' + TAG_COLORS[t] + (atag ? ' selected' : '') + '" onclick="event.stopPropagation();toggleTagByHour(\'' + hKey + '\',\'' + t + '\')">' + t + '</span>';
       }
       html += '</div></div>';
     }
@@ -385,7 +487,7 @@ function renderAll() {
 
   // === 模块2: 精力总结 ===
   html += '<div class="module"><div class="module-header">📊 精力总结 <span style="font-size:0.75rem;color:var(--text-muted);font-weight:400">— 按小时统计</span></div><div class="module-body">';
-  var tagHours = { "工作": 0, "学习": 0, "娱乐": 0, "生活": 0 };
+  var tagHours = { "工作": 0, "学习": 0, "娱乐": 0, "生活": 0, "运动": 0 };
   var taggedHourCount = 0;
   for (var ei2 = 0; ei2 < rec.timeline.length; ei2++) {
     var tgs = rec.timeline[ei2].tags || [];
@@ -398,7 +500,7 @@ function renderAll() {
     }
   }
   var pieParts = [];
-  var colors = ["#3b82f6","#8b5cf6","#f59e0b","#10b981"];
+  var colors = ["#3b82f6","#8b5cf6","#f59e0b","#10b981","#ef4444"];
   for (var ki = 0; ki < TAG_LIST.length; ki++) {
     var k = TAG_LIST[ki];
     if (tagHours[k] > 0) {
@@ -445,12 +547,12 @@ function renderAll() {
   html += '<div class="score-row">';
   html += '<div class="score-item"><div class="score-label">😊 心情</div><div class="star-row">';
   for (var si = 1; si <= 5; si++) {
-    html += '<button class="star-btn' + (si <= rec.mood ? " active" : "") + '" onclick="setMood(' + si + ')">★</button>';
+    html += '<button class="star-btn' + (si <= rec.mood ? ' active' : '') + '" onclick="setMood(' + si + ')">★</button>';
   }
   html += '</div></div>';
   html += '<div class="score-item"><div class="score-label">📚 学习</div><div class="star-row">';
   for (var si2 = 1; si2 <= 5; si2++) {
-    html += '<button class="star-btn' + (si2 <= rec.learn ? " active" : "") + '" onclick="setLearn(' + si2 + ')">★</button>';
+    html += '<button class="star-btn' + (si2 <= rec.learn ? ' active' : '') + '" onclick="setLearn(' + si2 + ')">★</button>';
   }
   html += '</div></div></div>';
   html += '<div style="margin-top:12px;"><div class="score-label" style="margin-bottom:4px;">💬 评语</div>';
@@ -465,10 +567,19 @@ function renderAll() {
 
 function esc(s) { if (!s) return ""; var e = document.createElement("span"); e.textContent = s; return e.innerHTML; }
 
+function refreshRecord() {
+  if (!currentDate) return;
+  currentRecord = data.records[currentDate];
+  if (!currentRecord) return;
+  if (!currentRecord.timeline) currentRecord.timeline = [];
+  if (!currentRecord.meals) currentRecord.meals = {};
+}
+
 // 时间轴操作（24整点节点，点击展开，时间不可编辑）
 var _activeHour = "";
 
 function findEntry(hKey) {
+  refreshRecord();
   var rec = currentRecord; if (!rec) return -1;
   for (var i = 0; i < rec.timeline.length; i++) {
     if (String(rec.timeline[i].hour || "").substring(0, 2) === hKey) return i;
@@ -505,8 +616,6 @@ function saveEntryTitle(hKey, value) {
   }
   if (rec.timeline[idx]) rec.timeline[idx].title = value;
   saveData(data);
-  // 不收起节点，让用户继续编辑标签
-  renderAll();
 }
 
 function toggleTagByHour(hKey, tag) {
@@ -594,9 +703,11 @@ document.addEventListener("click", function(e) {
 // 初始化
 (function init() {
   renderDateList();
-  var dates = Object.keys(data.records);
+  var dates = Object.keys(data.records).filter(function(d) {
+    return d && d.match(/^\d{4}-\d{2}-\d{2}$/);
+  }).sort().reverse();
   if (dates.length > 0) {
-    openDate(dates.sort().reverse()[0]);
+    openDate(dates[0]);
   }
   fireBoot();
 })();
